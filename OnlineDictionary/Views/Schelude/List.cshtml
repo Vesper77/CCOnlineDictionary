@@ -1,0 +1,21 @@
+﻿@model OnlineDictionary.ViewModel.ScheludeViewModel
+
+@{
+    ViewBag.Title = "Расписание";
+}
+
+<h2>Раписание Для @Model.schoolClass.Title </h2>
+@for (int i = 1; i <= Model.CountDays; i++) {
+    <div class="col-sm-4">
+        <h1>@i День</h1>
+        @foreach (var Lesson in Model.GetLessonsByDay(i)) {
+            <div style="border:1px solid">
+                @if (Lesson != null) {
+                    <p>@Lesson.lesson.LessonTitle</p>
+                } else {
+                    <p>Нет урока</p>
+                }
+            </div>
+        }
+    </div>
+}

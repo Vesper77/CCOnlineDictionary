@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineDictionary", "OnlineDictionary\OnlineDictionary.csproj", "{04B52E3D-69D4-4943-BF36-905C04A1ED51}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineDictionary.Tests", "OnlineDictionary.Tests\OnlineDictionary.Tests.csproj", "{853C2011-F245-4CD6-8C14-498709402C73}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{04B52E3D-69D4-4943-BF36-905C04A1ED51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04B52E3D-69D4-4943-BF36-905C04A1ED51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04B52E3D-69D4-4943-BF36-905C04A1ED51}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04B52E3D-69D4-4943-BF36-905C04A1ED51}.Release|Any CPU.Build.0 = Release|Any CPU
+		{853C2011-F245-4CD6-8C14-498709402C73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{853C2011-F245-4CD6-8C14-498709402C73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{853C2011-F245-4CD6-8C14-498709402C73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{853C2011-F245-4CD6-8C14-498709402C73}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,49 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <script src="~/Scripts/modernizr-2.6.2.js"></script>
+</head>
+<body>
+    <header>
+        <nav class="nav--top navbar navbar-default navbar-static-top navbar-inverse ">
+            <div class="container  ">
+                <a href="#" class="navbar-link"><img class="navbar-text navbar-left b_preview-logo " src="img/logo.jpg" alt="Логотип"></a>
+                <p class="navbar-text navbar-right b_preview-day ">13 мая, Пятница</p>
+
+            </div>
+        </nav>
+        <nav class=" navbar navbar-default navbar-static-top ">
+            <div class="container">
+                <p class="navbar-text navbar-left b_preview-day "><a href="#" class="navbar-link">Электронный дневник</a></p>
+                <p class="navbar-text navbar-left b_preview-day "><a href="#" class="navbar-link">Объявления</a></p>
+                <p class="navbar-text navbar-right b_preview-day "><a href="#" class="navbar-link">Преподавателям</a></p>
+                <p class="navbar-text navbar-right b_preview-day "><a href="#" class="navbar-link">Ученикам</a></p>
+                <p class="navbar-text navbar-right b_preview-day "><a href="#" class="navbar-link">Родителям</a></p>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container body-content">
+        @RenderBody()
+
+        <nav class="navbar navbar-default navbar-fixed-bottom">
+            <div class="container">
+                <div>
+                    <p class="navbar-text navbar-left  "><a href="#" class="navbar-link b_preview-organization">© 2009–2016 ООО «Электронный дневник»</a></p>
+                    <p class="navbar-text navbar-right b_preview-text "><a href="#" class="navbar-link">Школьный сайт</a></p>
+                    <p class="navbar-text navbar-right b_preview-text "><a href="#" class="navbar-link">Служба поддержки </a></p>
+                    <p class="navbar-text navbar-right b_preview-text "><a href="#" class="navbar-link">О дневнике</a></p>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+</body>
+</html>
