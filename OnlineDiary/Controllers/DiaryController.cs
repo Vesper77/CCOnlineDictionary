@@ -8,7 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 
 namespace OnlineDiary.Controllers
-{
+{    
     public class DiaryController : Controller
     {
         private ApplicationUserManager _userManager = null;
@@ -26,7 +26,6 @@ namespace OnlineDiary.Controllers
         }
         
         
-        [Authorize]
         public async Task<ActionResult> Schelude() {
             var user = await UserManager.FindByNameAsync(User.Identity.Name);
             if (await UserManager.IsInRoleAsync(user.Id, "teacher"))
