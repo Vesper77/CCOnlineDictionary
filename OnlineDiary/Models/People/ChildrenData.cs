@@ -1,6 +1,7 @@
 ﻿using OnlineDiary.Models.Diary;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -10,16 +11,19 @@ namespace OnlineDiary.Models.People
 {
     public class ChildrenData
     {
-        [ForeignKey("Parent")]
+        [Key]
+        public int Id { get; set; }
+
         public string ParentId { get; set; }
-        [ForeignKey("Children")]
         public string ChildrenId { get; set; }
-        [ForeignKey("SchoolClass")]
         public int SchoolClassId { get; set; }
 
-        public DiaryUser Parent { get; set; }
-        public DiaryUser Children { get; set; }
-        public SchoolClass SchoolClass { get; set; }
+        [ForeignKey("ParentId")]
+        public virtual DiaryUser Parent { get; set; }
+        [ForeignKey("ChildrenId")]
+        public virtual DiaryUser Children { get; set; }
+        
+        //public virtual SchoolClass ChildrenSchoolClass { get; set; }
 
     }
 }

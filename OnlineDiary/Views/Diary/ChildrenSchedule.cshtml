@@ -1,0 +1,31 @@
+﻿@model OnlineDiary.Models.UserScheduleViewModel
+@{
+    ViewBag.Title = "Расписагие";
+}
+
+<h2> Расписание ученика @Model.getChildUserName() </h2>
+
+
+@foreach (var dl in Model.getDaysWithScheduleLessons())
+{
+    <div class="b-preview-form col-md-4 col-sm-4 col-xs-12">
+        <div class=" panel panel-default">
+            <div class="panel-heading">@dl.Key</div>
+            <div class="panel-body">
+                <ul class="list-group">
+                    @for (int i = 0; i < OnlineDiary.Models.Diary.ScheduleLesson.MAX_LESSONS_PER_DAY; i++)
+                    {
+                        if (dl.Value.Length > i && dl.Value[i] != null)
+                        {
+                            <li class="list-group-item"><span class="badge"></span>@Model.getLessonTitle(dl.Value[i].LessonId)</li>
+                        }
+                        else
+                        {
+                            <li class="list-group-item">Нет урока</li>
+                        }
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+ }

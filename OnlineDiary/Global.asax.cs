@@ -18,7 +18,8 @@ namespace OnlineDiary
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-            Database.SetInitializer(new ApplicationDBInitializer());
+            //Database.SetInitializer(new ApplicationDBInitializer());
+            //new ApplicationDBInitializer().InitializeDatabase(new Models.ApplicationDbContext());
         }
     }
 }

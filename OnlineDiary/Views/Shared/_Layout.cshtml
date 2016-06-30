@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <title>Онлайн дневник</title>
     @Styles.Render("~/Content/css")
     @Styles.Render("~/Content/main.css")
     @Scripts.Render("~/bundles/modernizr")
@@ -13,11 +13,11 @@
     <header>
         <nav class="b_preview-day navbar navbar-default navbar-static-top navbar-inverse ">
             <div class="container  ">
-                <a href="#" class="navbar-link"><img class="navbar-text navbar-left b_preview-logo " src="img/logo.jpg" alt="Логотип"></img></a>
-                <p class="navbar-text navbar-right b_preview-day ">13 мая, Пятница</p>
+                <a href="#" class="navbar-link"><img class="navbar-text navbar-left b_preview-logo " src="/Content/Images/logo.jpg" alt="Логотип"></img></a>                
+                @Html.Partial("_LoginPartial")
             </div>
         </nav>
-        @Html.Partial("_LoginPartial")
+        
     </header>
 
     <div class="container body-content">
@@ -26,9 +26,6 @@
             <div class="container">
                 <div>
                     <p class="navbar-text navbar-left  "><a href="#" class="navbar-link b_preview-organization">© 2009–2016 ООО «Электронный дневник»</a></p>
-                    <p class="navbar-text navbar-right b_preview-text "><a href="#" class="navbar-link">Школьный сайт</a></p>
-                    <p class="navbar-text navbar-right b_preview-text "><a href="#" class="navbar-link">Служба поддержки </a></p>
-                    <p class="navbar-text navbar-right b_preview-text "><a href="#" class="navbar-link">О дневнике</a></p>
                 </div>
             </div>
         </nav>

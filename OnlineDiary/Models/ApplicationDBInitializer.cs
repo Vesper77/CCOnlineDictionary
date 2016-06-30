@@ -11,32 +11,71 @@ using System.Web.Mvc;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using OnlineDiary.Controllers;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace OnlineDiary.DAL
 {
-    public class ApplicationDBInitializer : DropCreateDatabaseIfModelChanges<ApplicationDbContext>
+    public class ApplicationDBInitializer : DropCreateDatabaseAlways<ApplicationDbContext>
     {
         public override void InitializeDatabase(ApplicationDbContext context)
         {
             base.InitializeDatabase(context);
         }
         protected override void Seed(ApplicationDbContext context) {
-            //Add roles
-            string[] roles = { "admin", "children", "teacher", "parent" };
+            //Roles
+            string[] roles = {
+                "admin", "teacher", "parent", "children"
+            };
+            var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(context));
             foreach (var r in roles) {
-                context.Roles.Add(new Microsoft.AspNet.Identity.EntityFramework.IdentityRole() { Name = r });
+                roleManager.Create(new IdentityRole(r));
             }
-            // Add Lessons
-            var lessons = new List<Lesson> {
-                new Lesson { Title = "Test" }
+            //Users
+            ApplicationUserManager manager = new ApplicationUserManager(new UserStore<DiaryUser>(context));
+            string password = "123qwe";
+            var user = new DiaryUser()
+            {
+                Email = "children@admin.com",
+                UserName = "children@admin.com"
             };
-            lessons.ForEach(l => context.Lessons.Add(l));
+            manager.Create(user, password);
 
-            // Add schoolClasses
-            var schoolClasses = new List<SchoolClass> {
-                new SchoolClass { Title = "TestClass"}
+            manager.AddToRole(user.Id, "children");
+            var teacher = new DiaryUser()
+            {
+                Email = "teacher@admin.com",
+                UserName = "teacher@admin.com"
             };
-            schoolClasses.ForEach(sch => context.SchoolClasses.Add(sch));
+            manager.Create(teacher, password);
+            manager.AddToRole(teacher.Id, "teacher");
+            var parent = new DiaryUser()
+            {
+                Email = "parent@admin.com",
+                UserName = "parent@admin.com"
+            };
+            manager.Create(parent, password);
+            manager.AddToRole(parent.Id, "parent");
+
+            // Add Lessons
+            var lesson = new Lesson { Title = "Lesson#1", TeacherId = teacher.Id };
+            var lesson1 = new Lesson { Title = "Lesson#2", TeacherId = teacher.Id };
+            var lesson2 = new Lesson { Title = "Lesson#3", TeacherId = teacher.Id };
+
+            context.Lessons.Add(lesson);
+            context.Lessons.Add(lesson1);
+            context.Lessons.Add(lesson2);
+            //Add schooles
+            var sch = new SchoolClass { Title = "Class#1" };
+            var sch1 = new SchoolClass { Title = "Class#2" };
+            context.SchoolClasses.Add(sch);
+            context.SchoolClasses.Add(sch1);
+            //Children Data (withoud SchoolClass)
+            context.ChildrenData.Add(new Models.People.ChildrenData() { ChildrenId = user.Id, ParentId = "0bf2c39f-7617-47c3-a908-ccbd69214a6c", SchoolClassId = 1 });
+            //Schelude lesonse 
+            context.ScheduleLessons.Add(new ScheduleLesson() {LessonId = lesson.Id, SchoolClassId = sch.Id, Order = 2, DayNumber=2});
+            context.ScheduleLessons.Add(new ScheduleLesson() {LessonId = lesson1.Id, SchoolClassId = sch.Id, Order = 1, DayNumber=1 });
+
+            context.SaveChanges();
         }
     }
 }

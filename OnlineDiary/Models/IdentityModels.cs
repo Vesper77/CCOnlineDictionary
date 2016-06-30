@@ -5,6 +5,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using OnlineDiary.Models.Diary;
 using System.Data.Entity.ModelConfiguration.Conventions;
+using OnlineDiary.Models.People;
 
 namespace OnlineDiary.Models
 {
@@ -31,6 +32,8 @@ namespace OnlineDiary.Models
         public DbSet<Lesson> Lessons { get; set; }
         public DbSet<SchoolClass> SchoolClasses { get; set; }
         public DbSet<Mark> Marks { get; set; }
+        public DbSet<ScheduleLesson> ScheduleLessons { get; set; }
+        public DbSet<ChildrenData> ChildrenData { get; set; }
 
         public static ApplicationDbContext Create()
         {
@@ -41,7 +44,11 @@ namespace OnlineDiary.Models
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<DiaryUser>().ToTable("Users");
+            modelBuilder.Entity<DiaryUser>().ToTable("User");
+            modelBuilder.Entity<IdentityRole>().ToTable("Role");
+            modelBuilder.Entity<IdentityUserRole>().ToTable("UserRole");
+            modelBuilder.Entity<IdentityUserClaim>().ToTable("UserClaim");
+            modelBuilder.Entity<IdentityUserLogin>().ToTable("UserLogin");
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
 
         }

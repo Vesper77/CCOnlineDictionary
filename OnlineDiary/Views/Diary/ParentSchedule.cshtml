@@ -1,0 +1,47 @@
+﻿@model OnlineDiary.Models.ParentUserScheduleViewModel
+@{
+    ViewBag.Title = "ParentSchedule";
+}
+
+<h2> Расписание детей @Model.getParentUserName() </h2>
+@if (Model.Childrens.Length > 0)
+{
+    foreach (var child in Model.Childrens)
+    {
+        <p style="text-align:center">Ребёнок : @Model.getUserName(child)</p>
+        <div style="border-bottom:1px solid;padding-top:20px;padding-bottom:20px;">
+            @foreach (var dl in Model.getDaysWithScheduleLessons(child.Id))
+            {
+                <div class="b-preview-form col-md-4 col-sm-4 col-xs-12">
+                    <div class=" panel panel-default">
+                        <div class="panel-heading">@dl.Key</div>
+                        <div class="panel-body">
+                            <ul class="list-group">
+                                @for (int i = 0; i < OnlineDiary.Models.Diary.ScheduleLesson.MAX_LESSONS_PER_DAY; i++)
+                                {
+                                    if (dl.Value.Length > i && dl.Value[i] != null)
+                                    {
+                                        <li class="list-group-item"><span class="badge"></span>@Model.getLessonTitle(dl.Value[i].LessonId)</li>
+                                    }
+                                    else
+                                    {
+                                        <li class="list-group-item">Нет урока</li>
+                                    }
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+}
+else
+{
+    <p>У тебя нет детей, =(</p>
+}
+
+
+
+
+

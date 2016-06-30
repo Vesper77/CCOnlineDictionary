@@ -25,20 +25,29 @@ namespace OnlineDiary.Controllers
             }
         }
         
-        
+        [Authorize]
         public async Task<ActionResult> Schelude() {
             var user = await UserManager.FindByNameAsync(User.Identity.Name);
             if (await UserManager.IsInRoleAsync(user.Id, "teacher"))
             {
-                return View("TeacherSchelude");
+                var viewModel = new TeacherScheduleViewModel();
+                viewModel.Teacher = user;
+                return View("TeacherSchedule", viewModel);
             }
             else if (await UserManager.IsInRoleAsync(user.Id, "parent"))
             {
-                return View("ParentSchelude");
+                var viewModel = new ParentUserScheduleViewModel();
+                viewModel.Parent = user;
+                return View("ParentSchedule", viewModel);
+            }
+            else if (await UserManager.IsInRoleAsync(user.Id, "children")) {
+                var viewModel = new UserScheduleViewModel();
+                viewModel.User = user;
+                return View("ChildrenSchedule", viewModel);
             }
             return RedirectToAction("Index", "Home");
         }
-        [Authorize]
+
         public async Task<ActionResult> Marks(int lessonId = 2) {
             var user = await UserManager.FindByNameAsync(User.Identity.Name);
             if (await UserManager.IsInRoleAsync(user.Id, "teacher"))
