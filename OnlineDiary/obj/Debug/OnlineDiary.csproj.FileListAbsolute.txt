@@ -159,6 +159,6 @@ C:\Users\Pacman\Documents\Visual Studio 2015\Projects\OnlineDictionary\OnlineDia
 C:\Users\Pacman\Documents\Visual Studio 2015\Projects\OnlineDictionary\OnlineDiary\bin\Microsoft.Owin.Security.Google.xml
 C:\Users\Pacman\Documents\Visual Studio 2015\Projects\OnlineDictionary\OnlineDiary\bin\Microsoft.Owin.Security.Twitter.xml
 C:\Users\Pacman\Documents\Visual Studio 2015\Projects\OnlineDictionary\OnlineDiary\bin\Microsoft.Owin.Security.MicrosoftAccount.xml
-C:\Users\Pacman\Documents\Visual Studio 2015\Projects\OnlineDictionary\OnlineDiary\obj\Debug\OnlineDiary.csprojResolveAssemblyReference.cache
 C:\Users\Pacman\Documents\Visual Studio 2015\Projects\OnlineDictionary\OnlineDiary\obj\Debug\OnlineDiary.dll
 C:\Users\Pacman\Documents\Visual Studio 2015\Projects\OnlineDictionary\OnlineDiary\obj\Debug\OnlineDiary.pdb
+C:\Users\Pacman\Documents\Visual Studio 2015\Projects\OnlineDictionary\OnlineDiary\obj\Debug\OnlineDiary.csprojResolveAssemblyReference.cache

@@ -1,0 +1,20 @@
+﻿@model OnlineDiary.Models.TeacherMarksViewModel
+@{
+    ViewBag.Title = "Оценки";
+}
+
+<div>
+    @using (Html.BeginForm("TeacherMarks", "Diary", FormMethod.Get, new { @class = "form-inline" }))
+    {
+        <div class="form-group">
+            <label>Класс</label>
+            @Html.DropDownListFor(m => m.form.ClassId, new SelectList(Model.getSchoolClasses(), "Key", "Value"), new { @class = "form-control"})
+        </div>
+        <div class="form-group">
+            <label>Уроки</label>
+            @Html.DropDownListFor(m => m.form.LessonId, new SelectList(Model.getLessons(), "Key", "Value"), new { @class = "form-control"});
+        </div>
+        <button type="submit">Показать</button>
+    }
+</div>
+

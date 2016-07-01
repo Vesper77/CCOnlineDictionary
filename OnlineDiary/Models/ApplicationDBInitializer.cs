@@ -56,6 +56,14 @@ namespace OnlineDiary.DAL
             manager.Create(parent, password);
             manager.AddToRole(parent.Id, "parent");
 
+            var admin = new DiaryUser()
+            {
+                Email = "admin@admin.com",
+                UserName = "admin@admin.com"
+            };
+            manager.Create(admin, password);
+            manager.AddToRole(admin.Id, "admin");
+
             // Add Lessons
             var lesson = new Lesson { Title = "Lesson#1", TeacherId = teacher.Id };
             var lesson1 = new Lesson { Title = "Lesson#2", TeacherId = teacher.Id };
@@ -70,7 +78,7 @@ namespace OnlineDiary.DAL
             context.SchoolClasses.Add(sch);
             context.SchoolClasses.Add(sch1);
             //Children Data (withoud SchoolClass)
-            context.ChildrenData.Add(new Models.People.ChildrenData() { ChildrenId = user.Id, ParentId = "0bf2c39f-7617-47c3-a908-ccbd69214a6c", SchoolClassId = 1 });
+            context.ChildrenData.Add(new Models.People.ChildrenData() { ChildrenId = user.Id, ParentId = parent.Id, SchoolClassId = 1 });
             //Schelude lesonse 
             context.ScheduleLessons.Add(new ScheduleLesson() {LessonId = lesson.Id, SchoolClassId = sch.Id, Order = 2, DayNumber=2});
             context.ScheduleLessons.Add(new ScheduleLesson() {LessonId = lesson1.Id, SchoolClassId = sch.Id, Order = 1, DayNumber=1 });

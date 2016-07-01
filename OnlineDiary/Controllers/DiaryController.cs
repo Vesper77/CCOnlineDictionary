@@ -26,7 +26,8 @@ namespace OnlineDiary.Controllers
         }
         
         [Authorize]
-        public async Task<ActionResult> Schelude() {
+        public async Task<ActionResult> Schelude()
+        {
             var user = await UserManager.FindByNameAsync(User.Identity.Name);
             if (await UserManager.IsInRoleAsync(user.Id, "teacher"))
             {
@@ -47,21 +48,38 @@ namespace OnlineDiary.Controllers
             }
             return RedirectToAction("Index", "Home");
         }
-
-        public async Task<ActionResult> Marks(int lessonId = 2) {
+        [Authorize]
+        public async Task<ActionResult> Marks(int lessonId = 2)
+        {
             var user = await UserManager.FindByNameAsync(User.Identity.Name);
             if (await UserManager.IsInRoleAsync(user.Id, "teacher"))
             {
-                //Get All Lessons of teacher
-                var lessons = context.Lessons.All(l => l.TeacherId == user.Id);
+                var viewModel = new TeacherMarksViewModel();
+                viewModel.Teacher = user;
+                return View("TeacherMarks", viewModel);
             }
             else if(await UserManager.IsInRoleAsync(user.Id, "parent"))
             {
-
+                return View();
+            }
+            else if(await UserManager.IsInRoleAsync(user.Id, "children"))
+            {
+                return View();
             }
             return RedirectToAction("Index", "Home");
         }
+
+        [Authorize(Roles = "teacher")]
+        public async Task<ActionResult> TeacherMarks(TeacherSelectMarksDataViewModel form = null) {
+            //TOOD End this Method
+            var user = await UserManager.FindByNameAsync(User.Identity.Name);
+            var viewModel = new TeacherMarksViewModel();
+            viewModel.Teacher = user;
+            viewModel.form = form == null ? new TeacherSelectMarksDataViewModel() : form;
+            return View(viewModel);
+        }
     }
+    
 }
 /*
  * Parent 

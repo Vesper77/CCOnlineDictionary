@@ -196,10 +196,12 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\DiaryController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\AdminViewModel.cs" />
     <Compile Include="Models\ApplicationDBInitializer.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -211,6 +213,7 @@
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\Diary\Lesson.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\MarksViewModel.cs" />
     <Compile Include="Models\People\ChildrenData.cs" />
     <Compile Include="Models\ScheduleViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -280,6 +283,12 @@
     <Content Include="Views\Diary\ChildrenSchedule.cshtml" />
     <Content Include="Views\Diary\ParentSchedule.cshtml" />
     <Content Include="Views\Diary\TeacherSchedule.cshtml" />
+    <Content Include="Views\Diary\TeacherMarks.cshtml" />
+    <Content Include="Views\Admin\Delete.cshtml" />
+    <Content Include="Views\Admin\Create.cshtml" />
+    <Content Include="Views\Admin\Details.cshtml" />
+    <Content Include="Views\Admin\Edit.cshtml" />
+    <Content Include="Views\Admin\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
