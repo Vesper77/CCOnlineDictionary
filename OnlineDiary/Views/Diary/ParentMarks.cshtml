@@ -8,7 +8,8 @@
         " третью ",
         " четвертую "
    };
-   var period = Model.GetPeriod();
+    var period = Model.GetPeriod();
+    int cruancyCounter = 0;
 }
 <div>
     @Html.ActionLink("Оценки за предыдущий период", "ParentMarks", new
@@ -49,11 +50,13 @@
                     {
                         <th>@date.ToString("dd.MM")</th>
                     }
+                    <th>Количество пропусков</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var lesson in ViewBag.Lessons)
                 {
+                    cruancyCounter = 0;
                     <tr>
                         <td>
                             @lesson.Title
@@ -70,12 +73,14 @@
                             else if(Model.IsTruancyed(Model.CurrentChildren.Id, lesson.Id, date))
                             {
                                 <td><b>Н</b></td>
+                                cruancyCounter++;
                             }
                             else
                             {
                                 <td></td>
                             }
                         }
+                        <td>@cruancyCounter</td>
                     </tr>
                 }
             </tbody>

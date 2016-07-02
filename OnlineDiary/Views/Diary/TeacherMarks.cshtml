@@ -2,13 +2,14 @@
 @{
     ViewBag.Title = "Оценки учеников";
     string[] quadmesters = new string[]
-   {
+    {
         "первую ",
         "вторую ",
         "третью ",
         "четвертую "
-   };
-   var period = Model.GetPeriod();
+    };
+    var period = Model.GetPeriod();
+    int cruancyCounter = 0;
 }
 <div>
     @Html.ActionLink("Оценки за предыдущий период", "TeacherMarks", new
@@ -53,11 +54,13 @@
                         {
                             <th>@date.ToString("dd.MM")</th>
                         }
+                        <th>Количество пропусков</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var children in Model.GetChildrensInClass(Model.form.ClassId))
                     {
+                        cruancyCounter = 0;
                         <tr>
                             <td>
                                 @children.FirstName
@@ -74,12 +77,14 @@
                                 else if(Model.IsTruancyed(children.Id, Model.form.LessonId, date))
                                 {
                                     <td><b>Н</b></td>
+                                    cruancyCounter++;
                                 }
                                 else
                                 {
                                     <td></td>
                                 }
                             }
+                            <td>@cruancyCounter</td>
                         </tr>
                     }
                 </tbody>
