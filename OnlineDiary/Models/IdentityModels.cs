@@ -43,14 +43,12 @@ namespace OnlineDiary.Models
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
             modelBuilder.Entity<DiaryUser>().ToTable("User");
             modelBuilder.Entity<IdentityRole>().ToTable("Role");
             modelBuilder.Entity<IdentityUserRole>().ToTable("UserRole");
             modelBuilder.Entity<IdentityUserClaim>().ToTable("UserClaim");
             modelBuilder.Entity<IdentityUserLogin>().ToTable("UserLogin");
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
-
         }
     }
 }

@@ -16,7 +16,6 @@ namespace OnlineDiary.Controllers
             var viewModel = new LoginViewModel();
             return View(viewModel);
         }
-
         public ActionResult About()
         {
             ViewBag.Message = "Your application description page.";

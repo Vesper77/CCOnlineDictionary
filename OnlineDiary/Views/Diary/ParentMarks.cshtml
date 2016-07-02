@@ -1,0 +1,84 @@
+﻿@model OnlineDiary.Models.ParentMarksViewModel
+@{
+    ViewBag.Title = "Оценки Ребенка";
+    string[] quadmesters = new string[]
+   {
+        " первую ",
+        " вторую ",
+        " третью ",
+        " четвертую "
+   };
+   var period = Model.GetPeriod();
+}
+<div>
+    @Html.ActionLink("Оценки за предыдущий период", "ParentMarks", new
+    {
+        childrenId = ViewBag.ChildId,
+        quadmester = Model.quadmesterNumber == 1 ? 4 : Model.quadmesterNumber - 1,
+        year = Model.quadmesterNumber == 1 ? Model.CurrentYear - 1 : Model.CurrentYear,
+    })
+    @Html.ActionLink("Оценки за следующий период", "ParentMarks", new
+    {
+        childrenId = ViewBag.ChildId,
+        quadmester = Model.quadmesterNumber == 4 ? 1 : Model.quadmesterNumber + 1,
+        year = Model.quadmesterNumber == 4 ? Model.CurrentYear + 1 : Model.CurrentYear,
+    })
+    <br />
+    <br />
+    @using (Html.BeginForm("ParentMarksPost", "Diary", FormMethod.Post, new { @class = "form-inline" }))
+    {
+        <div class="form-group">
+            <label>Выберите ребенка</label>
+            @Html.DropDownList("ChildrenId", ViewBag.AllChildrens as SelectList, new { @class = "form-control" });
+        </div>
+            <button type="submit">Показать</button>
+    }
+<h2>Оценки ученика класса @(" " + Model.getClassName(Model.CurrentChildren) ) </h2>
+<h3>
+    @(Model.CurrentChildren.FirstName + " за " +
+      quadmesters[Model.quadmesterNumber - 1] + "четверть" + Model.CurrentYear + " - " + (Model.CurrentYear + 1) + " учебного года")
+</h3>
+<div class="">
+    @if (Model.CurrentChildren != null)
+    {
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Предмет</th>
+                    @for (DateTime date = period.Item1; date < period.Item2; date = date.AddDays(1))
+                    {
+                        <th>@date.ToString("dd.MM")</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var lesson in ViewBag.Lessons)
+                {
+                    <tr>
+                        <td>
+                            @lesson.Title
+                        </td>
+                        @for (DateTime date = period.Item1; date <= period.Item2; date = date.AddDays(1))
+                        {
+                            int? val = Model.getMarkValue(date, lesson.Id, Model.CurrentChildren);
+                            if (val != null)
+                            {
+                                <td>
+                                    <b>@val</b>
+                                </td>
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>Ошибка</p>
+    }
+</div>

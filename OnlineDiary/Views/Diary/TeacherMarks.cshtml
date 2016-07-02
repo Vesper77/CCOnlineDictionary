@@ -1,20 +1,90 @@
 ﻿@model OnlineDiary.Models.TeacherMarksViewModel
 @{
-    ViewBag.Title = "Оценки";
+    ViewBag.Title = "Оценки учеников";
+    string[] quadmesters = new string[]
+   {
+        "первую ",
+        "вторую ",
+        "третью ",
+        "четвертую "
+   };
+   var period = Model.GetPeriod();
 }
-
 <div>
-    @using (Html.BeginForm("TeacherMarks", "Diary", FormMethod.Get, new { @class = "form-inline" }))
+    @Html.ActionLink("Оценки за предыдущий период", "TeacherMarks", new
+    {
+        LessonId = Model.form.LessonId,
+        ClassId = Model.form.ClassId,
+        quadmester = Model.quadmesterNumber == 1 ? 4 : Model.quadmesterNumber - 1,
+        year = Model.quadmesterNumber == 1 ? Model.CurrentYear - 1 : Model.CurrentYear,
+    })
+    @Html.ActionLink("Оценки за следующий период", "TeacherMarks", new
+    {
+        LessonId = Model.form.LessonId,
+        ClassId = Model.form.ClassId,
+        quadmester = Model.quadmesterNumber == 4 ? 1 : Model.quadmesterNumber + 1,
+        year = Model.quadmesterNumber == 4 ? Model.CurrentYear + 1 : Model.CurrentYear,
+    })
+    @using (Html.BeginForm("TeacherMarksPost", "Diary", FormMethod.Post, new { @class = "form-inline" }))
     {
         <div class="form-group">
             <label>Класс</label>
-            @Html.DropDownListFor(m => m.form.ClassId, new SelectList(Model.getSchoolClasses(), "Key", "Value"), new { @class = "form-control"})
+            @Html.DropDownList("classId", new SelectList(Model.getSchoolClasses(), "Key", "Value"), new { @class = "form-control"})
         </div>
         <div class="form-group">
             <label>Уроки</label>
-            @Html.DropDownListFor(m => m.form.LessonId, new SelectList(Model.getLessons(), "Key", "Value"), new { @class = "form-control"});
+            @Html.DropDownList("lessonId", new SelectList(Model.getLessons(), "Key", "Value"), new { @class = "form-control"})
         </div>
         <button type="submit">Показать</button>
     }
+    <h2>Оценки учеников класса @(" " + Model.getClassName(Model.form.ClassId)) </h2>
+    <h3>
+      @("По предмету " + "\"" + Model.getLessonName(Model.form.LessonId) + "\""+ " за " +
+      quadmesters[Model.quadmesterNumber - 1] + " четверть " + Model.CurrentYear + " - " + (Model.CurrentYear + 1) + "учебного  года")
+    </h3>
+    <div class="">
+        @if (Model.form != null)
+        {
+            <table class="table table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Ученик</th>
+                        @for (DateTime date = period.Item1; date < period.Item2; date = date.AddDays(1))
+                        {
+                            <th>@date.ToString("dd.MM")</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var children in Model.GetChildrensInClass(Model.form.ClassId))
+                    {
+                        <tr>
+                            <td>
+                                @children.FirstName
+                            </td>
+                            @for (DateTime date = period.Item1; date <= period.Item2; date = date.AddDays(1))
+                            {
+                                int? val = Model.getMarkValue(date, Model.form.LessonId, children);
+                                if (val != null)
+                                {
+                                    <td>
+                                        <b>@val</b>
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>Ошибка</p>
+        }
+    </div>
 </div>
 
