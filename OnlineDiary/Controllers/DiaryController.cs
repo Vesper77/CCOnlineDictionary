@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-
 namespace OnlineDiary.Controllers
 {    
     public class DiaryController : Controller
@@ -24,7 +23,6 @@ namespace OnlineDiary.Controllers
                 _userManager = value;
             }
         }
-        
         [Authorize]
         public async Task<ActionResult> Schelude()
         {
@@ -54,9 +52,7 @@ namespace OnlineDiary.Controllers
             var user = await UserManager.FindByNameAsync(User.Identity.Name);
             if (await UserManager.IsInRoleAsync(user.Id, "teacher"))
             {
-                var viewModel = new TeacherMarksViewModel();
-                viewModel.Teacher = user;
-                return View("TeacherMarks", viewModel);
+                return View();
             }
             else if(await UserManager.IsInRoleAsync(user.Id, "parent"))
             {
@@ -68,18 +64,84 @@ namespace OnlineDiary.Controllers
             }
             return RedirectToAction("Index", "Home");
         }
-
-        [Authorize(Roles = "teacher")]
-        public async Task<ActionResult> TeacherMarks(TeacherSelectMarksDataViewModel form = null) {
-            //TOOD End this Method
+        [Authorize(Roles = "children")]
+        [HttpGet]
+        public async Task<ActionResult> ChildrenMarks(int quadmester = 1, int year = 2015)
+        {
             var user = await UserManager.FindByNameAsync(User.Identity.Name);
-            var viewModel = new TeacherMarksViewModel();
-            viewModel.Teacher = user;
-            viewModel.form = form == null ? new TeacherSelectMarksDataViewModel() : form;
-            return View(viewModel);
+            ChildrenMarksViewModel model = new ChildrenMarksViewModel(year, quadmester);
+            model.User = user;
+            model.CurrentYear = year;
+            model.quadmesterNumber = quadmester;
+            var lessonsIDs = context.Marks.Where(x => x.ChildrenId == user.Id).Select(x => x.LessonId).Distinct();
+            var lessons = model.getLessons(user);
+            ViewBag.Lessons = lessons;
+            return View("ChildrenMarks", model);
+        }
+        [Authorize(Roles = "parent")]
+        [HttpGet]
+        public async Task<ActionResult>ParentMarks(string childrenId, int quadmester = 1, int year = 2015)
+        {
+            var user = await UserManager.FindByNameAsync(User.Identity.Name);
+            ParentMarksViewModel model = new ParentMarksViewModel(year, quadmester);
+            model.User = user;
+            var allChildrens = model.GetChildrens();
+            ViewBag.AllChildrens = new SelectList(allChildrens, "Id", "FirstName");
+            if (allChildrens.Count > 0)
+            {
+                if(childrenId == null)
+                {
+                    childrenId = allChildrens[0].Id;
+                }
+                model.CurrentChildren = context.Users.Where(x => x.Id == childrenId).First();
+                ViewBag.ChildId = childrenId;
+                ViewBag.Lessons = model.getLessons(model.CurrentChildren);
+                return View("ParentMarks", model);
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
+        }
+        [Authorize(Roles = "parent")]
+        [HttpPost]
+        public async Task<ActionResult> ParentMarksPost(string childrenId)
+        {
+            return await ParentMarks(childrenId);
+        }
+        //[Authorize(Roles = "teacher")]
+        //public async Task<ActionResult> TeacherMarks(TeacherSelectMarksDataViewModel form = null)
+        //{
+        //    var user = await UserManager.FindByNameAsync(User.Identity.Name);
+        //    var viewModel = new TeacherMarksViewModel(2015, 1);
+        //    viewModel.User = user;
+        //    viewModel.form = form == null ? new TeacherSelectMarksDataViewModel() : form;
+        //    return View(viewModel);
+        //}
+        [Authorize(Roles = "teacher")]
+        [HttpGet]
+        public async Task<ActionResult> TeacherMarks(int LessonId = 0, int ClassId = 0, int quadmester = 1, int year = 2015)
+        {
+            var user = await UserManager.FindByNameAsync(User.Identity.Name);
+            TeacherMarksViewModel model = new TeacherMarksViewModel(year, quadmester);
+            if(LessonId != 0)
+            {
+                model.form.LessonId = LessonId;
+            }
+            if(ClassId != 0)
+            {
+                model.form.ClassId = ClassId;
+            }
+            model.User = user;
+            return View("TeacherMarks", model);
+        }
+        [Authorize(Roles = "teacher")]
+        [HttpPost]
+        public async Task<ActionResult> TeacherMarksPost(int lessonId, int classId)
+        {
+            return await TeacherMarks(lessonId, classId);
         }
     }
-    
 }
 /*
  * Parent 
