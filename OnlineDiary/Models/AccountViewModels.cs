@@ -14,6 +14,8 @@ namespace OnlineDiary.Models
     {
         public string ReturnUrl { get; set; }
     }
+    
+
 
     public class SendCodeViewModel
     {

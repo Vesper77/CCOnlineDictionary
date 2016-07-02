@@ -8,7 +8,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using Microsoft.AspNet.Identity;
 
 namespace OnlineDiary.Controllers
 {
@@ -32,17 +31,35 @@ namespace OnlineDiary.Controllers
 
         public ActionResult Index()
         {
-            return View(context.Users.ToList());
-        }        
+            var allUsers = new List<EditUserViewModel>();
+            allUsers = getAllUsers();
+            return View(allUsers);
+        }
+
+        public List<EditUserViewModel> getAllUsers()
+        {
+            var users = new List<EditUserViewModel>();
+
+            foreach (var user in context.Users)
+            {
+                var r = new EditUserViewModel(user);
+                users.Add(r);
+            }
+            return users;
+        }
+
+
         public ActionResult Details(string id)
         {
-            DiaryUser dUser = context.Users.Find(id);
+            var user = context.Users.Find(id);
+            var dUser = new EditUserViewModel(user);
             if (dUser == null)
             {
                 return HttpNotFound();
             }
             return View(dUser);
         }
+        
         public ActionResult Create()
         {
             var viewModel = new EditUserViewModel();
@@ -60,7 +77,8 @@ namespace OnlineDiary.Controllers
         }
         public ActionResult Delete(string id)
         {
-            DiaryUser dUser = context.Users.Find(id);
+            var user = context.Users.Find(id);
+            var dUser = new EditUserViewModel(user);
             if (dUser == null)
             {
                 return HttpNotFound();
@@ -75,8 +93,20 @@ namespace OnlineDiary.Controllers
             if (ModelState.IsValid)
             {
                 var result = await UserManager.CreateAsync(dUser.GetUser(), dUser.Password);
+                
+
                 if (result.Succeeded) {
-                    //context.SaveChanges();
+                    if (dUser.LessonIds != null)
+                {
+                    for (int i = 0; i < dUser.LessonIds.Count(); i++)
+                    {
+                        var lesson = await context.Lessons.FindAsync(dUser.LessonIds[i]);
+                        var user = context.Users.Where(un => un.UserName == dUser.UserName).ToArray();
+
+                        lesson.TeacherId = user[0].Id;
+                    }
+                }
+                    context.SaveChanges();
                     return RedirectToAction("Details", new { id = dUser.GetUser().Id});
                 }
             }
@@ -93,8 +123,9 @@ namespace OnlineDiary.Controllers
                 if (user != null) {
 
                     user.FirstName = dUser.FirstName;
-                    user.Email = dUser.Email;
                     user.LastName = dUser.LastName;
+                    user.ParentName = dUser.ParentName;
+                    user.Email = dUser.Email;
                     user.PhoneNumber = dUser.PhoneNumber;
 
                     await UserManager.UpdateAsync(user);
@@ -107,21 +138,21 @@ namespace OnlineDiary.Controllers
                     }
 
                     context.SaveChanges();
-                    return View(dUser);
+                    return RedirectToAction("Index");
                 }
             }
             return View(dUser);
         }
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public ActionResult DeleteConfirmed(string id)
         {
-            DiaryUser dUser = context.Users.Find(id);
+            var dUser = context.Users.Find(id);
             context.Users.Remove(dUser);
             context.SaveChanges();
             return RedirectToAction("Index");
         }
-
+        
         protected override void Dispose(bool disposing)
         {
             context.Dispose();
