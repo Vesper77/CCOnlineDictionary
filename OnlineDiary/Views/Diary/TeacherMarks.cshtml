@@ -49,7 +49,7 @@
                 <thead>
                     <tr>
                         <th>Ученик</th>
-                        @for (DateTime date = period.Item1; date < period.Item2; date = date.AddDays(1))
+                        @for (DateTime date = period.Item1; date <= period.Item2; date = date.AddDays(1))
                         {
                             <th>@date.ToString("dd.MM")</th>
                         }
@@ -70,6 +70,10 @@
                                     <td>
                                         <b>@val</b>
                                     </td>
+                                }
+                                else if(Model.IsTruancyed(children.Id, Model.form.LessonId, date))
+                                {
+                                    <td><b>Н</b></td>
                                 }
                                 else
                                 {

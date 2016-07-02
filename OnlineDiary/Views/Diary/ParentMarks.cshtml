@@ -36,7 +36,7 @@
 <h2>Оценки ученика класса @(" " + Model.getClassName(Model.CurrentChildren) ) </h2>
 <h3>
     @(Model.CurrentChildren.FirstName + " за " +
-      quadmesters[Model.quadmesterNumber - 1] + "четверть" + Model.CurrentYear + " - " + (Model.CurrentYear + 1) + " учебного года")
+      quadmesters[Model.quadmesterNumber - 1] + "четверть " + Model.CurrentYear + " - " + (Model.CurrentYear + 1) + " учебного года")
 </h3>
 <div class="">
     @if (Model.CurrentChildren != null)
@@ -45,7 +45,7 @@
             <thead>
                 <tr>
                     <th>Предмет</th>
-                    @for (DateTime date = period.Item1; date < period.Item2; date = date.AddDays(1))
+                    @for (DateTime date = period.Item1; date <= period.Item2; date = date.AddDays(1))
                     {
                         <th>@date.ToString("dd.MM")</th>
                     }
@@ -66,6 +66,10 @@
                                 <td>
                                     <b>@val</b>
                                 </td>
+                            }
+                            else if(Model.IsTruancyed(Model.CurrentChildren.Id, lesson.Id, date))
+                            {
+                                <td><b>Н</b></td>
                             }
                             else
                             {

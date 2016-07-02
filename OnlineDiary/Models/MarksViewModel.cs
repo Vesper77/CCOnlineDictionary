@@ -56,6 +56,13 @@ namespace OnlineDiary.Models
             }
             return null;
         }
+        public bool IsTruancyed(string childrenId, int LessonId, DateTime date)
+        {
+            var truancy = context.Truancys.Where(x => x.ChildrenId == childrenId
+                                     && x.LessonId == LessonId
+                                     && x.TruancyDate == date).FirstOrDefault();
+            return truancy == null ? false : true;
+        }
         public string getClassName(DiaryUser user)
         {
             var children = context.ChildrenData.Where(x => x.ChildrenId == user.Id).First();

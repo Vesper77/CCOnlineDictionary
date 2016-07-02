@@ -28,18 +28,16 @@ namespace OnlineDiary.Models
             : base("DefaultConnection", throwIfV1Schema: false)
         {
         }
-
         public DbSet<Lesson> Lessons { get; set; }
         public DbSet<SchoolClass> SchoolClasses { get; set; }
         public DbSet<Mark> Marks { get; set; }
         public DbSet<ScheduleLesson> ScheduleLessons { get; set; }
         public DbSet<ChildrenData> ChildrenData { get; set; }
-
+        public DbSet<Truancy> Truancys { get; set; }
         public static ApplicationDbContext Create()
         {
             return new ApplicationDbContext();
         }
-
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

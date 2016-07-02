@@ -16,7 +16,6 @@ namespace OnlineDiary.Models.Diary
         public int LessonId { get; set; }
         public DateTime Day { get; set; }
         public int MarkValue { get; set; }
-
         public DiaryUser Children { get; set; }
         public Lesson Lesson { get; set; }
     }
