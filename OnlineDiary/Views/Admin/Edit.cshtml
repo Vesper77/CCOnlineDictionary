@@ -81,6 +81,7 @@
             <script>
                 $(function () {
                     $("#DropDownParents").hide();
+                    $("#DropDownClass").hide();
                     $("#CheckBoxLessons").hide();
                     $("#SaveButton").hide();
                     $(document).ready(function () {
@@ -88,26 +89,31 @@
                             if ($(this).val() == "Выберите роль") {
                                 $("#DropDownParents").hide();
                                 $("#CheckBoxLessons").hide();
+                                $("#DropDownClass").hide();
                                 $("#SaveButton").hide();
                             }
                             if ($(this).val() == "admin") {
                                 $("#DropDownParents").hide();
                                 $("#CheckBoxLessons").hide();
+                                $("#DropDownClass").hide();
                                 $("#SaveButton").show();
                             }
                             if ($(this).val() == "parent") {
                                 $("#DropDownParents").hide();
+                                $("#DropDownClass").hide();
                                 $("#CheckBoxLessons").hide();
                                 $("#SaveButton").show();
                             }
                             if ($(this).val() == "children") {
                                 $("#CheckBoxLessons").hide();
                                 $("#DropDownParents").show();
+                                $("#DropDownClass").show();
                                 $("#SaveButton").show();
                             }
                             if ($(this).val() == "teacher") {
                                 $("#DropDownParents").hide();
                                 $("#CheckBoxLessons").show();
+                                $("#DropDownClass").hide();
                                 $("#SaveButton").show();
                             }
                         });
@@ -118,14 +124,21 @@
 
         <div>
             <div class="col-md-10" id="DropDownParents">
-                @Html.DropDownListFor(mo => mo.ParentRoleId, new SelectList(Model.getAllParent(), "Key", "Value"))
-                @Html.ValidationMessageFor(mo => mo.ParentRoleId, "", new { @class = "text-danger" })
+                @Html.DropDownListFor(model => model.ParentId, new SelectList(Model.GetAllParent(), "Key", "Value"))
+                @Html.ValidationMessageFor(model => model.ParentId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div>
+            <div class="col-md-10" id="DropDownClass">
+                @Html.DropDownListFor(model => model.ClassId, new SelectList(Model.GetAllClass(), "Key", "Value"))
+                @Html.ValidationMessageFor(model => model.ClassId, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div>
             <div class="col-md-10" id="CheckBoxLessons">
-                @foreach (var item in Model.getAllLessons())
+                @foreach (var item in Model.GetAllLessons())
                 {
                     @item.Value
                     <input type="checkbox" name="LessonIds[]" value="@item.Key" />

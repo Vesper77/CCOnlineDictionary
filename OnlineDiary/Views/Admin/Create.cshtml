@@ -124,14 +124,14 @@
 
         <div class="form-group">
             <div class="col-md-10" id="DropDownParents">
-                @Html.DropDownListFor(mo => mo.ParentRoleId, new SelectList(Model.getAllParent(), "Key", "Value"), "Выберите роителя")
-                @Html.ValidationMessageFor(mo => mo.ParentRoleId, "", new { @class = "text-danger" })
+                @Html.DropDownListFor(mo => mo.ParentId, new SelectList(Model.GetAllParent(), "Key", "Value"), "Выберите роителя")
+                @Html.ValidationMessageFor(mo => mo.ParentId, "", new { @class = "text-danger" })
             </div>
         </div>
         
         <div class="form-group">
             <div class="col-md-10" id="CheckBoxLessons">
-                @foreach (var item in Model.getAllLessons())
+                @foreach (var item in Model.GetAllLessons())
                 {
                     @item.Value
                     <input type="checkbox" name="LessonIds[]" value="@item.Key" />

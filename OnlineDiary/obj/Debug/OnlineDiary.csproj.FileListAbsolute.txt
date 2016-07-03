@@ -249,3 +249,4 @@ D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\ru\Sy
 D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\ru\System.Web.WebPages.resources.dll
 D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\ru\System.Web.WebPages.Deployment.resources.dll
 D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\ru\System.Web.WebPages.Razor.resources.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\obj\Debug\OnlineDiary.csprojResolveAssemblyReference.cache

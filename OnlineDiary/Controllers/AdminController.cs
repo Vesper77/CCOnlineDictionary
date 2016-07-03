@@ -1,5 +1,9 @@
-﻿using Microsoft.AspNet.Identity.Owin;
+﻿using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.AspNet.Identity.Owin;
+using OnlineDiary.DAL;
 using OnlineDiary.Models;
+using OnlineDiary.Models.Diary;
 using OnlineDiary.Models.People;
 using System;
 using System.Collections.Generic;
@@ -31,24 +35,32 @@ namespace OnlineDiary.Controllers
 
         public ActionResult Index()
         {
-            var allUsers = new List<EditUserViewModel>();
-            allUsers = getAllUsers();
-            return View(allUsers);
-        }
-
-        public List<EditUserViewModel> getAllUsers()
-        {
-            var users = new List<EditUserViewModel>();
-
-            foreach (var user in context.Users)
+            var viewModel = new EditUserViewModel();
+            if (viewModel == null)
             {
-                var r = new EditUserViewModel(user);
-                users.Add(r);
+                return HttpNotFound();
             }
-            return users;
+            return View(viewModel);
         }
-
-
+        public ActionResult Create()
+        {
+            var viewModel = new EditUserViewModel();
+            if (viewModel == null)
+            {
+                return HttpNotFound();
+            }
+            return View(viewModel);
+        }
+        public ActionResult Edit(string id)
+        {
+            var user = context.Users.Find(id);
+            var viewModel = new EditUserViewModel(user);
+            if (viewModel == null)
+            {
+                return HttpNotFound();
+            }
+            return View(viewModel);
+        }
         public ActionResult Details(string id)
         {
             var user = context.Users.Find(id);
@@ -58,23 +70,7 @@ namespace OnlineDiary.Controllers
                 return HttpNotFound();
             }
             return View(dUser);
-        }
-        
-        public ActionResult Create()
-        {
-            var viewModel = new EditUserViewModel();
-            return View(viewModel);
-        }
-        public ActionResult Edit(string id)
-        {
-            var user = context.Users.Find(id);
-            if (user == null)
-            {
-                return HttpNotFound();
-            }
-            var viewModel = new EditUserViewModel(user);
-            return View(viewModel);
-        }
+        }     
         public ActionResult Delete(string id)
         {
             var user = context.Users.Find(id);
@@ -85,7 +81,7 @@ namespace OnlineDiary.Controllers
             }
             return View(dUser);
         }
-
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(EditUserViewModel dUser)
@@ -94,18 +90,23 @@ namespace OnlineDiary.Controllers
             {
                 var result = await UserManager.CreateAsync(dUser.GetUser(), dUser.Password);
                 
-
                 if (result.Succeeded) {
-                    if (dUser.LessonIds != null)
-                {
-                    for (int i = 0; i < dUser.LessonIds.Count(); i++)
+                    if (dUser.Role == "admin")
                     {
-                        var lesson = await context.Lessons.FindAsync(dUser.LessonIds[i]);
-                        var user = context.Users.Where(un => un.UserName == dUser.UserName).ToArray();
-
-                        lesson.TeacherId = user[0].Id;
                     }
-                }
+
+                    if (dUser.Role == "parent")
+                    {
+                    }
+
+                    if (dUser.Role == "children")
+                    {
+                    }
+
+                    if (dUser.Role == "teacher")
+                    {
+                    }
+
                     context.SaveChanges();
                     return RedirectToAction("Details", new { id = dUser.GetUser().Id});
                 }
@@ -118,16 +119,46 @@ namespace OnlineDiary.Controllers
         {
             if (ModelState.IsValid)
             {
-                //context.Entry(dUser).State = EntityState.Modified;
                 var user = await UserManager.FindByIdAsync(dUser.Id);
                 if (user != null) {
-
                     user.FirstName = dUser.FirstName;
                     user.LastName = dUser.LastName;
                     user.ParentName = dUser.ParentName;
                     user.Email = dUser.Email;
                     user.PhoneNumber = dUser.PhoneNumber;
 
+                    if (dUser.Role == "admin")
+                    {
+                    }
+
+                    if (dUser.Role == "parent")
+                    {
+                    }
+
+                    if (dUser.Role == "children")
+                    {
+                        context.ChildrenData.Where(c => c.ChildrenId == dUser.Id).ToArray()[0].ParentId = dUser.ParentId;
+                        context.ChildrenData.Where(c => c.ChildrenId == dUser.Id).ToArray()[0].SchoolClassId = dUser.ClassId;
+                        context.SaveChanges();
+                    }
+
+                    if (dUser.Role == "teacher")
+                    {
+                        for (int i = 0; i < context.Lessons.ToArray().Count(); i++)
+                        {
+                            if (context.Lessons.ToArray()[i].TeacherId == dUser.Id)
+                            {
+                                context.Lessons.ToArray()[i].TeacherId = null;
+                            }
+                        }
+
+                        for (int i = 0; i < dUser.LessonIds.Count(); i++)
+                        {
+                            var lessonId = dUser.LessonIds.ToArray()[i];
+                            context.Lessons.Where(model => model.Id == lessonId).ToArray()[0].TeacherId = dUser.Id;
+                        }
+
+                     }
                     await UserManager.UpdateAsync(user);
 
                     if (dUser.Password != null && dUser.Password.Length > 0) {
@@ -152,11 +183,25 @@ namespace OnlineDiary.Controllers
             context.SaveChanges();
             return RedirectToAction("Index");
         }
-        
         protected override void Dispose(bool disposing)
         {
             context.Dispose();
             base.Dispose(disposing);
+        }
+        /// <summary>
+        /// Возвращает все пользователей из таблицы User
+        /// </summary>
+        /// <returns></returns>
+        public List<EditUserViewModel> getAllUsers()
+        {
+            var users = new List<EditUserViewModel>();
+
+            foreach (var user in context.Users)
+            {
+                var r = new EditUserViewModel(user);
+                users.Add(r);
+            }
+            return users;
         }
     }
 }
