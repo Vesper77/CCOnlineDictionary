@@ -37,7 +37,10 @@
                     <th>Предмет</th> 
                     @for (DateTime date = period.Item1; date <= period.Item2; date = date.AddDays(1))
                     {
-                        <th>@date.ToString("dd.MM")</th>
+                        if (date.DayOfWeek != DayOfWeek.Sunday)
+                        {
+                            <th>@date.ToString("dd.MM")</th>
+                        }
                     }
                     <th>Количество пропусков</th>
                 </tr>
@@ -46,30 +49,36 @@
                 @foreach (var lesson in ViewBag.Lessons)
                 {
                     cruancyCounter = 0;
+                    int sumMarks = 0;
+                    int marksCounter = 0;
                     <tr>
                         <td>
                             @lesson.Title
                         </td>
                         @for (DateTime date = period.Item1; date <= period.Item2; date = date.AddDays(1))
                         {
-                            int? val = Model.getMarkValue(date, lesson.Id, Model.User);
-                            if (val != null)
+                            if (date.DayOfWeek != DayOfWeek.Sunday)
                             {
-                                <td>
-                                    <b>@val</b>
-                                </td>
-                            }
-                            else if(Model.IsTruancyed(Model.User.Id, lesson.Id, date))
-                            {
-                                <td><b>Н</b></td>
-                                cruancyCounter++;
-                            }
-                            else
-                            {
-                                <td></td>
+                                int? val = Model.getMarkValue(date, lesson.Id, Model.User);
+                                if (val != null)
+                                {
+                                    <td>
+                                        <b>@val</b>
+                                    </td>
+                                }
+                                else if (Model.IsTruancyed(Model.User.Id, lesson.Id, date))
+                                {
+                                    <td><b>Н</b></td>
+                                    cruancyCounter++;
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
                             }
                         }
                         <td>@cruancyCounter</td>
+                        <td>@(((double)sumMarks / marksCounter).ToString("0.00"))</td>
                     </tr>
                 }
             </tbody>

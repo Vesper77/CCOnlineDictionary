@@ -11,9 +11,15 @@ namespace OnlineDiary.Models
     public abstract class ScheduleViewModel
     {
         protected ApplicationDbContext context = new ApplicationDbContext();
-        public string[] days = { "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Субботы" };
-
-
+        /// <summary>
+        /// Дни недели
+        /// </summary>
+        public string[] days = { "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота" };
+        /// <summary>
+        /// Определяет имя пользователя по его Id
+        /// </summary>
+        /// <param name="id">Id</param>
+        /// <returns>Если пользователь найден, его имя, если оно задано иначе его email, если не найден - сообщение об этом</returns>
         public string getUserName(string id) {
             var user = context.Users.FirstOrDefault(x => x.Id == id);
             if (user != null)
@@ -33,6 +39,11 @@ namespace OnlineDiary.Models
                 return "User not found";
             }
         }
+        /// <summary>
+        /// Определяет имя пользователя
+        /// </summary>
+        /// <param name="User">Пользователь</param>
+        /// <returns>Имя пользователя, если оно задано, иначе его email</returns>
         public string getUserName(DiaryUser User)
         {
             if (User.FirstName != null && User.LastName != null)
@@ -44,6 +55,11 @@ namespace OnlineDiary.Models
                 return User.Email;
             }
         }
+        /// <summary>
+        /// Определяет расписание ученика или учителя
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public Dictionary<string, ScheduleLesson[]> getDaysWithScheduleLessons(string userId)
         {
             var schedule = new Dictionary<string, ScheduleLesson[]>();
