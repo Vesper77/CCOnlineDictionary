@@ -14,6 +14,10 @@ namespace OnlineDiary.Models
             this.CurrentYear = year;
             this.quadmesterNumber = quadmester;
         }
+        public MarksViewModel(int year)
+        {
+            this.CurrentYear = year;
+        }
         protected ApplicationDbContext context = new ApplicationDbContext();
         /// <summary>
         /// Текущий пользователь
@@ -77,6 +81,23 @@ namespace OnlineDiary.Models
             return null;
         }
         /// <summary>
+        /// Определяет оценку за четверть по данному предмету для данного ученика
+        /// </summary>
+        /// <param name="ChildrenId">id ученика</param>
+        /// <param name="LessonId">id предмета</param>
+        /// <param name="quadmesterNumber">номер четверти</param>
+        /// <returns></returns>
+        public int? GetFinalMark(string ChildrenId, int LessonId, int quadmesterNumber)
+        {
+            var marks = context.FinalMarks.Where(x => x.ChildrenId == ChildrenId && x.LessonId == LessonId
+                                                && x.QuadmesterNumber == quadmesterNumber && x.Year == this.CurrentYear).ToList();
+            if (marks != null && marks.Count > 0)
+            {
+                return marks[0].MarkValue;
+            }
+            return null;
+        }
+        /// <summary>
         /// Определяет, прогулял ли ученик определенный предмет в определеный день
         /// </summary>
         /// <param name="childrenId">Id ученика</param>
@@ -128,10 +149,12 @@ namespace OnlineDiary.Models
     public class ChildrenMarksViewModel : MarksViewModel
     {
         public ChildrenMarksViewModel(int year, int quadmester) : base(year, quadmester) { }
+        public ChildrenMarksViewModel(int year) : base(year){ }
     }
     public class ParentMarksViewModel : MarksViewModel
     {
         public ParentMarksViewModel(int year, int quadmester) : base(year, quadmester) { }
+        public ParentMarksViewModel(int year) : base(year) { }
         /// <summary>
         /// Ребенок, для которого необходимо просмотреть оценки
         /// </summary>
@@ -157,7 +180,8 @@ namespace OnlineDiary.Models
     public class TeacherMarksViewModel : MarksViewModel
     {
         public TeacherMarksViewModel(int year, int quadmester) : base(year, quadmester) { }
-        public TeacherSelectMarksDataViewModel form = new TeacherSelectMarksDataViewModel();
+        public TeacherMarksViewModel(int year) : base(year) { }
+        public TeacherDataViewModel form = new TeacherDataViewModel();
         /// <summary>
         /// Определяет классы, в которых преподает учитель. 
         /// </summary>
@@ -241,7 +265,7 @@ namespace OnlineDiary.Models
             return schedule == null ? new List<DayOfWeek>() : schedule.Select(x => (DayOfWeek)x.DayNumber).Distinct().ToList();
         }
     }
-    public class TeacherSelectMarksDataViewModel
+    public class TeacherDataViewModel
     {
         /// <summary>
         /// Id выбранного класса
@@ -251,7 +275,5 @@ namespace OnlineDiary.Models
         /// Id выбранного предмета
         /// </summary>
         public int LessonId { get; set; }
-        //public Dictionary<int, string> SchoolClasses = new Dictionary<int, string>();
-        //public Dictionary<int, string> Lessons = new Dictionary<int, string>();
     }
 }

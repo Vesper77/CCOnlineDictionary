@@ -34,6 +34,7 @@ namespace OnlineDiary.Models
         public DbSet<ScheduleLesson> ScheduleLessons { get; set; }
         public DbSet<ChildrenData> ChildrenData { get; set; }
         public DbSet<Truancy> Truancys { get; set; }
+        public DbSet<FinalMark> FinalMarks { get; set; }
         public static ApplicationDbContext Create()
         {
             return new ApplicationDbContext();

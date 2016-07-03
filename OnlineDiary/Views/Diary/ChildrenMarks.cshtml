@@ -43,10 +43,11 @@
                         }
                     }
                     <th>Количество пропусков</th>
+                    <th>Средняя оценка по предмету</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var lesson in ViewBag.Lessons)
+                @foreach (var lesson in Model.getLessons(Model.User))
                 {
                     cruancyCounter = 0;
                     int sumMarks = 0;
