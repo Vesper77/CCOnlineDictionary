@@ -30,7 +30,7 @@
     {
         <div class="form-group">
             <label>Выберите ребенка</label>
-            @Html.DropDownList("ChildrenId", ViewBag.AllChildrens as SelectList, new { @class = "form-control" });
+            @Html.DropDownList("ChildrenId", new SelectList(Model.GetChildrens(), "Id", "FirstName"), new { @class = "form-control" });
         </div>
             <button type="submit">Показать</button>
     }
@@ -54,10 +54,11 @@
                         }
                     }
                     <th>Количество пропусков</th>
+                    <th>Средняя оценка по предмету</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var lesson in ViewBag.Lessons)
+                @foreach (var lesson in Model.getLessons(Model.CurrentChildren))
                 {
                     cruancyCounter = 0;
                     int sumMarks = 0;

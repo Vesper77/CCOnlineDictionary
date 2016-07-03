@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 namespace OnlineDiary.Controllers
-{    
+{
     public class DiaryController : Controller
     {
         private ApplicationUserManager _userManager = null;
@@ -39,7 +39,8 @@ namespace OnlineDiary.Controllers
                 viewModel.Parent = user;
                 return View("ParentSchedule", viewModel);
             }
-            else if (await UserManager.IsInRoleAsync(user.Id, "children")) {
+            else if (await UserManager.IsInRoleAsync(user.Id, "children"))
+            {
                 var viewModel = new UserScheduleViewModel();
                 viewModel.User = user;
                 return View("ChildrenSchedule", viewModel);
@@ -54,11 +55,11 @@ namespace OnlineDiary.Controllers
             {
                 return View();
             }
-            else if(await UserManager.IsInRoleAsync(user.Id, "parent"))
+            else if (await UserManager.IsInRoleAsync(user.Id, "parent"))
             {
                 return View();
             }
-            else if(await UserManager.IsInRoleAsync(user.Id, "children"))
+            else if (await UserManager.IsInRoleAsync(user.Id, "children"))
             {
                 return View();
             }
@@ -71,31 +72,24 @@ namespace OnlineDiary.Controllers
             var user = await UserManager.FindByNameAsync(User.Identity.Name);
             ChildrenMarksViewModel model = new ChildrenMarksViewModel(year, quadmester);
             model.User = user;
-            model.CurrentYear = year;
-            model.quadmesterNumber = quadmester;
-            var lessonsIDs = context.Marks.Where(x => x.ChildrenId == user.Id).Select(x => x.LessonId).Distinct();
-            var lessons = model.getLessons(user);
-            ViewBag.Lessons = lessons;
             return View("ChildrenMarks", model);
         }
         [Authorize(Roles = "parent")]
         [HttpGet]
-        public async Task<ActionResult>ParentMarks(string childrenId, int quadmester = 1, int year = 2015)
+        public async Task<ActionResult> ParentMarks(string childrenId, int quadmester = 1, int year = 2015)
         {
             var user = await UserManager.FindByNameAsync(User.Identity.Name);
             ParentMarksViewModel model = new ParentMarksViewModel(year, quadmester);
             model.User = user;
             var allChildrens = model.GetChildrens();
-            ViewBag.AllChildrens = new SelectList(allChildrens, "Id", "FirstName");
             if (allChildrens.Count > 0)
             {
-                if(childrenId == null)
+                if (childrenId == null)
                 {
                     childrenId = allChildrens[0].Id;
                 }
                 model.CurrentChildren = context.Users.Where(x => x.Id == childrenId).First();
                 ViewBag.ChildId = childrenId;
-                ViewBag.Lessons = model.getLessons(model.CurrentChildren);
                 return View("ParentMarks", model);
             }
             else
@@ -124,11 +118,11 @@ namespace OnlineDiary.Controllers
         {
             var user = await UserManager.FindByNameAsync(User.Identity.Name);
             TeacherMarksViewModel model = new TeacherMarksViewModel(year, quadmester);
-            if(LessonId != 0)
+            if (LessonId != 0)
             {
                 model.form.LessonId = LessonId;
             }
-            if(ClassId != 0)
+            if (ClassId != 0)
             {
                 model.form.ClassId = ClassId;
             }
@@ -140,6 +134,67 @@ namespace OnlineDiary.Controllers
         public async Task<ActionResult> TeacherMarksPost(int lessonId, int classId)
         {
             return await TeacherMarks(lessonId, classId);
+        }
+        [Authorize(Roles = "children")]
+        [HttpGet]
+        public async Task<ActionResult> ChildrenFinalMarks(int year = 2015)
+        {
+            var user = await UserManager.FindByNameAsync(User.Identity.Name);
+            ChildrenMarksViewModel model = new ChildrenMarksViewModel(year);
+            model.User = user;
+            return View("ChildrenFinalMarks", model);
+        }
+        [Authorize(Roles = "parent")]
+        [HttpGet]
+        public async Task<ActionResult> ParentFinalMarks(string childrenId, int year = 2015)
+        {
+            var user = await UserManager.FindByNameAsync(User.Identity.Name);
+            ParentMarksViewModel model = new ParentMarksViewModel(year);
+            model.User = user;
+            var allChildrens = model.GetChildrens();
+            if (allChildrens.Count > 0)
+            {
+                if (childrenId == null)
+                {
+                    childrenId = allChildrens[0].Id;
+                }
+                model.CurrentChildren = context.Users.Where(x => x.Id == childrenId).First();
+                ViewBag.ChildId = childrenId;
+                return View("ParentFinalMarks", model);
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
+        }
+        [Authorize(Roles = "parent")]
+        [HttpPost]
+        public async Task<ActionResult> ParentFinalMarksPost(string childrenId)
+        {
+            return await ParentFinalMarks(childrenId);
+        }
+        [Authorize(Roles = "teacher")]
+        [HttpGet]
+        public async Task<ActionResult> TeacherFinalMarks(int classId = 0, int lessonId = 0, int year = 2015)
+        {
+            var user = await UserManager.FindByNameAsync(User.Identity.Name);
+            TeacherMarksViewModel model = new TeacherMarksViewModel(year);
+            if (lessonId != 0)
+            {
+                model.form.LessonId = lessonId;
+            }
+            if (classId != 0)
+            {
+                model.form.ClassId = classId;
+            }
+            model.User = user;
+            return View("TeacherFinalMarks", model);
+        }
+        [Authorize(Roles = "teacher")]
+        [HttpPost]
+        public async Task<ActionResult> TeacherFinalMarksPost(int classId, int lessonId)
+        {
+            return await TeacherFinalMarks(classId, lessonId);
         }
     }
 }

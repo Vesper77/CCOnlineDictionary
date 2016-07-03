@@ -207,6 +207,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\Diary\FinalMark.cs" />
     <Compile Include="Models\Diary\Mark.cs" />
     <Compile Include="Models\Diary\ScheduleLesson.cs" />
     <Compile Include="Models\Diary\SchoolClass.cs" />
@@ -292,6 +293,9 @@
     <Content Include="Views\Admin\Index.cshtml" />
     <Content Include="Views\Diary\ParentMarks.cshtml" />
     <Content Include="Views\Diary\ChildrenMarks.cshtml" />
+    <Content Include="Views\Diary\ChildrenFinalMarks.cshtml" />
+    <Content Include="Views\Diary\ParentFinalMarks.cshtml" />
+    <Content Include="Views\Diary\TeacherFinalMarks.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
