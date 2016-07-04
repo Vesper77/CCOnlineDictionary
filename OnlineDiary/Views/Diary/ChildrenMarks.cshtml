@@ -62,10 +62,10 @@
                     int[] countmarks, bool endTable, List<OnlineDiary.Models.Diary.Lesson> lessons)
 {
     int i = 0;
-    <table class="table table-bordered">
+    <table class="table table-bordered" style="font-size:10px;">
         <thead>
             <tr>
-                <th>Предмет</th>
+                <th class="b-mark_name">Предмет</th>
                 @for (DateTime date = start; date <= end; date = date.AddDays(1))
                 {
                     if (date.DayOfWeek != DayOfWeek.Sunday)
@@ -75,8 +75,8 @@
                 }
                 @if (endTable)
                 {
-                    <th>Кол-во Н</th>
-                    <th>Средняя оценка+
+                    <th class="b-mark_name">Кол-во Н</th>
+                    <th class="b-mark_name">Средняя оценка+
                 </th>
                 }
             </tr>
@@ -104,7 +104,7 @@
                             }
                             else if (Model.IsTruancyed(Model.User.Id, lesson.Id, date))
                             {
-                                <td><b>Н</b></td>
+                                <td style="color:red;"><b>Н</b></td>
                                 cryancys[i]++;
                             }
                             else
