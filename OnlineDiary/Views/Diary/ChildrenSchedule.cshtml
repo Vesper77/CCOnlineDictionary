@@ -1,31 +1,38 @@
 ﻿@model OnlineDiary.Models.UserScheduleViewModel
 @{
-    ViewBag.Title = "Расписагие";
+    ViewBag.Title = "Расписание ребёнка";
+    int dayCounter = 0;
 }
+<div class="schedule">
+    <div class="page-header week-select">
+        <h3>Расписание ученика @Model.getChildUserName()</h3>
+    </div>
 
-<h2> Расписание ученика @Model.getChildUserName() </h2>
-
-
-@foreach (var dl in Model.getDaysWithScheduleLessons())
-{
-    <div class="b-preview-form col-md-4 col-sm-4 col-xs-12">
-        <div class=" panel panel-default">
-            <div class="panel-heading">@dl.Key</div>
-            <div class="panel-body">
-                <ul class="list-group">
-                    @for (int i = 0; i < OnlineDiary.Models.Diary.ScheduleLesson.MAX_LESSONS_PER_DAY; i++)
-                    {
-                        if (dl.Value.Length > i && dl.Value[i] != null)
-                        {
-                            <li class="list-group-item"><span class="badge"></span>@Model.getLessonTitle(dl.Value[i].LessonId)</li>
-                        }
-                        else
-                        {
-                            <li class="list-group-item">Нет урока</li>
-                        }
-                    }
-                </ul>
-            </div>
+    <div class="schedule__content">
+        <div class="schedule-days">
+            @Html.Partial("_WeekSelect");
+            @foreach (var dl in Model.getDaysWithScheduleLessons())
+            {
+                @Html.Partial("_DayOfSchedule", dl, new ViewDataDictionary() { { "day", Model.StartWeek.AddDays(dayCounter).ToString("dd.MM") } });
+                dayCounter++;
+            }
         </div>
     </div>
- }
+</div>
+@Html.Partial("_ModalSchedule", false)
+@section Scripts{
+    <script>
+        window.date = {
+            startWeek: '@Model.StartWeek.ToString()',
+            endWeek: '@Model.EndWeek.ToString()'
+        };
+        window.urls = {
+            getHomeWork: '@Url.Action("GetHomeWork","Work")'
+        };
+        window.ids = {
+            homeworkModal: 'home-work-modal',
+            homeWorkText: 'home-work-text'
+        };
+    </script>
+    @Scripts.Render("~/Scripts/Schedule.js")
+}

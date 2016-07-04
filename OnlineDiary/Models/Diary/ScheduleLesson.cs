@@ -14,12 +14,13 @@ namespace OnlineDiary.Models.Diary
         public int Id { get; set; }
         public int DayNumber { get; set; }
 
+        [ForeignKey("Lesson")]
         public int LessonId { get; set; }
+        [ForeignKey("SchoolClass")]
         public int SchoolClassId { get; set; }
         public int Order { get; set; }
-        //[ForeignKey("LessonId")]
-        //public virtual Lesson Lesson { get; set; }
-        //[ForeignKey("SchoolClassId")]
-        //public virtual SchoolClass SchoolClass { get; set; }
+
+        public virtual Lesson Lesson { get; set; }
+        public virtual SchoolClass SchoolClass { get; set; }
     }
 }

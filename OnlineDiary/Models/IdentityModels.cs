@@ -35,6 +35,8 @@ namespace OnlineDiary.Models
         public DbSet<ChildrenData> ChildrenData { get; set; }
         public DbSet<Truancy> Truancys { get; set; }
         public DbSet<FinalMark> FinalMarks { get; set; }
+        public DbSet<Homework> HomeWorks { get; set; }
+
         public static ApplicationDbContext Create()
         {
             return new ApplicationDbContext();

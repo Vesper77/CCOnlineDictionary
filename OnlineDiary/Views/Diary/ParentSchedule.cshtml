@@ -1,47 +1,65 @@
 ﻿@model OnlineDiary.Models.ParentUserScheduleViewModel
 @{
-    ViewBag.Title = "ParentSchedule";
+    ViewBag.Title = "Расписание родителя";
+    int dayCounter = 0;
 }
 
-<h2> Расписание детей @Model.getParentUserName() </h2>
-@if (Model.Childrens.Length > 0)
-{
-    foreach (var child in Model.Childrens)
-    {
-        <p style="text-align:center">Ребёнок : @Model.getUserName(child)</p>
-        <div style="border-bottom:1px solid;padding-top:20px;padding-bottom:20px;">
-            @foreach (var dl in Model.getDaysWithScheduleLessons(child.Id))
+<div class="schedule">
+    <div class="page-header week-select">
+        <h3> Расписание детей @Model.getParentUserName()</h3>
+    </div>
+
+    <div class="schedule__content">
+        <div class="schedule-days">
+            @Html.Partial("_WeekSelect")
+            @if (Model.Childrens.Length > 0)
             {
-                <div class="b-preview-form col-md-4 col-sm-4 col-xs-12">
-                    <div class=" panel panel-default">
-                        <div class="panel-heading">@dl.Key</div>
-                        <div class="panel-body">
-                            <ul class="list-group">
-                                @for (int i = 0; i < OnlineDiary.Models.Diary.ScheduleLesson.MAX_LESSONS_PER_DAY; i++)
-                                {
-                                    if (dl.Value.Length > i && dl.Value[i] != null)
-                                    {
-                                        <li class="list-group-item"><span class="badge"></span>@Model.getLessonTitle(dl.Value[i].LessonId)</li>
-                                    }
-                                    else
-                                    {
-                                        <li class="list-group-item">Нет урока</li>
-                                    }
-                                }
-                            </ul>
+                <ul class="nav nav-tabs" role="tablist">
+                    @for (int i = 0; i < Model.Childrens.Length; i++)
+                    {
+                        <li @Html.Raw(i == 0 ? "class=\"active\"" : "") role="presentation">
+                            <a aria-controls="@Html.Raw("child" + Model.Childrens[i].Id)" href="@Html.Raw("#child" + Model.Childrens[i].Id)" role="tab" data-toggle="tab"> @Model.getUserName(Model.Childrens[i]) </a>
+                        </li>
+                    }
+                </ul>
+                <div class="tab-content childrens--content">
+                    @for (int c = 0; c < Model.Childrens.Length; c++)
+                    {
+                        dayCounter = 0;
+                        <div role="tabpanel" class="tab-pane @Html.Raw( c == 0 ? "active" : "" )" id="@Html.Raw("child" + Model.Childrens[c].Id)">
+                            @foreach (var dl in Model.getDaysWithScheduleLessons(Model.Childrens[c].Id))
+                            {
+                                @Html.Partial("_DayOfSchedule", dl, new ViewDataDictionary() { { "day", Model.StartWeek.AddDays(dayCounter).ToString("dd.MM") } })
+                                dayCounter++;
+                            }
                         </div>
-                    </div>
+                    }
                 </div>
             }
+            else
+            {
+                <p>У тебя нет детей, =(</p>
+            }
         </div>
-    }
+    </div>
+</div>
+
+@Html.Partial("_ModalSchedule", false)
+@section Scripts{
+    <script>
+        window.date = {
+            startWeek: '@Model.StartWeek.ToString()',
+            endWeek: '@Model.EndWeek.ToString()'
+        };
+        window.urls = {
+            getHomeWork: '@Url.Action("GetHomeWork","Work")',
+            setHomeWork : '@Url.Action("SetHomeWork", "Work")'
+        };
+        window.ids = {
+            homeworkModal: 'home-work-modal',
+            homeWorkText: 'home-work-text',
+            homeWorkSend: 'home-work-send'
+        };
+    </script>
+    @Scripts.Render("~/Scripts/Schedule.js")
 }
-else
-{
-    <p>У тебя нет детей, =(</p>
-}
-
-
-
-
-

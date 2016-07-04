@@ -200,6 +200,7 @@
     <Compile Include="Controllers\DiaryController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\WorkController.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AdminViewModel.cs" />
     <Compile Include="Models\ApplicationDBInitializer.cs" />
@@ -208,6 +209,7 @@
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Diary\FinalMark.cs" />
+    <Compile Include="Models\Diary\Homework.cs" />
     <Compile Include="Models\Diary\Mark.cs" />
     <Compile Include="Models\Diary\ScheduleLesson.cs" />
     <Compile Include="Models\Diary\SchoolClass.cs" />
@@ -244,9 +246,11 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\marks.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\Schedule.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -296,9 +300,13 @@
     <Content Include="Views\Diary\ChildrenFinalMarks.cshtml" />
     <Content Include="Views\Diary\ParentFinalMarks.cshtml" />
     <Content Include="Views\Diary\TeacherFinalMarks.cshtml" />
+    <Content Include="Views\Diary\_DayOfSchedule.cshtml" />
+    <Content Include="Views\Diary\_ModalSchedule.cshtml" />
+    <Content Include="Views\Diary\_WeekSelect.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Diary\Partial\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

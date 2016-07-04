@@ -18,26 +18,28 @@
         ClassId = Model.form.ClassId,
         quadmester = Model.quadmesterNumber == 1 ? 4 : Model.quadmesterNumber - 1,
         year = Model.quadmesterNumber == 1 ? Model.CurrentYear - 1 : Model.CurrentYear,
-    })
+    }, new { @class="btn btn-primary"})
     @Html.ActionLink("Оценки за следующий период", "TeacherMarks", new
     {
         LessonId = Model.form.LessonId,
         ClassId = Model.form.ClassId,
         quadmester = Model.quadmesterNumber == 4 ? 1 : Model.quadmesterNumber + 1,
         year = Model.quadmesterNumber == 4 ? Model.CurrentYear + 1 : Model.CurrentYear,
-    })
+    }, new { @class="btn btn-primary "})
+
     @using (Html.BeginForm("TeacherMarksPost", "Diary", FormMethod.Post, new { @class = "form-inline" }))
     {
         <div class="form-group">
             <label>Класс</label>
-            @Html.DropDownList("classId", new SelectList(Model.getSchoolClasses(), "Key", "Value"), new { @class = "form-control"})
+            @Html.DropDownList("classId", new SelectList(Model.getSchoolClasses(), "Key", "Value"), new { @class = "form-control", id="select-class"})
         </div>
         <div class="form-group">
             <label>Уроки</label>
-            @Html.DropDownList("lessonId", new SelectList(Model.getLessons(), "Key", "Value"), new { @class = "form-control"})
+            @Html.DropDownList("lessonId", new SelectList(Model.getLessons(), "Key", "Value"), new { @class = "form-control", id="select-lesson"})
         </div>
-        <button type="submit">Показать</button>
+        <button type="submit" class="btn btn-primary">Показать</button>
     }
+
     <h2>Оценки учеников класса @(" " + Model.getClassName(Model.form.ClassId)) </h2>
     <h3>
       @("По предмету " + "\"" + Model.getLessonName(Model.form.LessonId) + "\""+ " за " +
@@ -79,25 +81,27 @@
                                     int? val = Model.getMarkValue(date, Model.form.LessonId, children);
                                     if (val != null)
                                     {
-                                        <td>
-                                            <b>@val</b>
+                                        <td class="mark--set" data-mark-lesson="@Model.form.LessonId" data-mark-children="@children.Id" data-mark-date="@date.ToString()" >
+                                            @val
                                         </td>
                                         sumMarks += (int)val;
                                         marksCounter++;
                                     }
                                     else if (Model.IsTruancyed(children.Id, Model.form.LessonId, date))
                                     {
-                                        <td><b>Н</b></td>
+                                        <td class="mark--set" data-mark-lesson="@Model.form.LessonId" data-mark-children="@children.Id" data-mark-date="@date.ToString()">
+                                            Н
+                                        </td>
                                         cruancyCounter++;
                                     }
                                     else
                                     {
-                                        <td></td>
+                                        <td class="mark--set" data-mark-lesson="@Model.form.LessonId" data-mark-children="@children.Id" data-mark-date="@date.ToString()"></td>
                                     }
                                 }
                             }
-                            <td>@cruancyCounter</td>
-                            <td>@(((double)sumMarks / marksCounter).ToString("0.00"))</td>
+                            <td id="mark--cruancy">@cruancyCounter</td>
+                            <td id="mark--total">@(((double)sumMarks / marksCounter).ToString("0.00"))</td>
                         </tr>
                     }
                 </tbody>
@@ -109,4 +113,12 @@
         }
     </div>
 </div>
-
+@section Scripts{
+    <script>
+        window.urls = {
+            setMark: '@Url.Action("SetMark", "Diary")',
+            setTruancy: '@Url.Action("SetTruancy", "Diary")'
+        };
+    </script>
+    @Scripts.Render("~/Scripts/marks.js");
+}

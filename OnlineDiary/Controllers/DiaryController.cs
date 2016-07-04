@@ -24,25 +24,29 @@ namespace OnlineDiary.Controllers
             }
         }
         [Authorize]
-        public async Task<ActionResult> Schelude()
+        public async Task<ActionResult> Schedule(int numberWeek = 0)
         {
             var user = await UserManager.FindByNameAsync(User.Identity.Name);
+
             if (await UserManager.IsInRoleAsync(user.Id, "teacher"))
             {
                 var viewModel = new TeacherScheduleViewModel();
                 viewModel.Teacher = user;
+                viewModel.NumberWeek = numberWeek;
                 return View("TeacherSchedule", viewModel);
             }
             else if (await UserManager.IsInRoleAsync(user.Id, "parent"))
             {
                 var viewModel = new ParentUserScheduleViewModel();
                 viewModel.Parent = user;
+                viewModel.NumberWeek = numberWeek;
                 return View("ParentSchedule", viewModel);
             }
             else if (await UserManager.IsInRoleAsync(user.Id, "children"))
             {
                 var viewModel = new UserScheduleViewModel();
                 viewModel.User = user;
+                viewModel.NumberWeek = numberWeek;
                 return View("ChildrenSchedule", viewModel);
             }
             return RedirectToAction("Index", "Home");
@@ -53,15 +57,15 @@ namespace OnlineDiary.Controllers
             var user = await UserManager.FindByNameAsync(User.Identity.Name);
             if (await UserManager.IsInRoleAsync(user.Id, "teacher"))
             {
-                return View();
+                return RedirectToAction("TeacherMarks");
             }
             else if (await UserManager.IsInRoleAsync(user.Id, "parent"))
             {
-                return View();
+                return RedirectToAction("ParentMarks");
             }
             else if (await UserManager.IsInRoleAsync(user.Id, "children"))
             {
-                return View();
+                return RedirectToAction("ChildrenMarks");
             }
             return RedirectToAction("Index", "Home");
         }
@@ -196,19 +200,50 @@ namespace OnlineDiary.Controllers
         {
             return await TeacherFinalMarks(classId, lessonId);
         }
+        [HttpPost]
+        [Authorize(Roles ="teacher")]
+        public JsonResult SetMark(DateTime day, int markvalue, string childrenId, int lessonId)
+        {
+            if (markvalue > 5 && markvalue < 0)
+            {
+                return Json(new { result = false });
+            }
+            var mark = context.Marks.FirstOrDefault(m => m.ChildrenId == childrenId && m.LessonId == lessonId && m.Day == day);
+            if (mark == null)
+            {
+                mark = new Models.Diary.Mark();
+                mark.ChildrenId = childrenId;
+                mark.MarkValue = markvalue;
+                mark.Day = day;
+                mark.LessonId = lessonId;
+                context.Marks.Add(mark);
+            }
+            else
+            {
+                mark.MarkValue = markvalue;
+            }
+            var tryancy = context.Truancys.FirstOrDefault(t => t.ChildrenId == childrenId && t.LessonId == lessonId && t.TruancyDate == day);
+            if (tryancy != null) {
+                context.Truancys.Remove(tryancy);
+            }                
+            context.SaveChanges();
+            return Json(new { result = true, markValue = mark.MarkValue });
+        }
+        [HttpPost]
+        [Authorize(Roles = "teacher")]
+        public JsonResult SetTruancy(DateTime day, string childrenId, int lessonId)
+        {
+            if (day.Hour == 0 && day.Minute == 0 && day.Second == 0) {
+                context.Truancys.Add(new Models.Diary.Truancy() { TruancyDate = day, ChildrenId = childrenId, LessonId = lessonId });
+                var mark = context.Marks.FirstOrDefault(m => m.ChildrenId == childrenId && m.Day == day && m.LessonId == lessonId);
+                if (mark != null)
+                {
+                    context.Marks.Remove(mark);
+                }
+                context.SaveChanges();
+                return Json(new { result = true, markValue = "Н" });
+            }
+            return Json(new { result = false });
+        }
     }
 }
-/*
- * Parent 
- * Оценки для рёбёнка
- * Lessons\Days 1
- * Lessons1     3
- * --------
- * Children <-> Parent
- * --------
- * Teacher
- * Оценки за Физику для 5-Б
- * Children\Day 1
- * Петя         3
- * ------
- */

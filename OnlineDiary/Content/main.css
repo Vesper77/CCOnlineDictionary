@@ -1,3 +1,35 @@
+.mark--set {
+    font-weight:bold;
+}
+.mark__write {
+    width:100%;
+}
+.childrens--content {
+    margin-top:20px;
+}
+.lesson-title {
+    width:100%;
+    text-align:left;
+}
+.schedule-days {
+    display:block;
+    margin-left:60px;
+    margin-right:60px;
+}
+.week-select {
+    margin-bottom:20px;
+    text-align:center;
+}
+.select-children {
+    margin-top:40px;
+    margin-bottom:40px;
+}
+.marks-table {
+    padding-top:10px;
+}
+.marks--content {
+    margin-top:10px;
+}
 /*! HTML5 Boilerplate v5.3.0 | MIT License | https://html5boilerplate.com/ */
 
 /*
