@@ -79,11 +79,11 @@ namespace OnlineDiary.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-                    return RedirectToAction("Schelude", "Diary");
-                case SignInStatus.LockedOut:
-                    return View("Lockout");
-                case SignInStatus.RequiresVerification:
-                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
+                    return RedirectToAction("Schedule", "Diary");
+                //case SignInStatus.LockedOut:
+                //    return View("Lockout");
+                //case SignInStatus.RequiresVerification:
+                //    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
                 case SignInStatus.Failure:
                 default:
                     ModelState.AddModelError("", "Invalid login attempt.");

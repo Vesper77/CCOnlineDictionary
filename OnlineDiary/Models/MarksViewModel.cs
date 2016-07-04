@@ -113,12 +113,12 @@ namespace OnlineDiary.Models
         }
         public string getClassName(DiaryUser user)
         {
-            var children = context.ChildrenData.Where(x => x.ChildrenId == user.Id).First();
+            var children = context.ChildrenData.Where(x => x.ChildrenId == user.Id).FirstOrDefault();
             if (children == null)
             {
                 return "";
             }
-            var schoolClass = context.SchoolClasses.Where(x => x.Id == children.SchoolClassId).First();
+            var schoolClass = context.SchoolClasses.Where(x => x.Id == children.SchoolClassId).FirstOrDefault();
             return schoolClass == null ? "" : schoolClass.Title;
         }
         /// <summary>

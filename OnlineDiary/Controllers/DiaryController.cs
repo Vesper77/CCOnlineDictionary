@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNet.Identity.Owin;
 using OnlineDiary.Models;
+using OnlineDiary.Models.Diary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,7 +53,7 @@ namespace OnlineDiary.Controllers
             return RedirectToAction("Index", "Home");
         }
         [Authorize]
-        public async Task<ActionResult> Marks(int lessonId = 2)
+        public async Task<ActionResult> Marks()
         {
             var user = await UserManager.FindByNameAsync(User.Identity.Name);
             if (await UserManager.IsInRoleAsync(user.Id, "teacher"))
@@ -66,6 +67,22 @@ namespace OnlineDiary.Controllers
             else if (await UserManager.IsInRoleAsync(user.Id, "children"))
             {
                 return RedirectToAction("ChildrenMarks");
+            }
+            return RedirectToAction("Index", "Home");
+        }
+        public async Task<ActionResult> FinalMarks() {
+            var user = await UserManager.FindByNameAsync(User.Identity.Name);
+            if (await UserManager.IsInRoleAsync(user.Id, "teacher"))
+            {
+                return RedirectToAction("TeacherFinalMarks");
+            }
+            else if (await UserManager.IsInRoleAsync(user.Id, "parent"))
+            {
+                return RedirectToAction("ParentFinalMarks");
+            }
+            else if (await UserManager.IsInRoleAsync(user.Id, "children"))
+            {
+                return RedirectToAction("ChildrenFinalMarks");
             }
             return RedirectToAction("Index", "Home");
         }
@@ -107,15 +124,7 @@ namespace OnlineDiary.Controllers
         {
             return await ParentMarks(childrenId);
         }
-        //[Authorize(Roles = "teacher")]
-        //public async Task<ActionResult> TeacherMarks(TeacherSelectMarksDataViewModel form = null)
-        //{
-        //    var user = await UserManager.FindByNameAsync(User.Identity.Name);
-        //    var viewModel = new TeacherMarksViewModel(2015, 1);
-        //    viewModel.User = user;
-        //    viewModel.form = form == null ? new TeacherSelectMarksDataViewModel() : form;
-        //    return View(viewModel);
-        //}
+
         [Authorize(Roles = "teacher")]
         [HttpGet]
         public async Task<ActionResult> TeacherMarks(int LessonId = 0, int ClassId = 0, int quadmester = 1, int year = 2015)
@@ -244,6 +253,30 @@ namespace OnlineDiary.Controllers
                 return Json(new { result = true, markValue = "Н" });
             }
             return Json(new { result = false });
+        }
+        [HttpPost]
+        [Authorize(Roles = "teacher")]
+        public JsonResult setFinalMark(string childrenId, int lessonId, int fourth, int markvalue) {
+            if (markvalue < 1 || markvalue > 5) {
+                return Json(new { result = false});
+            }
+            FinalMark mark = context.FinalMarks.FirstOrDefault(m => m.LessonId == lessonId && m.QuadmesterNumber == fourth && m.ChildrenId == childrenId);
+            if (mark != null)
+            {
+                mark.MarkValue = markvalue;
+            }
+            else
+            {
+                mark = new FinalMark();
+                mark.ChildrenId = childrenId;
+                mark.LessonId = lessonId;
+                mark.QuadmesterNumber = fourth;
+                mark.MarkValue = markvalue;
+                mark.Year = DateTime.Now.Year - 1;
+                context.FinalMarks.Add(mark);
+            }
+            context.SaveChanges();
+            return Json(new { result = true, markValue = markvalue });
         }
     }
 }

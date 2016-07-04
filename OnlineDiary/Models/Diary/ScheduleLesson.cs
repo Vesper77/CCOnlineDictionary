@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -10,16 +11,15 @@ namespace OnlineDiary.Models.Diary
     public class ScheduleLesson
     {
         public const int MAX_LESSONS_PER_DAY = 6;
-
+        [Key]
         public int Id { get; set; }
         public int DayNumber { get; set; }
 
-        [ForeignKey("Lesson")]
         public int LessonId { get; set; }
-        [ForeignKey("SchoolClass")]
         public int SchoolClassId { get; set; }
         public int Order { get; set; }
 
+        [ForeignKey("LessonId")]
         public virtual Lesson Lesson { get; set; }
         public virtual SchoolClass SchoolClass { get; set; }
     }
