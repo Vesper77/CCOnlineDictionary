@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OnlineDiary.Models.Diary;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -32,7 +33,7 @@ namespace OnlineDiary.Models.CRUDViewModels
             this.FirstName = user.FirstName;
             this.LastName = user.LastName;
             this.ParentName = user.ParentName;
-            this.PhoneNumber = user.PhoneNumber;
+           // this.PhoneNumber = user.PhoneNumber;
         }
 
 
@@ -43,16 +44,21 @@ namespace OnlineDiary.Models.CRUDViewModels
 
 
         public string Id { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Введите логин")]
         public string UserName { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Введите email")]
         public string Email { get; set; }
-        [Display(Name = "New password")]
+        [Required(ErrorMessage = "Введите пароль")]
+        [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
+        [DataType(DataType.Password)]
         public string Password { get; set; }
+        [Required(ErrorMessage = "Введите имя")]
         public string FirstName { get; set; }
+        [Required(ErrorMessage = "Введите фамилию")]
         public string LastName { get; set; }
+        [Required(ErrorMessage = "Введите отчество")]
         public string ParentName { get; set; }
-        public string PhoneNumber { get; set; }
+       // public string PhoneNumber { get; set; }
         [Required]
         [Display(Name = "Role")]
         public string Role { get; set; }
@@ -64,10 +70,10 @@ namespace OnlineDiary.Models.CRUDViewModels
         /// Список всех ролей пользователя
         /// </summary>
         public SelectListItem[] Roles = new[] {
-                new SelectListItem() { Text = "Admin", Value = "admin"},
-                new SelectListItem() { Text = "Children",Value = "children"},
-                new SelectListItem() { Text = "Parent",Value = "parent"},
-                new SelectListItem() { Text = "Teacher",Value = "teacher"}
+                new SelectListItem() { Text = "Администратор", Value = "admin"},
+                new SelectListItem() { Text = "Ученик",Value = "children"},
+                new SelectListItem() { Text = "Родитель",Value = "parent"},
+                new SelectListItem() { Text = "Учитель",Value = "teacher"}
             };
 
         /// <summary>
@@ -85,7 +91,7 @@ namespace OnlineDiary.Models.CRUDViewModels
                     FirstName = this.FirstName,
                     LastName = this.LastName,
                     ParentName = this.ParentName,
-                    PhoneNumber = this.PhoneNumber
+                  //  PhoneNumber = this.PhoneNumber
                 };
             }
             return user;
@@ -164,9 +170,18 @@ namespace OnlineDiary.Models.CRUDViewModels
             var name = context.Roles.Where(i => i.Id == userRoleId).ToArray()[0].Name;
             return name;
         }
-
-
-
+        
+        /// <summary>
+        /// Создает новый школьный класс
+        /// </summary>
+        /// <param name="className">название школьного класса</param>
+        public void CreateClas(string className)
+        {
+            SchoolClass schClass = new SchoolClass();
+            schClass.Title = className;
+            context.SchoolClasses.Add(schClass);
+            context.SaveChanges();
+        }
 
     }
 }

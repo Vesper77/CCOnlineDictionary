@@ -3,15 +3,15 @@
     ViewBag.Title = "Index";
 }
 <div class="page-header">
-    @Html.ActionLink("Create New", "Create", new { }, new { @class = "btn btn-primary pull-right" })
+    @Html.ActionLink("Создать пользователя", "Create", new { }, new { @class = "btn btn-primary pull-right" })
     <h2>Список пользователей</h2>
 </div>
 <div class="form-group">
     <div class="col-md-10">
         @using (Html.BeginForm("Index", "Admin", FormMethod.Post))
         {
-            @Html.DropDownListFor(model => Model.Role, Model.Roles, "All", new { htmlAttributes = new { @class = "form-control", id = "DropDownRoles" } })
-            <input type="submit" value="Select Role" class="btn btn-primary"/>
+            @Html.DropDownListFor(model => Model.Role, Model.Roles, "Все", new { htmlAttributes = new { @class = "form-control", id = "DropDownRoles" } })
+            <input type="submit" value="Выбрать роль" class="btn btn-primary"/>
             <div>
                 <br/>
                 <table class="table">
@@ -42,9 +42,9 @@
                                 </td>
                             }
                             <td>
-                                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                                @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-                                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                                @Html.ActionLink("Изменить", "Edit", new { id = item.Id }) |
+                                @Html.ActionLink("Информация", "Details", new { id = item.Id }) |
+                                @Html.ActionLink("Удалить", "Delete", new { id = item.Id })
                             </td>
                         </tr>
                     }
@@ -64,6 +64,8 @@
                         }
                     </ul>
                 </div>
+
+                <br /><br />
             </div>
         }
     </div>

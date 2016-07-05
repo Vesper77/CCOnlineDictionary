@@ -153,7 +153,8 @@ namespace OnlineDiary.Controllers
                     return RedirectToAction("Details", new { id = dUser.GetUser().Id });
                 }
             }
-            return HttpNotFound();
+            return View(dUser);
+            //return HttpNotFound();
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -168,7 +169,7 @@ namespace OnlineDiary.Controllers
                     user.LastName = dUser.LastName;
                     user.ParentName = dUser.ParentName;
                     user.Email = dUser.Email;
-                    user.PhoneNumber = dUser.PhoneNumber;
+                    //user.PhoneNumber = dUser.PhoneNumber;
 
                     if (dUser.Role == "admin")
                     {

@@ -79,7 +79,7 @@ namespace OnlineDiary.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-                    return RedirectToAction("Schedule", "Diary");
+                    return RedirectToAction("Index", "Admin");
                 //case SignInStatus.LockedOut:
                 //    return View("Lockout");
                 //case SignInStatus.RequiresVerification:

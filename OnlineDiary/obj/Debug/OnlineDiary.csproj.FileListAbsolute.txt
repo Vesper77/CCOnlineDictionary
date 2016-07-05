@@ -407,3 +407,4 @@ D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Micro
 D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Microsoft.Owin.Security.MicrosoftAccount.xml
 D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\obj\Debug\OnlineDiary.dll
 D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\obj\Debug\OnlineDiary.pdb
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\obj\Debug\OnlineDiary.csprojResolveAssemblyReference.cache
