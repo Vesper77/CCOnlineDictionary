@@ -35,11 +35,11 @@ namespace OnlineDiary.Models
         /// Определяет дату начала и конца четверти
         /// </summary>
         /// <returns>даты начала и конца четверти</returns>
-        public Tuple<DateTime, DateTime> GetPeriod()
+        public Tuple<DateTime, DateTime> GetPeriod(int quadmester)
         {
             var startDate = new DateTime();
             var endDate = new DateTime();
-            switch (quadmesterNumber)
+            switch (quadmester)
             {
                 case 1:
                     startDate = new DateTime(CurrentYear, 9, 1);
@@ -87,15 +87,26 @@ namespace OnlineDiary.Models
         /// <param name="LessonId">id предмета</param>
         /// <param name="quadmesterNumber">номер четверти</param>
         /// <returns></returns>
-        public int? GetFinalMark(string ChildrenId, int LessonId, int quadmesterNumber)
+        public int GetFinalMark(string ChildrenId, int LessonId, int quadmesterNumber)
         {
-            var marks = context.FinalMarks.Where(x => x.ChildrenId == ChildrenId && x.LessonId == LessonId
-                                                && x.QuadmesterNumber == quadmesterNumber && x.Year == this.CurrentYear).ToList();
-            if (marks != null && marks.Count > 0)
+            var period = GetPeriod(quadmesterNumber);
+            int counterMarks = 0;
+            int sumMarks = 0;
+            for (DateTime beginDate = period.Item1; beginDate <= period.Item2; beginDate = beginDate.AddDays(1))
             {
-                return marks[0].MarkValue;
+                var mark = context.Marks.Where(x => x.ChildrenId == ChildrenId && x.Day == beginDate && x.LessonId == LessonId).
+                                               FirstOrDefault();
+                if(mark != null)
+                {
+                    sumMarks += mark.MarkValue;
+                    counterMarks++;
+                }
             }
-            return null;
+            if (counterMarks == 0)
+            {
+                return 0;
+            }
+            return (int)Math.Round((double)sumMarks / counterMarks);
         }
         /// <summary>
         /// Определяет, прогулял ли ученик определенный предмет в определеный день
@@ -163,6 +174,7 @@ namespace OnlineDiary.Models
         /// Определяет детей данного родителя
         /// </summary>
         /// <returns>Список детей</returns>
+        public List<DiaryUser> Childrens { get; set; }
         public List<DiaryUser> GetChildrens()
         {
             var childrenIDs = context.ChildrenData.Where(x => x.ParentId == User.Id).Select(x => x.ChildrenId);
@@ -275,5 +287,13 @@ namespace OnlineDiary.Models
         /// Id выбранного предмета
         /// </summary>
         public int LessonId { get; set; }
+        /// <summary>
+        /// Классы, где ведет учитель
+        /// </summary>
+        public Dictionary<int, string> Classes { get;  set; }
+        /// <summary>
+        /// Предмеы, которые ведет учитель
+        /// </summary>
+        public Dictionary<int, string> Lessons { get; set; }
     }
 }

@@ -102,12 +102,12 @@ namespace OnlineDiary.Controllers
             var user = await UserManager.FindByNameAsync(User.Identity.Name);
             ParentMarksViewModel model = new ParentMarksViewModel(year, quadmester);
             model.User = user;
-            var allChildrens = model.GetChildrens();
-            if (allChildrens.Count > 0)
+            model.Childrens = model.GetChildrens();
+            if (model.Childrens.Count > 0)
             {
                 if (childrenId == null)
                 {
-                    childrenId = allChildrens[0].Id;
+                    childrenId = model.Childrens[0].Id;
                 }
                 model.CurrentChildren = context.Users.Where(x => x.Id == childrenId).First();
                 ViewBag.ChildId = childrenId;
@@ -140,6 +140,8 @@ namespace OnlineDiary.Controllers
                 model.form.ClassId = ClassId;
             }
             model.User = user;
+            model.form.Classes = model.getSchoolClasses();
+            model.form.Lessons = model.getLessons();
             return View("TeacherMarks", model);
         }
         [Authorize(Roles = "teacher")]
@@ -164,12 +166,12 @@ namespace OnlineDiary.Controllers
             var user = await UserManager.FindByNameAsync(User.Identity.Name);
             ParentMarksViewModel model = new ParentMarksViewModel(year);
             model.User = user;
-            var allChildrens = model.GetChildrens();
-            if (allChildrens.Count > 0)
+            model.Childrens = model.GetChildrens();
+            if (model.Childrens.Count > 0)
             {
                 if (childrenId == null)
                 {
-                    childrenId = allChildrens[0].Id;
+                    childrenId = model.Childrens[0].Id;
                 }
                 model.CurrentChildren = context.Users.Where(x => x.Id == childrenId).First();
                 ViewBag.ChildId = childrenId;
@@ -201,6 +203,8 @@ namespace OnlineDiary.Controllers
                 model.form.ClassId = classId;
             }
             model.User = user;
+            model.form.Classes = model.getSchoolClasses();
+            model.form.Lessons = model.getLessons();
             return View("TeacherFinalMarks", model);
         }
         [Authorize(Roles = "teacher")]

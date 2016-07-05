@@ -222,6 +222,7 @@
     <Compile Include="Models\Diary\Truancy.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\Diary\Lesson.cs" />
+    <Compile Include="Models\LessonViewModel.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\MarksViewModel.cs" />
     <Compile Include="Models\People\ChildrenData.cs" />
@@ -310,6 +311,9 @@
     <Content Include="Views\Diary\_DayOfSchedule.cshtml" />
     <Content Include="Views\Diary\_ModalSchedule.cshtml" />
     <Content Include="Views\Diary\_WeekSelect.cshtml" />
+    <Content Include="Views\Admin\CreateLesson.cshtml" />
+    <Content Include="Views\Admin\SelectClass.cshtml" />
+    <Content Include="Views\Admin\EditSchedule.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

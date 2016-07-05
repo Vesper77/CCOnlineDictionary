@@ -288,6 +288,61 @@ namespace OnlineDiary.Controllers
             context.SaveChanges();
             return RedirectToAction("Index");
         }
+        [HttpGet]
+        public async Task<ActionResult> CreateLesson()
+        {
+            var model = new LessonViewModel();
+            model.Teachers = model.GetAllTeachers();
+            return View(model);
+        }
+        [HttpPost]
+        public async Task<ActionResult> CreateLesson(string teacherId, string name)
+        {
+            if (!String.IsNullOrWhiteSpace(name))
+            {
+                var lesson = new Lesson() { TeacherId = teacherId, Title = name };
+                var identLesson = context.Lessons.Where(x => x.TeacherId == teacherId && x.Title.
+                                                       ToLower() == name.ToLower()).FirstOrDefault();
+                if (identLesson == null)
+                {
+                    context.Lessons.Add(lesson);
+                    context.SaveChanges();
+                }
+            }
+            return await CreateLesson();
+        }
+        [HttpGet]
+        public async Task<ActionResult> SelectClass()
+        {
+            EditScheduleViewModel model = new EditScheduleViewModel();
+            model.AllClasses = model.GetAllClasses();
+            return View(model);
+        }
+        [HttpPost]
+        public async Task<ActionResult> SelectClass(int classId, int day)
+        {
+            return await EditSchedule(classId, day);
+        }
+        [HttpGet]
+        public async Task<ActionResult> EditSchedule(int classId, int day)
+        {
+            EditScheduleViewModel model = new EditScheduleViewModel();
+            model.classiD = classId;
+            model.Day = day;
+            var l = model.GetCurrentLesson(model.classiD, 1);
+            model.Lessons = model.GetAllLessons();
+            ViewBag.ClassName = context.SchoolClasses.Where(x => x.Id == classId).First().Title;
+            return View("EditSchedule", model);
+        }
+        [HttpPost]
+        public async Task<ActionResult> EditSchedule(int classId, int day, int[] lesson)
+        {
+            EditScheduleViewModel model = new EditScheduleViewModel();
+            model.classiD = classId;
+            model.Day = day;
+            model.EditSchedule(lesson);
+            return RedirectToAction("SelectClass", "Admin");
+        }
         protected override void Dispose(bool disposing)
         {
             context.Dispose();

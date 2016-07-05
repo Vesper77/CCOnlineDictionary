@@ -8,7 +8,7 @@
         "третью ",
         "четвертую "
     };
-    var period = Model.GetPeriod();
+    var period = Model.GetPeriod(Model.quadmesterNumber);
     int cruancyCounter = 0;
 }
 <div>
@@ -29,17 +29,37 @@
 
     @using (Html.BeginForm("TeacherMarksPost", "Diary", FormMethod.Post, new { @class = "form-inline" }))
     {
-        <div class="form-group">
-            <label>Класс</label>
-            @Html.DropDownList("classId", new SelectList(Model.getSchoolClasses(), "Key", "Value"), new { @class = "form-control", id="select-class"})
-        </div>
-        <div class="form-group">
-            <label>Уроки</label>
-            @Html.DropDownList("lessonId", new SelectList(Model.getLessons(), "Key", "Value"), new { @class = "form-control", id="select-lesson"})
-        </div>
-        <button type="submit" class="btn btn-primary">Показать</button>
+        if (Model.form.Classes.Count > 1)
+        {
+            <div class="form-group">
+                <label>Класс</label>
+                @Html.DropDownList("classId", new SelectList(Model.form.Classes, "Key", "Value"), new { @class = "form-control" })
+            </div>
+        }
+        else
+        {
+            <div class="form-group">
+                <label>Класс: @(Model.form.Classes.First().Value)</label>
+            </div>
+        }
+        if (Model.form.Lessons.Count > 1)
+        {
+            <div class="form-group">
+                <label>Уроки</label>
+                @Html.DropDownList("lessonId", new SelectList(Model.form.Lessons, "Key", "Value"), new { @class = "form-control" })
+            </div>
+        }
+        else
+        {
+            <div class="form-group">
+                <label>Предмет: @Model.form.Lessons.First().Value</label>
+            </div>
+        }
+        if (Model.form.Classes.Count > 1 || Model.form.Lessons.Count > 1)
+        {
+            <button type="submit">Показать</button>
+        }
     }
-
     <h2>Оценки учеников класса @(" " + Model.getClassName(Model.form.ClassId)) </h2>
     <h3>
       @("По предмету " + "\"" + Model.getLessonName(Model.form.LessonId) + "\""+ " за " +
@@ -101,7 +121,14 @@
                                 }
                             }
                             <td id="mark--cruancy">@cruancyCounter</td>
-                            <td id="mark--total">@(((double)sumMarks / marksCounter).ToString("0.00"))</td>
+                            @if (marksCounter > 0)
+                            {
+                                <td id="mark--total">@(((double)sumMarks / marksCounter).ToString("0.00"))</td>
+                            }
+                            else
+                            {
+                                <td id= "mark--total">0</td>
+                            }
                         </tr>
                     }
                 </tbody>

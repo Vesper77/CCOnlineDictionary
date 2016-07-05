@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 namespace OnlineDiary.Models
 {
     public abstract class ScheduleViewModel
@@ -219,6 +218,103 @@ namespace OnlineDiary.Models
         public string getUserName()
         {
             return getUserName(Teacher);
+        }
+    }
+    public class EditScheduleViewModel
+    {
+        private ApplicationDbContext context = new ApplicationDbContext();
+        public int Day { get; set; }
+        public int classiD { get; set; }
+        public Dictionary<int, string> days = new Dictionary<int, string>()
+        {
+            {1, "Понедельник" },
+            {2, "Вторник" },
+            {3, "Среда" },
+            {4, "Четверг" },
+            {5, "Пятница" },
+            {6, "Суббота" }
+        };
+        public Dictionary<int, string> Lessons { get; set; } = new Dictionary<int, string>();
+        /// <summary>
+        /// Возвращает все предметы
+        /// </summary>
+        /// <returns></returns>
+        public Dictionary<int, string> GetAllLessons()
+        {
+            Dictionary<int, string> lessons = new Dictionary<int, string>();
+            lessons.Add(0, "Нет урока");
+            foreach(var iter in context.Lessons.ToList())
+            {
+                lessons.Add(iter.Id, iter.Title);
+            }
+            return lessons;
+        }
+        /// <summary>
+        /// Возвращает название предмета, который стоит у определенного класса в поределенный день под определенным номером
+        /// </summary>
+        /// <param name="order"></param>
+        /// <param name="classId"></param>
+        /// <returns></returns>
+        public KeyValuePair<int, string> GetCurrentLesson(int order, int classId)
+        {
+            var schedulelesson = context.ScheduleLessons.
+                Where(x => x.DayNumber == Day && x.SchoolClassId == classId && x.Order == order).
+                FirstOrDefault();
+            if (schedulelesson == null)
+            {
+                return new KeyValuePair<int, string>(0, "Нет урока");
+            }
+            var currentlesson = context.Lessons.Where(x => x.Id == schedulelesson.LessonId).FirstOrDefault();
+            if(currentlesson == null)
+            {
+                return new KeyValuePair<int, string>(0,"Нет урока");
+            }
+            return new KeyValuePair<int, string>(currentlesson.Id, currentlesson.Title); 
+        }
+        public Dictionary<int, string> AllClasses { get; set; } = new Dictionary<int, string>();
+        public Dictionary<int, string> GetAllClasses()
+        {
+            Dictionary<int, string> allClasses = new Dictionary<int, string>();
+            foreach(var iter in context.SchoolClasses.ToList())
+            {
+                allClasses.Add(iter.Id, iter.Title);
+            }
+            return allClasses;
+        }
+        public void EditSchedule(int[] lesson)
+        {
+            for (int i = 0; i < 6; i++)
+            {
+                var removeobj = context.ScheduleLessons.SingleOrDefault(x => x.SchoolClassId == classiD &&
+                                                                        x.DayNumber == Day &&
+                                                                        x.Order == i + 1);
+                if (removeobj != null)
+                {
+                    var homework = context.HomeWorks.Where(x => x.ScheludeLessonId == removeobj.Id).ToList();
+                    if(homework != null && homework.Count > 0)
+                    {
+                        foreach(var iter in homework)
+                        {
+                            context.HomeWorks.Remove(iter);
+                            context.SaveChanges();
+                        }
+                    }
+                    context.ScheduleLessons.Remove(removeobj);
+                    context.SaveChanges();
+                }
+                if (lesson[i] != 0)
+                {
+                    var schedulelesson = new ScheduleLesson()
+                    {
+                        SchoolClassId = classiD,
+                        LessonId = lesson[i],
+                        Order = i + 1,
+                        DayNumber = Day
+                    };
+                    context.ScheduleLessons.Add(schedulelesson);
+                    context.SaveChanges();
+                }
+            }
         }
     }
 }

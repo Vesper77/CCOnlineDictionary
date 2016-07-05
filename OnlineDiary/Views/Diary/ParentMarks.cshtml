@@ -8,7 +8,7 @@
             " третью ",
             " четвертую "
     };
-    var period = Model.GetPeriod();
+    var period = Model.GetPeriod(Model.quadmesterNumber);
     int countDays = (period.Item2 - period.Item1).Days / 2;
 
     var lessons = Model.getLessons(Model.CurrentChildren);
@@ -36,11 +36,18 @@
     <br />
     @using (Html.BeginForm("ParentMarksPost", "Diary", FormMethod.Post, new { @class = "form-inline select-children" }))
     {
-        <div class="form-group">
-            <label>Выберите ребенка</label>
-            @Html.DropDownList("ChildrenId", new SelectList(Model.GetChildrens(), "Id", "FirstName"), new { @class = "form-control" })
-        </div>
-        <button type="submit" class="btn btn-primary">Показать</button>
+        if (Model.Childrens.Count > 1)
+        {
+            <div class="form-group">
+                <label>Выберите ребенка</label>
+                @Html.DropDownList("ChildrenId", new SelectList(Model.Childrens, "Id", "FirstName"), new { @class = "form-control" });
+            </div>
+            <button type="submit">Показать</button>
+        }
+        else
+        {
+            <label>Ребёнок: @Model.CurrentChildren.FirstName</label>
+        }
     }
 </div>
 
@@ -122,7 +129,14 @@ int i = 0;
                 @if (endTable)
                 {
                     <td>@cryancys[i]</td>
-                    <td>@(((double)summarks[i] / countmarks[i]).ToString("0.00"))</td>
+                    if (countmarks[i] != 0)
+                    {
+                        <td>@(((double)summarks[i] / countmarks[i]).ToString("0.00"))</td>
+                    }
+                    else
+                    {
+                        <td>0</td>
+                    }
                 }
             </tr>
             i++;

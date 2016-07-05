@@ -25,15 +25,36 @@
     })
     @using (Html.BeginForm("TeacherFinalMarksPost", "Diary", FormMethod.Post, new { @class = "form-inline" }))
     {
-        <div class="form-group">
+        if (Model.form.Classes.Count > 1)
+        {
+            <div class="form-group">
             <label>Класс</label>
-            @Html.DropDownList("classId", new SelectList(Model.getSchoolClasses(), "Key", "Value"), new { @class = "form-control" })
-        </div>
-        <div class="form-group">
-            <label>Уроки</label>
-            @Html.DropDownList("lessonId", new SelectList(Model.getLessons(), "Key", "Value"), new { @class = "form-control" })
-        </div>
-        <button type="submit">Показать</button>
+            @Html.DropDownList("classId", new SelectList(Model.form.Classes, "Key", "Value"), new { @class = "form-control" })
+            </div>
+        }
+        else
+        {
+            <div class="form-group">
+                <label>Класс: @(Model.form.Classes.First().Value)</label>
+            </div>
+        }
+        if (Model.form.Lessons.Count > 1)
+        {
+            <div class="form-group">
+                <label>Предметы</label>
+                @Html.DropDownList("lessonId", new SelectList(Model.form.Lessons, "Key", "Value"), new { @class = "form-control" })
+            </div>
+        }
+        else
+        {
+             <div class="form-group">
+                <label>"Предмет: @Model.form.Lessons.First().Value"</label>
+             </div>
+        } 
+        if (Model.form.Classes.Count > 1 || Model.form.Lessons.Count > 1)
+        {
+            <button type="submit">Показать</button>
+        }
     }
     <h2>Итоговые оценки учеников класса @(" " + Model.getClassName(Model.form.ClassId)) </h2>
     <h3>
@@ -57,24 +78,25 @@
                 <tbody>
                     @foreach (var children in Model.GetChildrensInClass(Model.form.ClassId))
                     {
+                        int[] marks = new int[4];
                         <tr>
                             <td>
                                 @children.FirstName
                             </td>
-                            @for (int i = 1; i < 6; i++)
+                            @for (int i = 1; i < 5; i++)
                             {
-                                int? val = Model.GetFinalMark(children.Id, Model.form.LessonId, i);
-                                if (val != null)
-                                {
-                                    <td class="set--mark-final" data-mark-lesson="@Model.form.LessonId" data-mark-children="@children.Id" data-mark-fourth="@(i)" >
+                                int val = Model.GetFinalMark(children.Id, Model.form.LessonId, i);
+                                marks[i - 1] = val;
+                                <td class="set--mark-final" data-mark-lesson="@Model.form.LessonId" data-mark-children="@children.Id" data-mark-fourth="@(i)" >
                                         @val
                                     </td>
-                                }
-                                else
+                                @*else
                                 {
                                     <td class="set--mark-final" data-mark-lesson="@Model.form.LessonId" data-mark-children="@children.Id" data-mark-fourth="@(i)" ></td>
-                                }
+                                }*@
                             }
+                            @{int finalMark = (int)Math.Round((double)(marks[0] + marks[1] + marks[2] + marks[3]) / 4);}
+                            <td><b>@finalMark</b></td>
                         </tr>
                     }
                 </tbody>

@@ -33,7 +33,7 @@ namespace OnlineDiary.DAL
             }
             //Users
             ApplicationUserManager manager = new ApplicationUserManager(new UserStore<DiaryUser>(context));
-            string password = "123qwe";
+            string password = "123456";
             var user = new DiaryUser()
             {
                 Email = "children@admin.com",
@@ -58,8 +58,8 @@ namespace OnlineDiary.DAL
 
             var admin = new DiaryUser()
             {
-                Email = "admin@admin.com",
-                UserName = "admin@admin.com"
+                Email = "admin@admin.ru",
+                UserName = "admin@admin.ru"
             };
             manager.Create(admin, password);
             manager.AddToRole(admin.Id, "admin");

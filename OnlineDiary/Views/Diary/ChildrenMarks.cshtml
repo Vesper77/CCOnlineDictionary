@@ -8,7 +8,7 @@
         " третью ",
         " четвертую "
     };
-    var period = Model.GetPeriod();
+    var period = Model.GetPeriod(Model.quadmesterNumber);
     int cruancyCounter = 0;
     int countDays = (period.Item2 - period.Item1).Days / 2;
 
@@ -116,7 +116,14 @@
                     @if (endTable)
                     {
                         <td>@cryancys[i]</td>
-                        <td>@(((double)summarks[i] / countmarks[i]).ToString("0.00"))</td>
+                        if (countmarks[i] != 0)
+                        {
+                            <td>@(((double)summarks[i] / countmarks[i]).ToString("0.00"))</td>
+                        }
+                        else
+                        {
+                            <td>0</td>
+                        }
                     }
                 </tr>
                 i++;
