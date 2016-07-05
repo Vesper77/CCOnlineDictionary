@@ -40,7 +40,6 @@ namespace OnlineDiary.DAL
                 UserName = "children@admin.com"
             };
             manager.Create(user, password);
-
             manager.AddToRole(user.Id, "children");
             var teacher = new DiaryUser()
             {

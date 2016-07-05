@@ -203,12 +203,17 @@
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\WorkController.cs" />
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Models\AdminViewModel.cs" />
     <Compile Include="Models\ApplicationDBInitializer.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\EntityViewModels\CreateUserViewModel.cs" />
+    <Compile Include="Models\EntityViewModels\DeleteUserViewModel.cs" />
+    <Compile Include="Models\EntityViewModels\DetailUserViewModel.cs" />
+    <Compile Include="Models\EntityViewModels\EditUserViewModel.cs" />
+    <Compile Include="Models\EntityViewModels\IndexUserViewModel.cs" />
+    <Compile Include="Models\EntityViewModels\UserViewModel.cs" />
     <Compile Include="Models\Diary\FinalMark.cs" />
     <Compile Include="Models\Diary\Homework.cs" />
     <Compile Include="Models\Diary\Mark.cs" />

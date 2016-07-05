@@ -96,7 +96,7 @@ namespace OnlineDiary.Models
             {
                 var mark = context.Marks.Where(x => x.ChildrenId == ChildrenId && x.Day == beginDate && x.LessonId == LessonId).
                                                FirstOrDefault();
-                if(mark != null)
+                if (mark != null)
                 {
                     sumMarks += mark.MarkValue;
                     counterMarks++;
@@ -139,7 +139,7 @@ namespace OnlineDiary.Models
         /// <returns>Название класса, если найден класс с таким id, иначе пустую строку</returns>
         public string getClassName(int classId)
         {
-            var schoolClass = context.SchoolClasses.Where(x => x.Id == classId).First();
+            var schoolClass = context.SchoolClasses.Where(x => x.Id == classId).FirstOrDefault();
             return schoolClass == null ? "" : schoolClass.Title;
         }
         /// <summary>
@@ -160,7 +160,7 @@ namespace OnlineDiary.Models
     public class ChildrenMarksViewModel : MarksViewModel
     {
         public ChildrenMarksViewModel(int year, int quadmester) : base(year, quadmester) { }
-        public ChildrenMarksViewModel(int year) : base(year){ }
+        public ChildrenMarksViewModel(int year) : base(year) { }
     }
     public class ParentMarksViewModel : MarksViewModel
     {
@@ -227,7 +227,7 @@ namespace OnlineDiary.Models
         /// <returns>Название предмета, если предмет с таким id найден, иначе пустую строку</returns>
         public string getLessonName(int lessonId)
         {
-            var lesson = context.Lessons.Where(x => x.Id == lessonId).First();
+            var lesson = context.Lessons.Where(x => x.Id == lessonId).FirstOrDefault();
             return lesson == null ? "" : lesson.Title;
         }
         /// <summary>
@@ -242,7 +242,7 @@ namespace OnlineDiary.Models
                 context.ScheduleLessons.Where(l => l.SchoolClassId == form.ClassId).Select(y => y.LessonId).Distinct().ToList().
                     ForEach(l => lessons.Add(l, context.Lessons.FirstOrDefault(x => x.Id == l).Title));
             }
-            if(lessons.Count > 0 && form.LessonId == 0)
+            if (lessons.Count > 0 && form.LessonId == 0)
             {
                 form.LessonId = lessons.Keys.First();
             }
@@ -256,8 +256,8 @@ namespace OnlineDiary.Models
         public List<DiaryUser> GetChildrensInClass(int classId)
         {
             var result = new List<DiaryUser>();
-            var childrensId = context.ChildrenData.Where(x => x.SchoolClassId == classId).Select(x => x.ChildrenId);
-            if(childrensId != null)
+            var childrensId = context.ChildrenData.Where(x => x.SchoolClassId == classId).ToList().Select(x => x.ChildrenId);
+            if (childrensId != null)
             {
                 result = (from i in childrensId
                           from j in context.Users
@@ -273,8 +273,9 @@ namespace OnlineDiary.Models
         /// <returns></returns>
         public List<DayOfWeek> GetDays(int classId, int LessonId)
         {
-            var schedule = context.ScheduleLessons.Where(x => x.SchoolClassId == classId && x.LessonId == LessonId);
-            return schedule == null ? new List<DayOfWeek>() : schedule.Select(x => (DayOfWeek)x.DayNumber).Distinct().ToList();
+            var schedule = context.ScheduleLessons.Where(x => x.SchoolClassId == classId && x.LessonId == LessonId).ToList();
+            return schedule == null || schedule.Count == 0 ? new List<DayOfWeek>() : schedule.
+                                       Select(x => (DayOfWeek)x.DayNumber).Distinct().ToList();
         }
     }
     public class TeacherDataViewModel
@@ -290,7 +291,7 @@ namespace OnlineDiary.Models
         /// <summary>
         /// Классы, где ведет учитель
         /// </summary>
-        public Dictionary<int, string> Classes { get;  set; }
+        public Dictionary<int, string> Classes { get; set; }
         /// <summary>
         /// Предмеы, которые ведет учитель
         /// </summary>

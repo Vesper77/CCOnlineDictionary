@@ -3,6 +3,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using OnlineDiary.DAL;
 using OnlineDiary.Models;
+using OnlineDiary.Models.CRUDViewModels;
 using OnlineDiary.Models.Diary;
 using OnlineDiary.Models.People;
 using System;
@@ -35,9 +36,9 @@ namespace OnlineDiary.Controllers
 
         public ActionResult Index(int page = 0)
         {
-
-            var viewModel = new EditUserViewModel();
+            var viewModel = new IndexUserViewModel();
             viewModel.page = page;
+            viewModel.Role = "all";
             if (viewModel == null)
             {
                 return HttpNotFound();
@@ -46,7 +47,7 @@ namespace OnlineDiary.Controllers
         }
         public ActionResult Create()
         {
-            var viewModel = new EditUserViewModel();
+            var viewModel = new CreateUserViewModel();
             
             if (viewModel == null)
             {
@@ -58,6 +59,9 @@ namespace OnlineDiary.Controllers
         {
             var user = context.Users.Find(id);
             var viewModel = new EditUserViewModel(user);
+            var userRoleId = context.Users.Where(i => i.Id == viewModel.Id).ToArray()[0].Roles.ToArray()[0].RoleId;
+            var roleName = context.Roles.Where(i => i.Id == userRoleId).ToArray()[0].Name;
+            viewModel.Role = roleName;
             if (viewModel == null)
             {
                 return HttpNotFound();
@@ -67,7 +71,7 @@ namespace OnlineDiary.Controllers
         public ActionResult Details(string id)
         {
             var user = context.Users.Find(id);
-            var dUser = new EditUserViewModel(user);
+            var dUser = new DetailUserViewModel(user);
             if (dUser == null)
             {
                 return HttpNotFound();
@@ -77,17 +81,21 @@ namespace OnlineDiary.Controllers
         public ActionResult Delete(string id)
         {
             var user = context.Users.Find(id);
-            var dUser = new EditUserViewModel(user);
+            var dUser = new DeleteUserViewModel(user);
             if (dUser == null)
             {
                 return HttpNotFound();
             }
             return View(dUser);
         }
-
+        [HttpPost]
+        public ActionResult Index(IndexUserViewModel dUser)
+        {
+            return View(dUser);
+        }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(EditUserViewModel dUser)
+        public async Task<ActionResult> Create(CreateUserViewModel dUser)
         {
             if (ModelState.IsValid)
             {
@@ -235,7 +243,48 @@ namespace OnlineDiary.Controllers
         public ActionResult DeleteConfirmed(string id)
         {
             var dUser = context.Users.Find(id);
+            var userRole = context.Users.Where(i => i.Id == dUser.Id).ToArray()[0].Roles.ToArray()[0];
+            var roleName = context.Roles.Where(i => i.Id == userRole.RoleId).ToArray()[0].Name;
+            UserManager.RemoveFromRoleAsync(id, roleName);
+            if (roleName == "parent")
+            {
+                var parentData = context.ChildrenData.Where(i => i.ParentId == id).ToArray();
+                foreach (var p in parentData)
+                {
+                    p.ParentId = null;
+                }
+            }
+            if (roleName == "children")
+            {
+                var children = context.ChildrenData.Where(i => i.ChildrenId == id).ToArray()[0];
+                context.ChildrenData.Remove(children);
+                var childrenTruancys = context.Truancys.Where(i => i.ChildrenId == id).ToArray();
+                foreach (var t in childrenTruancys)
+                {
+                    context.Truancys.Remove(t);
+                }
+                var childrenMarks = context.Marks.Where(i => i.ChildrenId == id).ToArray();
+                foreach (var m in childrenMarks)
+                {
+                    context.Marks.Remove(m);
+                }
+                var childrenFinalMarks = context.FinalMarks.Where(i => i.ChildrenId == id).ToArray();
+                foreach (var fm in childrenFinalMarks)
+                {
+                    context.FinalMarks.Remove(fm);
+                }
+            }
+            if (roleName == "teacher")
+            {
+                var lessons = context.Lessons.Where(i => i.TeacherId == id).ToArray();
+                foreach (var lesson in lessons)
+                {
+                    lesson.TeacherId = null;
+                }
+
+            }
             context.Users.Remove(dUser);
+
             context.SaveChanges();
             return RedirectToAction("Index");
         }
@@ -298,21 +347,6 @@ namespace OnlineDiary.Controllers
         {
             context.Dispose();
             base.Dispose(disposing);
-        }
-        /// <summary>
-        /// Возвращает все пользователей из таблицы User
-        /// </summary>
-        /// <returns></returns>
-        public List<EditUserViewModel> getAllUsers()
-        {
-            var users = new List<EditUserViewModel>();
-
-            foreach (var user in context.Users)
-            {
-                var r = new EditUserViewModel(user);
-                users.Add(r);
-            }
-            return users;
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿@model OnlineDiary.Models.EditUserViewModel
+﻿@model OnlineDiary.Models.CRUDViewModels.IndexUserViewModel
 @{
     ViewBag.Title = "Index";
 }
@@ -6,200 +6,91 @@
     @Html.ActionLink("Create New", "Create", new { }, new { @class = "btn btn-primary pull-right" })
     <h2>Список пользователей</h2>
 </div>
-@*<div class="form-group">
+<div class="form-group">
     <div class="col-md-10">
-        @Html.DropDownListFor(model => Model.Role, new[] {
-            new SelectListItem() {Text = "All", Value = "all"},
-            new SelectListItem() {Text = "Admin", Value = "admin"},
-            new SelectListItem() {Text = "Children",Value = "children"},
-            new SelectListItem() {Text = "Parent",Value = "parent"},
-            new SelectListItem() {Text = "Teacher",Value = "teacher"}
-            }, new { htmlAttributes = new { @class = "form-control", id = "DropDownRoles" } })
-        @Html.ValidationMessageFor(model => Model.Role, "", new { @class = "text-danger" })
+        @using (Html.BeginForm("Index", "Admin", FormMethod.Post))
+        {
+            @Html.DropDownListFor(model => Model.Role, Model.Roles, "All", new { htmlAttributes = new { @class = "form-control", id = "DropDownRoles" } })
+            <input type="submit" value="Select Role" class="btn btn-primary"/>
+            <div>
+                <br/>
+                <table class="table">
+                    @if (Model.Role == null) {
+                        Model.Role = "all";
+                    }
+                    @foreach (var item in Model.GetAllUsersByRole(Model.Role))
+                    {
+                        <tr>
+                            <td class="tdIndex">
+                                @Html.DisplayFor(model => item.FirstName)
+                                @Html.DisplayFor(model => item.LastName)
+                                @Html.DisplayFor(model => item.ParentName)
+                            </td>
+                            <td>
+                                @{
+                                    var roleName = Model.GetRoleNameById(item.Id);
+                                    @Html.DisplayFor(modelItem => roleName)
+                                }
+                            </td>
+                            @if (Model.Role == "children")
+                            {
+                                <td>
+                                    @{
+                                        string className = Model.GetClassNameById(item.Id);
+                                    }
+                                    @Html.DisplayFor(model => className)
+                                </td>
+                            }
+                            <td>
+                                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                                @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                            </td>
+                        </tr>
+                    }
+                </table>
+                <div style="text-align:center">
+                    <ul class="pagination" style="display:inline-block;">
+                        @for (int i = 0; i < Model.getCountAllPages(); i++)
+                        {
+                            if (Model.page == i)
+                            {
+                                <li class="active">@Html.ActionLink((i + 1).ToString(), "Index", new { page = i })</li>
+                            }
+                            else
+                            {
+                                <li>@Html.ActionLink((i + 1).ToString(), "Index", new { page = i })</li>
+                            }
+                        }
+                    </ul>
+                </div>
+            </div>
+        }
     </div>
-</div>*@
+</div>
 
-<div id="AllUsers">
-    <table class="table">
-        @foreach (var item in Model.getAllUsers())
-        {
-            <tr>
-                <td>
-                    @Html.ActionLink(item.Email, "Edit", new { id = item.Id })
-                </td>
-                <td>
-                    <ul>
-                        <li>@Html.DisplayFor(modelItem => item.FirstName)</li>
-                        <li>@Html.DisplayFor(modelItem => item.LastName)</li>
-                        <li>@Html.DisplayFor(modelItem => item.ParentName)</li>
-                    </ul>
-                </td>
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-                </td>
-            </tr>
-        }
-    </table>
-    <div style="text-align:center">
-        <ul class="pagination" style="display:inline-block;">
-            @for (int i = 0; i < Model.getCountAllPages(); i++)
-            {
-                if (Model.page == i)
-                {
-                    <li class="active">@Html.ActionLink((i + 1).ToString(), "Index", new { page = i })</li>
-                }
-                else
-                {
-                    <li>@Html.ActionLink((i + 1).ToString(), "Index", new { page = i })</li>
-                }
 
-            }
-        </ul>
-    </div>
-</div>
-@*<div id="SortAdmin">
-    <table class="table">
-        @foreach (var item in Model.SortUserListByRole("admin"))
-        {
-            <tr>
-                <td>
-                    @Html.ActionLink(item.Email, "Edit", new { id = item.Id })
-                </td>
-                <td>
-                    <ul>
-                        <li>@Html.DisplayFor(modelItem => item.FirstName)</li>
-                        <li>@Html.DisplayFor(modelItem => item.LastName)</li>
-                        <li>@Html.DisplayFor(modelItem => item.UserName)</li>
-                    </ul>
-                </td>
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-                </td>
-            </tr>
-        }
-    </table>
-</div>
-<div id="SortChildren">
-    <table class="table">
-        @foreach (var item in Model.SortUserListByRole("children"))
-        {
-            <tr>
-                <td>
-                    @Html.ActionLink(item.Email, "Edit", new { id = item.Id })
-                </td>
-                <td>
-                    <ul>
-                        <li>@Html.DisplayFor(modelItem => item.FirstName)</li>
-                        <li>@Html.DisplayFor(modelItem => item.LastName)</li>
-                        <li>@Html.DisplayFor(modelItem => item.UserName)</li>
-                    </ul>
-                </td>
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-                </td>
-            </tr>
-        }
-    </table>
-</div>
-<div id="SortParent">
-    <table class="table">
-        @foreach (var item in Model.SortUserListByRole("parent"))
-        {
-            <tr>
-                <td>
-                    @Html.ActionLink(item.Email, "Edit", new { id = item.Id })
-                </td>
-                <td>
-                    <ul>
-                        <li>@Html.DisplayFor(modelItem => item.FirstName)</li>
-                        <li>@Html.DisplayFor(modelItem => item.LastName)</li>
-                        <li>@Html.DisplayFor(modelItem => item.UserName)</li>
-                    </ul>
-                </td>
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-                </td>
-            </tr>
-        }
-    </table>
-</div>
-<div id="SortTeacher">
-    <table class="table">
-        @foreach (var item in Model.SortUserListByRole("teacher"))
-        {
-            <tr>
-                <td>
-                    @Html.ActionLink(item.Email, "Edit", new { id = item.Id })
-                </td>
-                <td>
-                    <ul>
-                        <li>@Html.DisplayFor(modelItem => item.FirstName)</li>
-                        <li>@Html.DisplayFor(modelItem => item.LastName)</li>
-                        <li>@Html.DisplayFor(modelItem => item.UserName)</li>
-                    </ul>
-                </td>
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-                </td>
-            </tr>
-        }
-    </table>
-</div>*@
+
 @section Scripts{
     <script>
         $(function () {
             $(document).ready(function () {
                 $("#AllUsers").show();
-                $("#SortAdmin").hide();
-                $("#SortParent").hide();
-                $("#SortTeacher").hide();
-                $("#SortChildren").hide();
                 $("#Role").change(function () {
                     if ($(this).val() == "all") {
                         $("#AllUsers").show();
-                        $("#SortAdmin").hide();
-                        $("#SortParent").hide();
-                        $("#SortTeacher").hide();
-                        $("#SortChildren").hide();
                     }
                     if ($(this).val() == "admin") {
                         $("#AllUsers").hide();
-                        $("#SortAdmin").show();
-                        $("#SortParent").hide();
-                        $("#SortTeacher").hide();
-                        $("#SortChildren").hide();
                     }
                     if ($(this).val() == "parent") {
                         $("#AllUsers").hide();
-                        $("#SortAdmin").hide();
-                        $("#SortParent").show();
-                        $("#SortTeacher").hide();
-                        $("#SortChildren").hide();
                     }
                     if ($(this).val() == "teacher") {
                         $("#AllUsers").hide();
-                        $("#SortAdmin").hide();
-                        $("#SortParent").hide();
-                        $("#SortTeacher").show();
-                        $("#SortChildren").hide();
                     } if ($(this).val() == "children") {
                         $("#AllUsers").hide();
-                        $("#SortAdmin").hide();
-                        $("#SortParent").hide();
-                        $("#SortTeacher").hide();
-                        $("#SortChildren").show();
                     }
-
                 });
             });
         });

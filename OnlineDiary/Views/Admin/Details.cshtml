@@ -1,4 +1,4 @@
-﻿@model OnlineDiary.Models.EditUserViewModel
+﻿@model OnlineDiary.Models.CRUDViewModels.DetailUserViewModel
 @{
     ViewBag.Title = "Details";
 }
@@ -38,12 +38,20 @@
         <dd>
             @Html.DisplayFor(model => Model.Email)
         </dd>
-
         <dt>
             @Html.DisplayNameFor(model => Model.PhoneNumber)
         </dt>
         <dd>
             @Html.DisplayFor(model => Model.PhoneNumber)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => Model.Role)
+        </dt>
+        <dd>
+            @{
+                var nameRole = Model.GetRoleNameById(Model.Id);
+            }
+            @Html.DisplayFor(model => nameRole)
         </dd>
     </dl>
 </div>

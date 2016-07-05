@@ -13,20 +13,19 @@
 }
 <div>
     @Html.ActionLink("Оценки за предыдущий период", "TeacherMarks", new
-    {
-        LessonId = Model.form.LessonId,
-        ClassId = Model.form.ClassId,
-        quadmester = Model.quadmesterNumber == 1 ? 4 : Model.quadmesterNumber - 1,
-        year = Model.quadmesterNumber == 1 ? Model.CurrentYear - 1 : Model.CurrentYear,
-    }, new { @class="btn btn-primary"})
+{
+    LessonId = Model.form.LessonId,
+    ClassId = Model.form.ClassId,
+    quadmester = Model.quadmesterNumber == 1 ? 4 : Model.quadmesterNumber - 1,
+    year = Model.quadmesterNumber == 1 ? Model.CurrentYear - 1 : Model.CurrentYear,
+}, new { @class = "btn btn-primary" })
     @Html.ActionLink("Оценки за следующий период", "TeacherMarks", new
-    {
-        LessonId = Model.form.LessonId,
-        ClassId = Model.form.ClassId,
-        quadmester = Model.quadmesterNumber == 4 ? 1 : Model.quadmesterNumber + 1,
-        year = Model.quadmesterNumber == 4 ? Model.CurrentYear + 1 : Model.CurrentYear,
-    }, new { @class="btn btn-primary "})
-
+{
+    LessonId = Model.form.LessonId,
+    ClassId = Model.form.ClassId,
+    quadmester = Model.quadmesterNumber == 4 ? 1 : Model.quadmesterNumber + 1,
+    year = Model.quadmesterNumber == 4 ? Model.CurrentYear + 1 : Model.CurrentYear,
+}, new { @class = "btn btn-primary " })
     @using (Html.BeginForm("TeacherMarksPost", "Diary", FormMethod.Post, new { @class = "form-inline" }))
     {
         if (Model.form.Classes.Count > 1)
@@ -36,7 +35,7 @@
                 @Html.DropDownList("classId", new SelectList(Model.form.Classes, "Key", "Value"), new { @class = "form-control" })
             </div>
         }
-        else
+        else if (Model.form.Classes.Count > 0)
         {
             <div class="form-group">
                 <label>Класс: @(Model.form.Classes.First().Value)</label>
@@ -49,7 +48,7 @@
                 @Html.DropDownList("lessonId", new SelectList(Model.form.Lessons, "Key", "Value"), new { @class = "form-control" })
             </div>
         }
-        else
+        else if (Model.form.Lessons.Count > 0)
         {
             <div class="form-group">
                 <label>Предмет: @Model.form.Lessons.First().Value</label>
@@ -62,12 +61,12 @@
     }
     <h2>Оценки учеников класса @(" " + Model.getClassName(Model.form.ClassId)) </h2>
     <h3>
-      @("По предмету " + "\"" + Model.getLessonName(Model.form.LessonId) + "\""+ " за " +
+        @("По предмету " + "\"" + Model.getLessonName(Model.form.LessonId) + "\"" + " за " +
       quadmesters[Model.quadmesterNumber - 1] + " четверть " + Model.CurrentYear + " - " + (Model.CurrentYear + 1) + "учебного  года")
     </h3>
     <div class="">
         @{ var days = Model.GetDays(Model.form.ClassId, Model.form.LessonId);}
-        @if (Model.form != null && days.Count > 0)
+        @if (Model.form != null && days.Count > 0 && Model.form.Classes.Count > 0 && Model.form.Lessons.Count > 0)
         {
             <table class="table table table-bordered" style="font-size:10px;">
                 <thead>
@@ -81,7 +80,7 @@
                             }
                         }
                         <th class="b-mark_name">Количество пропусков</th>
-                        <th class="b-mark_name">Средняя оценка по предмету</th>
+                        <th class="b-mark_name">Оценка за четверть</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -101,7 +100,7 @@
                                     int? val = Model.getMarkValue(date, Model.form.LessonId, children);
                                     if (val != null)
                                     {
-                                        <td class="mark--set" data-mark-lesson="@Model.form.LessonId" data-mark-children="@children.Id" data-mark-date="@date.ToString()" >
+                                        <td class="mark--set" data-mark-lesson="@Model.form.LessonId" data-mark-children="@children.Id" data-mark-date="@date.ToString()">
                                             @val
                                         </td>
                                         sumMarks += (int)val;
@@ -123,11 +122,11 @@
                             <td id="mark--cruancy">@cruancyCounter</td>
                             @if (marksCounter > 0)
                             {
-                                <td id="mark--total">@(((double)sumMarks / marksCounter).ToString("0.00"))</td>
+                                <td id="mark--total">@((int)Math.Round((double)sumMarks / marksCounter))</td>
                             }
                             else
                             {
-                                <td id= "mark--total">0</td>
+                                <td id="mark--total">0</td>
                             }
                         </tr>
                     }

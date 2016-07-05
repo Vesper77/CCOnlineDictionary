@@ -326,85 +326,166 @@ C:\Users\User\Documents\CCOnlineDictionary\OnlineDiary\bin\Microsoft.Owin.Securi
 C:\Users\User\Documents\CCOnlineDictionary\OnlineDiary\obj\Debug\OnlineDiary.csprojResolveAssemblyReference.cache
 C:\Users\User\Documents\CCOnlineDictionary\OnlineDiary\obj\Debug\OnlineDiary.dll
 C:\Users\User\Documents\CCOnlineDictionary\OnlineDiary\obj\Debug\OnlineDiary.pdb
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\ApplicationInsights.config
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\roslyn\csc.exe
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\roslyn\Microsoft.CodeAnalysis.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\roslyn\Microsoft.CSharp.Core.targets
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\roslyn\Microsoft.VisualBasic.Core.targets
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\roslyn\System.Collections.Immutable.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\roslyn\System.Reflection.Metadata.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\roslyn\vbc.exe
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\roslyn\VBCSCompiler.exe
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\roslyn\VBCSCompiler.exe.config
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\OnlineDiary.dll.config
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\OnlineDiary.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\OnlineDiary.pdb
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Antlr3.Runtime.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\EntityFramework.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\EntityFramework.SqlServer.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Microsoft.AI.Agent.Intercept.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Microsoft.AI.DependencyCollector.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Microsoft.AI.PerfCounterCollector.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Microsoft.AI.ServerTelemetryChannel.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Microsoft.AI.Web.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Microsoft.AI.WindowsServer.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Microsoft.ApplicationInsights.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Microsoft.AspNet.Identity.Core.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Microsoft.AspNet.Identity.EntityFramework.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Microsoft.AspNet.Identity.Owin.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Microsoft.Owin.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Microsoft.Owin.Host.SystemWeb.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Microsoft.Owin.Security.Cookies.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Microsoft.Owin.Security.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Microsoft.Owin.Security.Facebook.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Microsoft.Owin.Security.Google.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Microsoft.Owin.Security.MicrosoftAccount.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Microsoft.Owin.Security.OAuth.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Microsoft.Owin.Security.Twitter.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Microsoft.Web.Infrastructure.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Newtonsoft.Json.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Owin.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\System.Web.Helpers.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\System.Web.Mvc.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\System.Web.Optimization.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\System.Web.Razor.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\System.Web.WebPages.Deployment.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\System.Web.WebPages.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\System.Web.WebPages.Razor.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\WebGrease.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Microsoft.AI.DependencyCollector.xml
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Microsoft.AI.ServerTelemetryChannel.xml
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Microsoft.AI.Web.xml
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Microsoft.AI.WindowsServer.xml
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Microsoft.ApplicationInsights.xml
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\System.Web.Helpers.xml
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\System.Web.Mvc.xml
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\System.Web.Optimization.xml
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\System.Web.Razor.xml
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\System.Web.WebPages.xml
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\System.Web.WebPages.Deployment.xml
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\System.Web.WebPages.Razor.xml
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Antlr3.Runtime.pdb
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Newtonsoft.Json.xml
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\EntityFramework.xml
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\EntityFramework.SqlServer.xml
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Microsoft.AspNet.Identity.Core.xml
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Microsoft.AspNet.Identity.Owin.xml
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Microsoft.AspNet.Identity.EntityFramework.xml
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Microsoft.Owin.xml
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Microsoft.Owin.Host.SystemWeb.xml
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Microsoft.Owin.Security.xml
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Microsoft.Owin.Security.Facebook.xml
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Microsoft.Owin.Security.Cookies.xml
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Microsoft.Owin.Security.OAuth.xml
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Microsoft.Owin.Security.Google.xml
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Microsoft.Owin.Security.Twitter.xml
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\bin\Microsoft.Owin.Security.MicrosoftAccount.xml
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\obj\Debug\OnlineDiary.csprojResolveAssemblyReference.cache
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\obj\Debug\OnlineDiary.dll
-C:\Users\User\Desktop\master\CCOnlineDictionary-master\OnlineDiary\obj\Debug\OnlineDiary.pdb
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\ApplicationInsights.config
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\roslyn\csc.exe
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\roslyn\Microsoft.CodeAnalysis.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\roslyn\Microsoft.CSharp.Core.targets
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\roslyn\Microsoft.VisualBasic.Core.targets
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\roslyn\System.Collections.Immutable.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\roslyn\System.Reflection.Metadata.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\roslyn\vbc.exe
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\roslyn\VBCSCompiler.exe
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\roslyn\VBCSCompiler.exe.config
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\OnlineDiary.dll.config
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\OnlineDiary.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\OnlineDiary.pdb
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Antlr3.Runtime.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\EntityFramework.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\EntityFramework.SqlServer.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Microsoft.AI.Agent.Intercept.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Microsoft.AI.DependencyCollector.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Microsoft.AI.PerfCounterCollector.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Microsoft.AI.ServerTelemetryChannel.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Microsoft.AI.Web.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Microsoft.AI.WindowsServer.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Microsoft.ApplicationInsights.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Microsoft.AspNet.Identity.Core.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Microsoft.AspNet.Identity.EntityFramework.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Microsoft.AspNet.Identity.Owin.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Microsoft.Owin.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Microsoft.Owin.Host.SystemWeb.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Microsoft.Owin.Security.Cookies.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Microsoft.Owin.Security.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Microsoft.Owin.Security.Facebook.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Microsoft.Owin.Security.Google.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Microsoft.Owin.Security.MicrosoftAccount.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Microsoft.Owin.Security.OAuth.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Microsoft.Owin.Security.Twitter.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Microsoft.Web.Infrastructure.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Newtonsoft.Json.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Owin.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\System.Web.Helpers.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\System.Web.Mvc.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\System.Web.Optimization.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\System.Web.Razor.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\System.Web.WebPages.Deployment.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\System.Web.WebPages.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\System.Web.WebPages.Razor.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\WebGrease.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Microsoft.AI.DependencyCollector.xml
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Microsoft.AI.ServerTelemetryChannel.xml
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Microsoft.AI.Web.xml
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Microsoft.AI.WindowsServer.xml
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Microsoft.ApplicationInsights.xml
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\System.Web.Helpers.xml
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\System.Web.Mvc.xml
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\System.Web.Optimization.xml
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\System.Web.Razor.xml
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\System.Web.WebPages.xml
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\System.Web.WebPages.Deployment.xml
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\System.Web.WebPages.Razor.xml
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Antlr3.Runtime.pdb
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Newtonsoft.Json.xml
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\EntityFramework.xml
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\EntityFramework.SqlServer.xml
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Microsoft.AspNet.Identity.Core.xml
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Microsoft.AspNet.Identity.Owin.xml
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Microsoft.AspNet.Identity.EntityFramework.xml
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Microsoft.Owin.xml
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Microsoft.Owin.Host.SystemWeb.xml
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Microsoft.Owin.Security.xml
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Microsoft.Owin.Security.Facebook.xml
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Microsoft.Owin.Security.Cookies.xml
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Microsoft.Owin.Security.OAuth.xml
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Microsoft.Owin.Security.Google.xml
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Microsoft.Owin.Security.Twitter.xml
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Microsoft.Owin.Security.MicrosoftAccount.xml
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\obj\Debug\OnlineDiary.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\obj\Debug\OnlineDiary.pdb
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\ApplicationInsights.config
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\roslyn\csc.exe
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\roslyn\Microsoft.CodeAnalysis.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\roslyn\Microsoft.CSharp.Core.targets
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\roslyn\Microsoft.VisualBasic.Core.targets
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\roslyn\System.Collections.Immutable.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\roslyn\System.Reflection.Metadata.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\roslyn\vbc.exe
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\roslyn\VBCSCompiler.exe
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\roslyn\VBCSCompiler.exe.config
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\OnlineDiary.dll.config
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\OnlineDiary.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\OnlineDiary.pdb
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Antlr3.Runtime.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\EntityFramework.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\EntityFramework.SqlServer.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Microsoft.AI.Agent.Intercept.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Microsoft.AI.DependencyCollector.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Microsoft.AI.PerfCounterCollector.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Microsoft.AI.ServerTelemetryChannel.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Microsoft.AI.Web.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Microsoft.AI.WindowsServer.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Microsoft.ApplicationInsights.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Microsoft.AspNet.Identity.Core.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Microsoft.AspNet.Identity.EntityFramework.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Microsoft.AspNet.Identity.Owin.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Microsoft.Owin.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Microsoft.Owin.Host.SystemWeb.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Microsoft.Owin.Security.Cookies.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Microsoft.Owin.Security.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Microsoft.Owin.Security.Facebook.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Microsoft.Owin.Security.Google.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Microsoft.Owin.Security.MicrosoftAccount.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Microsoft.Owin.Security.OAuth.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Microsoft.Owin.Security.Twitter.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Microsoft.Web.Infrastructure.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Newtonsoft.Json.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Owin.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\System.Web.Helpers.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\System.Web.Mvc.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\System.Web.Optimization.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\System.Web.Razor.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\System.Web.WebPages.Deployment.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\System.Web.WebPages.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\System.Web.WebPages.Razor.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\WebGrease.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Microsoft.AI.DependencyCollector.xml
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Microsoft.AI.ServerTelemetryChannel.xml
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Microsoft.AI.Web.xml
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Microsoft.AI.WindowsServer.xml
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Microsoft.ApplicationInsights.xml
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\System.Web.Helpers.xml
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\System.Web.Mvc.xml
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\System.Web.Optimization.xml
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\System.Web.Razor.xml
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\System.Web.WebPages.xml
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\System.Web.WebPages.Deployment.xml
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\System.Web.WebPages.Razor.xml
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Antlr3.Runtime.pdb
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Newtonsoft.Json.xml
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\EntityFramework.xml
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\EntityFramework.SqlServer.xml
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Microsoft.AspNet.Identity.Core.xml
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Microsoft.AspNet.Identity.Owin.xml
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Microsoft.AspNet.Identity.EntityFramework.xml
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Microsoft.Owin.xml
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Microsoft.Owin.Host.SystemWeb.xml
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Microsoft.Owin.Security.xml
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Microsoft.Owin.Security.Facebook.xml
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Microsoft.Owin.Security.Cookies.xml
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Microsoft.Owin.Security.OAuth.xml
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Microsoft.Owin.Security.Google.xml
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Microsoft.Owin.Security.Twitter.xml
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\bin\Microsoft.Owin.Security.MicrosoftAccount.xml
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\obj\Debug\OnlineDiary.csprojResolveAssemblyReference.cache
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\obj\Debug\OnlineDiary.dll
+C:\Users\User\Desktop\master2\CCOnlineDictionary-AdminPanel\OnlineDiary\obj\Debug\OnlineDiary.pdb
