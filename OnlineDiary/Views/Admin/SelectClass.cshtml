@@ -1,0 +1,28 @@
+﻿@model OnlineDiary.Models.EditScheduleViewModel
+
+@{
+    ViewBag.Title = "Выбор класса";
+}
+<div class="panel panel-default b_preview-enter b_preview-form">
+    <div class="panel-heading b_preview-enter ">Редактирование расписания</div>
+    <div class="panel-body">
+        @using (Html.BeginForm("SelectClass", "Admin", FormMethod.Post))
+        {
+            <fieldset class="form-group">
+                <label>Выбор Класса</label>
+                @Html.DropDownList("classId", new SelectList(Model.AllClasses, "Key", "Value"), new { @class = "form-control"})
+            </fieldset>
+            <fieldset class="form-group">
+                <label>Выбор дня</label>
+                @Html.DropDownList("day", new SelectList(Model.days, "Key", "Value"), new { @class = "form-control"})
+            </fieldset>
+            <fieldset class="form-group">
+                <button type="submit" class="btn btn-primary">Редактировать расписание</button>
+            </fieldset>
+        }
+    </div>
+</div>
+
+
+
+

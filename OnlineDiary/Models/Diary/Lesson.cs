@@ -11,9 +11,9 @@ namespace OnlineDiary.Models.Diary
     {
         public int Id { get; set; }
         public string Title { get; set; }
-        [ForeignKey("Teacher")]
         public string TeacherId { get; set; }
 
         public virtual DiaryUser Teacher { get; set; }
+        //public virtual ScheduleLesson ScheduleLesson { get; set; }
     }
 }

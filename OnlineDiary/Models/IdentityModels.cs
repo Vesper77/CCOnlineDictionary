@@ -20,6 +20,7 @@ namespace OnlineDiary.Models
         }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public string ParentName { get; set; }
     }
 
     public class ApplicationDbContext : IdentityDbContext<DiaryUser>
@@ -35,6 +36,8 @@ namespace OnlineDiary.Models
         public DbSet<ChildrenData> ChildrenData { get; set; }
         public DbSet<Truancy> Truancys { get; set; }
         public DbSet<FinalMark> FinalMarks { get; set; }
+        public DbSet<Homework> HomeWorks { get; set; }
+
         public static ApplicationDbContext Create()
         {
             return new ApplicationDbContext();

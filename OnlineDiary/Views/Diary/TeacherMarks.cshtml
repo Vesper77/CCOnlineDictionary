@@ -8,7 +8,7 @@
         "третью ",
         "четвертую "
     };
-    var period = Model.GetPeriod();
+    var period = Model.GetPeriod(Model.quadmesterNumber);
     int cruancyCounter = 0;
 }
 <div>
@@ -18,25 +18,47 @@
         ClassId = Model.form.ClassId,
         quadmester = Model.quadmesterNumber == 1 ? 4 : Model.quadmesterNumber - 1,
         year = Model.quadmesterNumber == 1 ? Model.CurrentYear - 1 : Model.CurrentYear,
-    })
+    }, new { @class="btn btn-primary"})
     @Html.ActionLink("Оценки за следующий период", "TeacherMarks", new
     {
         LessonId = Model.form.LessonId,
         ClassId = Model.form.ClassId,
         quadmester = Model.quadmesterNumber == 4 ? 1 : Model.quadmesterNumber + 1,
         year = Model.quadmesterNumber == 4 ? Model.CurrentYear + 1 : Model.CurrentYear,
-    })
+    }, new { @class="btn btn-primary "})
+
     @using (Html.BeginForm("TeacherMarksPost", "Diary", FormMethod.Post, new { @class = "form-inline" }))
     {
-        <div class="form-group">
-            <label>Класс</label>
-            @Html.DropDownList("classId", new SelectList(Model.getSchoolClasses(), "Key", "Value"), new { @class = "form-control"})
-        </div>
-        <div class="form-group">
-            <label>Уроки</label>
-            @Html.DropDownList("lessonId", new SelectList(Model.getLessons(), "Key", "Value"), new { @class = "form-control"})
-        </div>
-        <button type="submit">Показать</button>
+        if (Model.form.Classes.Count > 1)
+        {
+            <div class="form-group">
+                <label>Класс</label>
+                @Html.DropDownList("classId", new SelectList(Model.form.Classes, "Key", "Value"), new { @class = "form-control" })
+            </div>
+        }
+        else
+        {
+            <div class="form-group">
+                <label>Класс: @(Model.form.Classes.First().Value)</label>
+            </div>
+        }
+        if (Model.form.Lessons.Count > 1)
+        {
+            <div class="form-group">
+                <label>Уроки</label>
+                @Html.DropDownList("lessonId", new SelectList(Model.form.Lessons, "Key", "Value"), new { @class = "form-control" })
+            </div>
+        }
+        else
+        {
+            <div class="form-group">
+                <label>Предмет: @Model.form.Lessons.First().Value</label>
+            </div>
+        }
+        if (Model.form.Classes.Count > 1 || Model.form.Lessons.Count > 1)
+        {
+            <button type="submit">Показать</button>
+        }
     }
     <h2>Оценки учеников класса @(" " + Model.getClassName(Model.form.ClassId)) </h2>
     <h3>
@@ -47,10 +69,10 @@
         @{ var days = Model.GetDays(Model.form.ClassId, Model.form.LessonId);}
         @if (Model.form != null && days.Count > 0)
         {
-            <table class="table table table-bordered">
+            <table class="table table table-bordered" style="font-size:10px;">
                 <thead>
                     <tr>
-                        <th>Ученик</th>
+                        <th class="b-mark_name">Ученик</th>
                         @for (DateTime date = period.Item1; date <= period.Item2; date = date.AddDays(1))
                         {
                             if (date.DayOfWeek != DayOfWeek.Sunday && days.Contains(date.DayOfWeek))
@@ -58,8 +80,8 @@
                                 <th>@date.ToString("dd.MM")</th>
                             }
                         }
-                        <th>Количество пропусков</th>
-                        <th>Средняя оценка по предмету</th>
+                        <th class="b-mark_name">Количество пропусков</th>
+                        <th class="b-mark_name">Средняя оценка по предмету</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -79,25 +101,34 @@
                                     int? val = Model.getMarkValue(date, Model.form.LessonId, children);
                                     if (val != null)
                                     {
-                                        <td>
-                                            <b>@val</b>
+                                        <td class="mark--set" data-mark-lesson="@Model.form.LessonId" data-mark-children="@children.Id" data-mark-date="@date.ToString()" >
+                                            @val
                                         </td>
                                         sumMarks += (int)val;
                                         marksCounter++;
                                     }
                                     else if (Model.IsTruancyed(children.Id, Model.form.LessonId, date))
                                     {
-                                        <td><b>Н</b></td>
+                                        <td class="mark--set" data-mark-lesson="@Model.form.LessonId" data-mark-children="@children.Id" data-mark-date="@date.ToString()">
+                                            Н
+                                        </td>
                                         cruancyCounter++;
                                     }
                                     else
                                     {
-                                        <td></td>
+                                        <td class="mark--set" data-mark-lesson="@Model.form.LessonId" data-mark-children="@children.Id" data-mark-date="@date.ToString()"></td>
                                     }
                                 }
                             }
-                            <td>@cruancyCounter</td>
-                            <td>@(((double)sumMarks / marksCounter).ToString("0.00"))</td>
+                            <td id="mark--cruancy">@cruancyCounter</td>
+                            @if (marksCounter > 0)
+                            {
+                                <td id="mark--total">@(((double)sumMarks / marksCounter).ToString("0.00"))</td>
+                            }
+                            else
+                            {
+                                <td id= "mark--total">0</td>
+                            }
                         </tr>
                     }
                 </tbody>
@@ -109,4 +140,12 @@
         }
     </div>
 </div>
-
+@section Scripts{
+    <script>
+        window.urls = {
+            setMark: '@Url.Action("SetMark", "Diary")',
+            setTruancy: '@Url.Action("SetTruancy", "Diary")'
+        };
+    </script>
+    @Scripts.Render("~/Scripts/marks.js");
+}

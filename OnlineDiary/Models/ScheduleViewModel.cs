@@ -5,22 +5,49 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 namespace OnlineDiary.Models
 {
     public abstract class ScheduleViewModel
     {
-        protected ApplicationDbContext context = new ApplicationDbContext();
+        /// <summary>
+        /// Day when week start
+        /// </summary>
+        public DateTime StartWeek { get; set; }
+        /// <summary>
+        /// Dat when week end
+        /// </summary>
+        public DateTime EndWeek { get; set; }
+        /// <summary>
+        /// Number of week 
+        /// </summary>
+        public int NumberWeek
+        {
+            get { return numberWeek; }
+            set
+            {
+                numberWeek = value;
+                initWeek();
+            }
+        }
         /// <summary>
         /// Дни недели
         /// </summary>
         public string[] days = { "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота" };
         /// <summary>
+        /// Дни
+        /// </summary>
+        public DateTime[] numberDays = new DateTime[6];
+
+        protected ApplicationDbContext context = new ApplicationDbContext();
+        private int numberWeek = 0;
+
+        /// <summary>
         /// Определяет имя пользователя по его Id
         /// </summary>
         /// <param name="id">Id</param>
         /// <returns>Если пользователь найден, его имя, если оно задано иначе его email, если не найден - сообщение об этом</returns>
-        public string getUserName(string id) {
+        public string getUserName(string id)
+        {
             var user = context.Users.FirstOrDefault(x => x.Id == id);
             if (user != null)
             {
@@ -79,25 +106,54 @@ namespace OnlineDiary.Models
             }
             return schedule;
         }
+        /// <summary>
+        /// Return lesosn title by id(Not use now, maybe)
+        /// </summary>
+        /// <param name="LessonId"></param>
+        /// <returns></returns>
         public string getLessonTitle(int LessonId)
         {
             var lesson = context.Lessons.FirstOrDefault(x => x.Id == LessonId);
             return lesson == null ? "Урок не найден" : lesson.Title;
         }
+
+        private void initWeek()
+        {
+            int diff = DayOfWeek.Monday - DateTime.Now.DayOfWeek - 1;
+            if (diff == 0)
+            {
+                diff = -6;
+            }
+            var currentStartWeek = DateTime.Now.AddDays(diff);
+
+            currentStartWeek = currentStartWeek.AddHours(-currentStartWeek.Hour);
+            currentStartWeek = currentStartWeek.AddMinutes(-currentStartWeek.Minute);
+            currentStartWeek = currentStartWeek.AddSeconds(-currentStartWeek.Second);
+
+            StartWeek = currentStartWeek.AddDays(numberWeek * 7);
+            EndWeek = StartWeek.AddDays(6);
+
+            for (int i = 0; i < numberDays.Length; i++)
+            {
+                numberDays[i] = StartWeek.AddDays(i);
+            }
+        }
     }
     public class UserScheduleViewModel : ScheduleViewModel
-    {        
+    {
         public DiaryUser User;
 
         public Dictionary<string, ScheduleLesson[]> getDaysWithScheduleLessons()
         {
             return getDaysWithScheduleLessons(User.Id);
         }
-        public string getChildUserName() {
+        public string getChildUserName()
+        {
             return getUserName(User);
         }
     }
-    public class ParentUserScheduleViewModel : ScheduleViewModel {
+    public class ParentUserScheduleViewModel : ScheduleViewModel
+    {
         private DiaryUser parent = null;
         public DiaryUser Parent
         {
@@ -108,13 +164,15 @@ namespace OnlineDiary.Models
                 findChildrens();
             }
         }
-        private void findChildrens() {
+        private void findChildrens()
+        {
             var childrensData = context.ChildrenData.Where(x => x.ParentId == Parent.Id).ToList();
             List<DiaryUser> childrens = new List<DiaryUser>();
             childrensData.ForEach(
                 x => {
                     var child = context.Users.FirstOrDefault(u => u.Id == x.ChildrenId);
-                    if (child != null) {
+                    if (child != null)
+                    {
                         childrens.Add(child);
                     }
                 }
@@ -129,9 +187,11 @@ namespace OnlineDiary.Models
         }
 
     }
-    public class TeacherScheduleViewModel : ScheduleViewModel {
+    public class TeacherScheduleViewModel : ScheduleViewModel
+    {
         public DiaryUser Teacher;
-        public Dictionary<string, ScheduleLesson[]> getDaysWuthScheduleLessons() {
+        public Dictionary<string, ScheduleLesson[]> getDaysWuthScheduleLessons()
+        {
             var schedule = new Dictionary<string, ScheduleLesson[]>();
             var lessons = context.Lessons.Where(l => l.TeacherId == Teacher.Id).ToList();
             var schLessons = new List<ScheduleLesson>();
@@ -140,21 +200,121 @@ namespace OnlineDiary.Models
                     schLessons.AddRange(context.ScheduleLessons.Where(x => x.LessonId == l.Id).ToArray());
                 }
             );
-            for (int i = 0; i < days.Length; i++) {
+            for (int i = 0; i < days.Length; i++)
+            {
                 var dayLessons = new ScheduleLesson[ScheduleLesson.MAX_LESSONS_PER_DAY];
-                schLessons.ForEach( 
+                schLessons.ForEach(
                     l => {
-                        if (l.DayNumber == i + 1) {
+                        if (l.DayNumber == i + 1)
+                        {
                             dayLessons[l.Order - 1] = l;
                         }
-                    }    
+                    }
                 );
                 schedule.Add(days[i], dayLessons);
             }
             return schedule;
         }
-        public string getUserName() {
+        public string getUserName()
+        {
             return getUserName(Teacher);
+        }
+    }
+    public class EditScheduleViewModel
+    {
+        private ApplicationDbContext context = new ApplicationDbContext();
+        public int Day { get; set; }
+        public int classiD { get; set; }
+        public Dictionary<int, string> days = new Dictionary<int, string>()
+        {
+            {1, "Понедельник" },
+            {2, "Вторник" },
+            {3, "Среда" },
+            {4, "Четверг" },
+            {5, "Пятница" },
+            {6, "Суббота" }
+        };
+        public Dictionary<int, string> Lessons { get; set; } = new Dictionary<int, string>();
+        /// <summary>
+        /// Возвращает все предметы
+        /// </summary>
+        /// <returns></returns>
+        public Dictionary<int, string> GetAllLessons()
+        {
+            Dictionary<int, string> lessons = new Dictionary<int, string>();
+            lessons.Add(0, "Нет урока");
+            foreach(var iter in context.Lessons.ToList())
+            {
+                lessons.Add(iter.Id, iter.Title);
+            }
+            return lessons;
+        }
+        /// <summary>
+        /// Возвращает название предмета, который стоит у определенного класса в поределенный день под определенным номером
+        /// </summary>
+        /// <param name="order"></param>
+        /// <param name="classId"></param>
+        /// <returns></returns>
+        public KeyValuePair<int, string> GetCurrentLesson(int order, int classId)
+        {
+            var schedulelesson = context.ScheduleLessons.
+                Where(x => x.DayNumber == Day && x.SchoolClassId == classId && x.Order == order).
+                FirstOrDefault();
+            if (schedulelesson == null)
+            {
+                return new KeyValuePair<int, string>(0, "Нет урока");
+            }
+            var currentlesson = context.Lessons.Where(x => x.Id == schedulelesson.LessonId).FirstOrDefault();
+            if(currentlesson == null)
+            {
+                return new KeyValuePair<int, string>(0,"Нет урока");
+            }
+            return new KeyValuePair<int, string>(currentlesson.Id, currentlesson.Title); 
+        }
+        public Dictionary<int, string> AllClasses { get; set; } = new Dictionary<int, string>();
+        public Dictionary<int, string> GetAllClasses()
+        {
+            Dictionary<int, string> allClasses = new Dictionary<int, string>();
+            foreach(var iter in context.SchoolClasses.ToList())
+            {
+                allClasses.Add(iter.Id, iter.Title);
+            }
+            return allClasses;
+        }
+        public void EditSchedule(int[] lesson)
+        {
+            for (int i = 0; i < 6; i++)
+            {
+                var removeobj = context.ScheduleLessons.SingleOrDefault(x => x.SchoolClassId == classiD &&
+                                                                        x.DayNumber == Day &&
+                                                                        x.Order == i + 1);
+                if (removeobj != null)
+                {
+                    var homework = context.HomeWorks.Where(x => x.ScheludeLessonId == removeobj.Id).ToList();
+                    if(homework != null && homework.Count > 0)
+                    {
+                        foreach(var iter in homework)
+                        {
+                            context.HomeWorks.Remove(iter);
+                            context.SaveChanges();
+                        }
+                    }
+                    context.ScheduleLessons.Remove(removeobj);
+                    context.SaveChanges();
+                }
+                if (lesson[i] != 0)
+                {
+                    var schedulelesson = new ScheduleLesson()
+                    {
+                        SchoolClassId = classiD,
+                        LessonId = lesson[i],
+                        Order = i + 1,
+                        DayNumber = Day
+                    };
+                    context.ScheduleLessons.Add(schedulelesson);
+                    context.SaveChanges();
+                }
+            }
         }
     }
 }

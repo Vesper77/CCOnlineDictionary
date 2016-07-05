@@ -1,0 +1,151 @@
+﻿@model OnlineDiary.Models.EditUserViewModel
+
+@{
+    ViewBag.Title = "Create";
+}
+<h2>Create</h2>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>DiaryUser</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.UserName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.UserName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.ParentName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ParentName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ParentName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.PhoneNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.Role, new[] {
+                new SelectListItem() {Text = "Admin", Value = "admin"},
+                new SelectListItem() {Text = "Children",Value = "children"},
+                new SelectListItem() {Text = "Parent",Value = "parent"},
+                new SelectListItem() {Text = "Teacher",Value = "teacher"}
+                }, new { htmlAttributes = new { @class = "form-control", id = "DropDownRoles" } })
+                @Html.ValidationMessageFor(model => model.Role, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-10" id="DropDownParents">
+                @Html.DropDownListFor(mo => mo.ParentId, new SelectList(Model.GetAllParent(), "Key", "Value"), "Выберите роителя")
+                @Html.ValidationMessageFor(mo => mo.ParentId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div>
+            <div class="col-md-10" id="DropDownClass">
+                @Html.DropDownListFor(model => model.ClassId, new SelectList(Model.GetAllClass(), "Key", "Value"))
+                @Html.ValidationMessageFor(model => model.ClassId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-10" id="CheckBoxLessons">
+                @foreach (var item in Model.GetAllLessons())
+                {
+                    @item.Value
+                    <input type="checkbox" name="LessonIds[]" value="@item.Key" />
+                }
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+@section Scripts{
+    <script>
+        $(function () {
+            $("#DropDownParents").hide();
+            $("#DropDownClass").hide();
+            $("#CheckBoxLessons").hide();
+            $("#SaveButton").hide();
+            $(document).ready(function () {
+                $("#Role").change(function () {
+                    if ($(this).val() == "Выберите роль") {
+                        $("#DropDownParents").hide();
+                        $("#CheckBoxLessons").hide();
+                        $("#DropDownClass").hide();
+                        $("#SaveButton").hide();
+                    }
+                    if ($(this).val() == "admin") {
+                        $("#DropDownParents").hide();
+                        $("#CheckBoxLessons").hide();
+                        $("#DropDownClass").hide();
+                        $("#SaveButton").show();
+                    }
+                    if ($(this).val() == "parent") {
+                        $("#DropDownParents").hide();
+                        $("#DropDownClass").hide();
+                        $("#CheckBoxLessons").hide();
+                        $("#SaveButton").show();
+                    }
+                    if ($(this).val() == "children") {
+                        $("#CheckBoxLessons").hide();
+                        $("#DropDownParents").show();
+                        $("#DropDownClass").show();
+                        $("#SaveButton").show();
+                    }
+                    if ($(this).val() == "teacher") {
+                        $("#DropDownParents").hide();
+                        $("#CheckBoxLessons").show();
+                        $("#DropDownClass").hide();
+                        $("#SaveButton").show();
+                    }
+                });
+            });
+        });
+</script>
+    }

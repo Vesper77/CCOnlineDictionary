@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNet.Identity.Owin;
 using OnlineDiary.Models;
+using OnlineDiary.Models.Diary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,44 +25,64 @@ namespace OnlineDiary.Controllers
             }
         }
         [Authorize]
-        public async Task<ActionResult> Schelude()
+        public async Task<ActionResult> Schedule(int numberWeek = 0)
         {
             var user = await UserManager.FindByNameAsync(User.Identity.Name);
+
             if (await UserManager.IsInRoleAsync(user.Id, "teacher"))
             {
                 var viewModel = new TeacherScheduleViewModel();
                 viewModel.Teacher = user;
+                viewModel.NumberWeek = numberWeek;
                 return View("TeacherSchedule", viewModel);
             }
             else if (await UserManager.IsInRoleAsync(user.Id, "parent"))
             {
                 var viewModel = new ParentUserScheduleViewModel();
                 viewModel.Parent = user;
+                viewModel.NumberWeek = numberWeek;
                 return View("ParentSchedule", viewModel);
             }
             else if (await UserManager.IsInRoleAsync(user.Id, "children"))
             {
                 var viewModel = new UserScheduleViewModel();
                 viewModel.User = user;
+                viewModel.NumberWeek = numberWeek;
                 return View("ChildrenSchedule", viewModel);
             }
             return RedirectToAction("Index", "Home");
         }
         [Authorize]
-        public async Task<ActionResult> Marks(int lessonId = 2)
+        public async Task<ActionResult> Marks()
         {
             var user = await UserManager.FindByNameAsync(User.Identity.Name);
             if (await UserManager.IsInRoleAsync(user.Id, "teacher"))
             {
-                return View();
+                return RedirectToAction("TeacherMarks");
             }
             else if (await UserManager.IsInRoleAsync(user.Id, "parent"))
             {
-                return View();
+                return RedirectToAction("ParentMarks");
             }
             else if (await UserManager.IsInRoleAsync(user.Id, "children"))
             {
-                return View();
+                return RedirectToAction("ChildrenMarks");
+            }
+            return RedirectToAction("Index", "Home");
+        }
+        public async Task<ActionResult> FinalMarks() {
+            var user = await UserManager.FindByNameAsync(User.Identity.Name);
+            if (await UserManager.IsInRoleAsync(user.Id, "teacher"))
+            {
+                return RedirectToAction("TeacherFinalMarks");
+            }
+            else if (await UserManager.IsInRoleAsync(user.Id, "parent"))
+            {
+                return RedirectToAction("ParentFinalMarks");
+            }
+            else if (await UserManager.IsInRoleAsync(user.Id, "children"))
+            {
+                return RedirectToAction("ChildrenFinalMarks");
             }
             return RedirectToAction("Index", "Home");
         }
@@ -81,12 +102,12 @@ namespace OnlineDiary.Controllers
             var user = await UserManager.FindByNameAsync(User.Identity.Name);
             ParentMarksViewModel model = new ParentMarksViewModel(year, quadmester);
             model.User = user;
-            var allChildrens = model.GetChildrens();
-            if (allChildrens.Count > 0)
+            model.Childrens = model.GetChildrens();
+            if (model.Childrens.Count > 0)
             {
                 if (childrenId == null)
                 {
-                    childrenId = allChildrens[0].Id;
+                    childrenId = model.Childrens[0].Id;
                 }
                 model.CurrentChildren = context.Users.Where(x => x.Id == childrenId).First();
                 ViewBag.ChildId = childrenId;
@@ -103,15 +124,7 @@ namespace OnlineDiary.Controllers
         {
             return await ParentMarks(childrenId);
         }
-        //[Authorize(Roles = "teacher")]
-        //public async Task<ActionResult> TeacherMarks(TeacherSelectMarksDataViewModel form = null)
-        //{
-        //    var user = await UserManager.FindByNameAsync(User.Identity.Name);
-        //    var viewModel = new TeacherMarksViewModel(2015, 1);
-        //    viewModel.User = user;
-        //    viewModel.form = form == null ? new TeacherSelectMarksDataViewModel() : form;
-        //    return View(viewModel);
-        //}
+
         [Authorize(Roles = "teacher")]
         [HttpGet]
         public async Task<ActionResult> TeacherMarks(int LessonId = 0, int ClassId = 0, int quadmester = 1, int year = 2015)
@@ -127,6 +140,8 @@ namespace OnlineDiary.Controllers
                 model.form.ClassId = ClassId;
             }
             model.User = user;
+            model.form.Classes = model.getSchoolClasses();
+            model.form.Lessons = model.getLessons();
             return View("TeacherMarks", model);
         }
         [Authorize(Roles = "teacher")]
@@ -151,12 +166,12 @@ namespace OnlineDiary.Controllers
             var user = await UserManager.FindByNameAsync(User.Identity.Name);
             ParentMarksViewModel model = new ParentMarksViewModel(year);
             model.User = user;
-            var allChildrens = model.GetChildrens();
-            if (allChildrens.Count > 0)
+            model.Childrens = model.GetChildrens();
+            if (model.Childrens.Count > 0)
             {
                 if (childrenId == null)
                 {
-                    childrenId = allChildrens[0].Id;
+                    childrenId = model.Childrens[0].Id;
                 }
                 model.CurrentChildren = context.Users.Where(x => x.Id == childrenId).First();
                 ViewBag.ChildId = childrenId;
@@ -188,6 +203,8 @@ namespace OnlineDiary.Controllers
                 model.form.ClassId = classId;
             }
             model.User = user;
+            model.form.Classes = model.getSchoolClasses();
+            model.form.Lessons = model.getLessons();
             return View("TeacherFinalMarks", model);
         }
         [Authorize(Roles = "teacher")]
@@ -196,19 +213,74 @@ namespace OnlineDiary.Controllers
         {
             return await TeacherFinalMarks(classId, lessonId);
         }
+        [HttpPost]
+        [Authorize(Roles ="teacher")]
+        public JsonResult SetMark(DateTime day, int markvalue, string childrenId, int lessonId)
+        {
+            if (markvalue > 5 && markvalue < 0)
+            {
+                return Json(new { result = false });
+            }
+            var mark = context.Marks.FirstOrDefault(m => m.ChildrenId == childrenId && m.LessonId == lessonId && m.Day == day);
+            if (mark == null)
+            {
+                mark = new Models.Diary.Mark();
+                mark.ChildrenId = childrenId;
+                mark.MarkValue = markvalue;
+                mark.Day = day;
+                mark.LessonId = lessonId;
+                context.Marks.Add(mark);
+            }
+            else
+            {
+                mark.MarkValue = markvalue;
+            }
+            var tryancy = context.Truancys.FirstOrDefault(t => t.ChildrenId == childrenId && t.LessonId == lessonId && t.TruancyDate == day);
+            if (tryancy != null) {
+                context.Truancys.Remove(tryancy);
+            }                
+            context.SaveChanges();
+            return Json(new { result = true, markValue = mark.MarkValue });
+        }
+        [HttpPost]
+        [Authorize(Roles = "teacher")]
+        public JsonResult SetTruancy(DateTime day, string childrenId, int lessonId)
+        {
+            if (day.Hour == 0 && day.Minute == 0 && day.Second == 0) {
+                context.Truancys.Add(new Models.Diary.Truancy() { TruancyDate = day, ChildrenId = childrenId, LessonId = lessonId });
+                var mark = context.Marks.FirstOrDefault(m => m.ChildrenId == childrenId && m.Day == day && m.LessonId == lessonId);
+                if (mark != null)
+                {
+                    context.Marks.Remove(mark);
+                }
+                context.SaveChanges();
+                return Json(new { result = true, markValue = "Н" });
+            }
+            return Json(new { result = false });
+        }
+        [HttpPost]
+        [Authorize(Roles = "teacher")]
+        public JsonResult setFinalMark(string childrenId, int lessonId, int fourth, int markvalue) {
+            if (markvalue < 1 || markvalue > 5) {
+                return Json(new { result = false});
+            }
+            FinalMark mark = context.FinalMarks.FirstOrDefault(m => m.LessonId == lessonId && m.QuadmesterNumber == fourth && m.ChildrenId == childrenId);
+            if (mark != null)
+            {
+                mark.MarkValue = markvalue;
+            }
+            else
+            {
+                mark = new FinalMark();
+                mark.ChildrenId = childrenId;
+                mark.LessonId = lessonId;
+                mark.QuadmesterNumber = fourth;
+                mark.MarkValue = markvalue;
+                mark.Year = DateTime.Now.Year - 1;
+                context.FinalMarks.Add(mark);
+            }
+            context.SaveChanges();
+            return Json(new { result = true, markValue = markvalue });
+        }
     }
 }
-/*
- * Parent 
- * Оценки для рёбёнка
- * Lessons\Days 1
- * Lessons1     3
- * --------
- * Children <-> Parent
- * --------
- * Teacher
- * Оценки за Физику для 5-Б
- * Children\Day 1
- * Петя         3
- * ------
- */

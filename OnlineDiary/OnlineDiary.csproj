@@ -25,6 +25,7 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <ApplicationInsightsResourceId>/subscriptions/50996a78-6dc4-4aec-932b-31283e8ecb5b/resourcegroups/Default-ApplicationInsights-CentralUS/providers/microsoft.insights/components/OnlineDiary</ApplicationInsightsResourceId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -200,6 +201,7 @@
     <Compile Include="Controllers\DiaryController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\WorkController.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AdminViewModel.cs" />
     <Compile Include="Models\ApplicationDBInitializer.cs" />
@@ -208,12 +210,14 @@
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Diary\FinalMark.cs" />
+    <Compile Include="Models\Diary\Homework.cs" />
     <Compile Include="Models\Diary\Mark.cs" />
     <Compile Include="Models\Diary\ScheduleLesson.cs" />
     <Compile Include="Models\Diary\SchoolClass.cs" />
     <Compile Include="Models\Diary\Truancy.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\Diary\Lesson.cs" />
+    <Compile Include="Models\LessonViewModel.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\MarksViewModel.cs" />
     <Compile Include="Models\People\ChildrenData.cs" />
@@ -236,6 +240,7 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Properties\PublishProfiles\onlinediarycc.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -244,9 +249,11 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\marks.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\Schedule.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -296,6 +303,12 @@
     <Content Include="Views\Diary\ChildrenFinalMarks.cshtml" />
     <Content Include="Views\Diary\ParentFinalMarks.cshtml" />
     <Content Include="Views\Diary\TeacherFinalMarks.cshtml" />
+    <Content Include="Views\Diary\_DayOfSchedule.cshtml" />
+    <Content Include="Views\Diary\_ModalSchedule.cshtml" />
+    <Content Include="Views\Diary\_WeekSelect.cshtml" />
+    <Content Include="Views\Admin\CreateLesson.cshtml" />
+    <Content Include="Views\Admin\SelectClass.cshtml" />
+    <Content Include="Views\Admin\EditSchedule.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

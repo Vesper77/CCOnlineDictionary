@@ -1,0 +1,70 @@
+﻿@model OnlineDiary.Models.ChildrenMarksViewModel
+@{
+    ViewBag.Title = "Итоговые Оценки";
+    string[] head = new string[]
+    {
+        "Оценка за первую четверть",
+        "Оценка за вторую четверть",
+        "Оценка за третью четверть",
+        "Оценка за четвертую четверть",
+        "Годовая оценка"
+    };
+}
+<div>
+    @Html.ActionLink("Оценки за предыдущий год", "ChildrenFinalMarks", new
+    {
+        year = Model.CurrentYear - 1
+    })
+    @Html.ActionLink("Оценки за следующий год", "ChildrenFinalMarks", new
+    {
+        year = Model.CurrentYear + 1
+    })
+</div>
+<h2>Итоговые оценки ученика класса @(" " + Model.getClassName(Model.User) ) </h2>
+<h3>
+    @(Model.User.FirstName + " за " + Model.CurrentYear + " - " + (Model.CurrentYear + 1) + " учебный год")
+</h3>
+<div class="">
+    @if (Model.User != null)
+    {
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Предмет</th>
+                    @for (int i = 0; i < 5; i++)
+                    {
+                        <th>@head[i]</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var lesson in Model.getLessons(Model.User))
+                {
+                    <tr>
+                        <td>
+                            @lesson.Title
+                        </td>
+                        @for (int i = 1; i < 6; i++)
+                        {
+                            int? val = Model.GetFinalMark(Model.User.Id, lesson.Id, i);
+                            if (val != null)
+                            {
+                                <td>
+                                    <b>@val</b>
+                                </td>
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>Ошибка</p>
+    }
+</div>

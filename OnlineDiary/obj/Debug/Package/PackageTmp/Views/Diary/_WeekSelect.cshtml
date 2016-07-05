@@ -1,0 +1,7 @@
+﻿@model OnlineDiary.Models.ScheduleViewModel
+<div class="week-select">
+    <a class="pull-left btn btn-primary" href="@Url.Action("Schedule", "Diary", new { numberWeek = Model.NumberWeek - 1 })"><span class="glyphicon glyphicon-arrow-left"></span></a>
+    <a href="@Url.Action("Schedule","Diary", new { numberWeek = Model.NumberWeek + 1  })" class="pull-right btn btn-primary"><span class="glyphicon glyphicon-arrow-right"></span></a>
+    <a href="@Url.Action("Schedule","Diary", new { numberWeek = 0  })" class="btn btn-primary">Текущия неделя</a>
+    <div class="clearfix"></div>
+</div>

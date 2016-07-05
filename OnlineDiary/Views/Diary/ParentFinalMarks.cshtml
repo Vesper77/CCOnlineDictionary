@@ -25,11 +25,18 @@
     <br />
     @using (Html.BeginForm("ParentFinalMarksPost", "Diary", FormMethod.Post, new { @class = "form-inline" }))
     {
-        <div class="form-group">
-            <label>Выберите ребенка</label>
-            @Html.DropDownList("ChildrenId", new SelectList(Model.GetChildrens(), "Id", "FirstName"), new { @class = "form-control" });
-        </div>
-        <button type="submit">Показать</button>
+        if (Model.Childrens.Count > 1)
+        {
+            <div class="form-group">
+                <label>Выберите ребенка</label>
+                @Html.DropDownList("ChildrenId", new SelectList(Model.Childrens, "Id", "FirstName"), new { @class = "form-control" });
+            </div>
+            <button type="submit">Показать</button>
+        }
+        else
+        {
+            <label>Ребёнок: @Model.CurrentChildren.FirstName</label>
+        }
     }
     <h2> Итоговые оценки ученика класса @(" " + Model.getClassName(Model.CurrentChildren) ) </h2>
     <h3>
@@ -51,24 +58,21 @@
                 <tbody>
                     @foreach (var lesson in Model.getLessons(Model.CurrentChildren))
                     {
+                        int[] marks = new int[4];
                         <tr>
                             <td>
                                 @lesson.Title
                             </td>
-                           @for (int i = 1; i < 6; i++)
-                           {
-                               int? val = Model.GetFinalMark(Model.CurrentChildren.Id, lesson.Id, i);
-                               if (val != null)
-                               {
+                            @for (int i = 1; i < 5; i++)
+                            {
+                                int val = Model.GetFinalMark(Model.CurrentChildren.Id, lesson.Id, i);
                                 <td>
-                                    <b>@val</b>
+                                    <b>val</b>
                                 </td>
-                               }
-                               else
-                               {
-                                <td></td>
-                               }
-                           }
+                                marks[i - 1] = val;
+                            }
+                            @{int finalMark = (int)Math.Round((double)(marks[0] + marks[1] + marks[2] + marks[3]) / 4);}
+                            <td><b>@finalMark</b></td>
                         </tr>
                     }
                 </tbody>

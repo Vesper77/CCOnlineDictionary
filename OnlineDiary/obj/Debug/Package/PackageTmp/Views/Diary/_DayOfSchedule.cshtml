@@ -1,0 +1,19 @@
+﻿@model KeyValuePair<string, OnlineDiary.Models.Diary.ScheduleLesson[]>
+<div class="b-preview-form col-md-4 col-sm-4 col-xs-12">
+    <div class="panel panel-default">
+        <div class="panel-heading">@Model.Key (@ViewData["day"]) </div>
+        <ul class="list-group">
+            @for (int i = 0; i < OnlineDiary.Models.Diary.ScheduleLesson.MAX_LESSONS_PER_DAY; i++)
+            {
+                if (Model.Value.Length > i && Model.Value[i] != null)
+                {
+                    <li class="list-group-item lesson-title" data-lesson-id="@Model.Value[i].Id.ToString()" >@Model.Value[i].Lesson.Title</li>
+                }
+                else
+                {
+                    <li class="list-group-item lesson-title">Нет урока</li>
+                }
+            }
+        </ul>
+    </div>
+</div>
