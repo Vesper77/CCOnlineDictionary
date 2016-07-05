@@ -120,7 +120,7 @@ namespace OnlineDiary.Models.CRUDViewModels
         /// Возвращает список всех пользователей из таблицы User с ролью Parent
         /// </summary>
         /// <returns></returns>
-        public Dictionary<string, string> GetAllParent()
+        public Dictionary<string, string> GetAllParents()
         {
             var parentRoleName = "parent";
             var parentRole = context.Roles.SingleOrDefault(r => r.Name == parentRoleName);
@@ -175,7 +175,7 @@ namespace OnlineDiary.Models.CRUDViewModels
         /// Создает новый школьный класс
         /// </summary>
         /// <param name="className">название школьного класса</param>
-        public void CreateClas(string className)
+        public void CreateClass(string className)
         {
             SchoolClass schClass = new SchoolClass();
             schClass.Title = className;

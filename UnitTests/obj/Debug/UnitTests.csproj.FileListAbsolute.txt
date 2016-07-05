@@ -32,7 +32,6 @@ D:\Program Files\Репозитории\CCOnlineDictionary\UnitTests\bin\Debug\M
 D:\Program Files\Репозитории\CCOnlineDictionary\UnitTests\bin\Debug\Microsoft.Owin.Security.dll
 D:\Program Files\Репозитории\CCOnlineDictionary\UnitTests\bin\Debug\Owin.dll
 D:\Program Files\Репозитории\CCOnlineDictionary\UnitTests\bin\Debug\Microsoft.Owin.Security.Cookies.dll
-D:\Program Files\Репозитории\CCOnlineDictionary\UnitTests\bin\Debug\Microsoft.AspNet.Identity.EntityFramework.dll
 D:\Program Files\Репозитории\CCOnlineDictionary\UnitTests\bin\Debug\Microsoft.Owin.Host.SystemWeb.dll
 D:\Program Files\Репозитории\CCOnlineDictionary\UnitTests\bin\Debug\OnlineDiary.pdb
 D:\Program Files\Репозитории\CCOnlineDictionary\UnitTests\bin\Debug\EntityFramework.xml
