@@ -47,21 +47,21 @@ namespace OnlineDiary.Models.CRUDViewModels
         [Required(ErrorMessage = "Введите логин")]
         public string UserName { get; set; }
         [Required(ErrorMessage = "Введите email")]
+        [EmailAddress(ErrorMessage ="Ввдеите нормальный емейл")]
         public string Email { get; set; }
-        [Required(ErrorMessage = "Введите пароль")]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
-        [DataType(DataType.Password)]
-        public string Password { get; set; }
         [Required(ErrorMessage = "Введите имя")]
+        [RegularExpression(@"^[а-яА-Я]+$", ErrorMessage = "Используйте буквы")]
         public string FirstName { get; set; }
         [Required(ErrorMessage = "Введите фамилию")]
+        [RegularExpression(@"^[а-яФ-Я]+$", ErrorMessage = "Используйте буквы")]
         public string LastName { get; set; }
         [Required(ErrorMessage = "Введите отчество")]
+        [RegularExpression(@"^[а-яА-Я]+$", ErrorMessage = "Используйте буквы")]
         public string ParentName { get; set; }
-       // public string PhoneNumber { get; set; }
+        // public string PhoneNumber { get; set; }
         [Required]
         [Display(Name = "Role")]
-        public string Role { get; set; }
+        public string Role { get; set; } = "all";
        
         public string ParentId { get; set; }
         public int ClassId { get; set; }
@@ -101,19 +101,9 @@ namespace OnlineDiary.Models.CRUDViewModels
         /// Возвращает список всех элементов из таблицы Lesson
         /// </summary>
         /// <returns></returns>
-        public Dictionary<int, string> GetAllLessons()
+        public Lesson[] GetAllLessons()
         {
-            var allLesson = context.Lessons.Where(l => l.TeacherId == null).ToArray();
-            if (allLesson != null)
-            {
-                var lessons = new Dictionary<int, string>();
-                foreach (var l in allLesson)
-                {
-                    lessons.Add(l.Id, l.Title);
-                }
-                return lessons;
-            }
-            return new Dictionary<int, string>();
+            return context.Lessons.Where(l => l.TeacherId == null || l.TeacherId == Id).ToArray();
         }
 
         /// <summary>
@@ -164,13 +154,16 @@ namespace OnlineDiary.Models.CRUDViewModels
         /// </summary>
         /// <param name="userId">Id пользователя</param>
         /// <returns></returns>
-        public string GetRoleNameById(string userId)
+        public string GetRoleNameById(string userId, bool isLocalization = false)
         {
             var userRoleId = context.Users.Where(i => i.Id == userId).ToArray()[0].Roles.ToArray()[0].RoleId;
-            var name = context.Roles.Where(i => i.Id == userRoleId).ToArray()[0].Name;
+            var name = context.Roles.First(i => i.Id == userRoleId).Name;
+            if (isLocalization) {
+                return GetRoleTitle(name);
+            }
             return name;
         }
-        
+
         /// <summary>
         /// Создает новый школьный класс
         /// </summary>
@@ -181,6 +174,16 @@ namespace OnlineDiary.Models.CRUDViewModels
             schClass.Title = className;
             context.SchoolClasses.Add(schClass);
             context.SaveChanges();
+        }
+        private string GetRoleTitle(string role) {
+            switch (role) {
+                case "all": return "Все";
+                case "children": return "Ученик";
+                case "parent": return "Родитель";
+                case "teacher": return "Учитель";
+                case "admin": return "Админ";
+                default: return "Человек";
+            }
         }
 
     }

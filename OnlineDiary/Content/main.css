@@ -49,7 +49,7 @@ font-weight:bold;
 .b-preview-day {
     font-size: 12px;
     color: white;
-    margin-bottom: 0px;
+        margin-bottom: 28px;
 }
 .b-preview-about {
     margin-bottom: 100px;
@@ -88,6 +88,8 @@ font-weight:bold;
 .b-admin-table {
     margin-bottom: 100px;
 }
+
+
 table {
     table-layout: fixed;
     width: 100%;
@@ -103,6 +105,23 @@ th {
 .b-main_footer {
     margin-top: 24px;
 }
+.b-preview_week {
+    width: 
+}
+.b-schedule__week {
+    margin-bottom: 22px;
+}
+.b-shredule_log {
+    color: #FFFFFF;
+}
+.b-shredule_log:hover {
+color: #FFFFFF;
+text-decoration: none;
+}
+.b_shredule_week {
+    margin-bottom:23px;
+}
+
 @media screen and (max-width: 1280px) {
     .table>caption+thead>tr:first-child>td,
     .table>caption+thead>tr:first-child>th,
@@ -123,6 +142,16 @@ th {
         width: 200px;
         height: 20px;
     }
+        .b-preview_table {
+    padding: 0;
+    font-size: 10px;
+
+
+    }
+    .b-main_footer {
+
+        display: none;
+}
 }
 @media screen and (max-width: 450px) {
     .b-preview-about {
@@ -149,6 +178,15 @@ th {
     width: 335px;
     margin-bottom: 100px;
     }
+    .b-preview_table {
+    padding: 0;
+    font-size: 10px;
+
+}
+.b-preview_subject {
+    width: 30   0px;
+    height: 50px;
+}
 }
 @media screen and (max-width: 480px) {
     .b-preview-about {
@@ -170,6 +208,25 @@ th {
 
 .container.b-preview-form {
     width: 335px;
+}
+.b_mark_mouth {
+    width: 645px;
+    display: inline-block;
+    margin-left: 45px;
+}
+
+.button_log:hover {
+text-decoration: none;
+}
+
+
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 60px;
+    background-color: #f5f5f5;
 }
 
 .tdIndex

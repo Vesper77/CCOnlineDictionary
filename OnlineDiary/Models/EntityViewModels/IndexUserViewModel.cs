@@ -58,7 +58,10 @@ namespace OnlineDiary.Models.CRUDViewModels
                     }
                 }
             }
-            list.Sort((x, y) => x.FirstName.CompareTo(y.FirstName));
+            if (list.Count > 0 && list != null) {
+                list.Sort((x, y) => x.FirstName.CompareTo(y.FirstName));
+            }
+            
             return list;
         }
 

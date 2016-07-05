@@ -11,17 +11,17 @@
 </head>
 <body>
     <header>
-        <nav class="b-preview-day navbar navbar-default navbar-static-top navbar-inverse ">
-            <div class="container ">
-                <a href="#" class="navbar-link"><img class="navbar-text navbar-left b-preview-logo " src="/Content/Images/logo.jpg" alt="Логотип"></img></a>             
+        <nav class=" b-preview-day navbar navbar-default navbar-static-top navbar-inverse ">
+            <div class="container">
+                <a href="#" class="navbar-link"><img class="navbar-text navbar-left b-preview-logo " src="Cotnent/Images/logo.jpg" alt="Логотип"></img></a>
+                <p class="navbar-text navbar-left ">
+                <ul class="nav navbar-nav navbar-left">
+                    <li>@Html.ActionLink("Расписание", "Schedule", "Diary", new { }, new { @class = "navbar-link" })</li>
+                    <li>@Html.ActionLink("Итоговые оценки", "FinalMarks", "Diary", new { }, new { @class = "navbar-link" })</li>
+                    <li>@Html.ActionLink("Оценки", "Marks", "Diary", new { }, new { @class = "navbar-link" })</li>
+                    <li class="dropdown">
+                </ul>
                 @Html.Partial("_LoginPartial")
-            </div>
-        </nav>
-        <nav class="navbar navbar-default navbar-static-top b-preview-diary ">
-            <div class="container ">
-                <p class="navbar-text navbar-right ">@Html.ActionLink("Расписание" , "Schedule", "Diary", new { }, new { @class= "navbar-link" })</p>
-                <p class="navbar-text navbar-right ">@Html.ActionLink("Оценки", "Marks", "Diary", new { }, new { @class = "navbar-link" })</p>
-                <p class="navbar-text navbar-right ">@Html.ActionLink("Итоговые оценки", "FinalMarks", "Diary", new { }, new { @class = "navbar-link" })</p>
             </div>
         </nav>
     </header>
@@ -40,10 +40,10 @@
         @Scripts.Render("~/bundles/bootstrap")
         @RenderSection("scripts", required: false)
     </content>
-    <nav class="b-main_footer navbar navbar-default navbar-fixed-bottom">
+    @*<nav class="b-main_footer navbar navbar-default navbar-fixed-bottom">
         <div>
             <p class="navbar-text navbar-left"><a href="#" class="b-company_name navbar-link ">© 2009–2016 ООО «Электронный дневник»</a></p>
         </div>
-    </nav>
+    </nav>*@
 </body>
 </html>

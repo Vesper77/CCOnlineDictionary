@@ -101,33 +101,27 @@ namespace OnlineDiary.Controllers
             {
                 var result = await UserManager.CreateAsync(dUser.GetUser(), dUser.Password);
 
-                if (result.Succeeded)
-                {
+                if (result.Succeeded) {
                     var user = dUser.GetUser();
-                    if (dUser.Role == "admin")
-                    {
+                    if (dUser.Role == "admin") {
                         var roles = UserManager.GetRoles(user.Id);
                         foreach (var r in roles) {
-                            UserManager.RemoveFromRole(user.Id,  r);
-                        }
-                        UserManager.AddToRole(user.Id, dUser.Role);
-                    }
-
-                    if (dUser.Role == "parent")
-                    {
-                        var roles = UserManager.GetRoles(user.Id);
-                        foreach (var r in roles)
-                        {
                             UserManager.RemoveFromRole(user.Id, r);
                         }
                         UserManager.AddToRole(user.Id, dUser.Role);
                     }
 
-                    if (dUser.Role == "children")
-                    {
+                    if (dUser.Role == "parent") {
                         var roles = UserManager.GetRoles(user.Id);
-                        foreach (var r in roles)
-                        {
+                        foreach (var r in roles) {
+                            UserManager.RemoveFromRole(user.Id, r);
+                        }
+                        UserManager.AddToRole(user.Id, dUser.Role);
+                    }
+
+                    if (dUser.Role == "children") {
+                        var roles = UserManager.GetRoles(user.Id);
+                        foreach (var r in roles) {
                             UserManager.RemoveFromRole(user.Id, r);
                         }
                         UserManager.AddToRole(user.Id, dUser.Role);
@@ -136,14 +130,12 @@ namespace OnlineDiary.Controllers
                         data.ParentId = dUser.ParentId;
                         data.SchoolClassId = dUser.ClassId;
                         context.ChildrenData.Add(data);
-                        
+
                     }
 
-                    if (dUser.Role == "teacher")
-                    {
+                    if (dUser.Role == "teacher") {
                         var roles = UserManager.GetRoles(user.Id);
-                        foreach (var r in roles)
-                        {
+                        foreach (var r in roles) {
                             UserManager.RemoveFromRole(user.Id, r);
                         }
                         UserManager.AddToRole(user.Id, dUser.Role);
@@ -151,6 +143,11 @@ namespace OnlineDiary.Controllers
 
                     context.SaveChanges();
                     return RedirectToAction("Details", new { id = dUser.GetUser().Id });
+                } else {
+                    foreach (var er in result.Errors) {
+                        ModelState.AddModelError("",er);
+                    }
+                    return View(dUser);
                 }
             }
             return View(dUser);
@@ -160,6 +157,7 @@ namespace OnlineDiary.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(EditUserViewModel dUser)
         {
+
             if (ModelState.IsValid)
             {
                 var user = await UserManager.FindByIdAsync(dUser.Id);
@@ -169,7 +167,6 @@ namespace OnlineDiary.Controllers
                     user.LastName = dUser.LastName;
                     user.ParentName = dUser.ParentName;
                     user.Email = dUser.Email;
-                    //user.PhoneNumber = dUser.PhoneNumber;
 
                     if (dUser.Role == "admin")
                     {
@@ -207,13 +204,14 @@ namespace OnlineDiary.Controllers
                             UserManager.RemoveFromRole(user.Id, r);
                         }
                         UserManager.AddToRole(user.Id, dUser.Role);
-                        for (int i = 0; i < context.Lessons.ToArray().Count(); i++)
-                        {
-                            if (context.Lessons.ToArray()[i].TeacherId == dUser.Id)
-                            {
-                                context.Lessons.ToArray()[i].TeacherId = null;
-                            }
-                        }
+                        context.Lessons.Where(l => l.TeacherId == dUser.Id).ToList().ForEach(l => l.TeacherId = null);
+                        //for (int i = 0; i < context.Lessons.ToArray().Count(); i++)
+                        //{
+                        //    if (context.Lessons.ToArray()[i].TeacherId == dUser.Id)
+                        //    {
+                        //        context.Lessons.ToArray()[i].TeacherId = null;
+                        //    }
+                        //}
 
                         for (int i = 0; i < dUser.LessonIds.Count(); i++)
                         {
@@ -224,17 +222,19 @@ namespace OnlineDiary.Controllers
                     }
                     await UserManager.UpdateAsync(user);
 
-                    if (dUser.Password != null && dUser.Password.Length > 0)
+                    if (!string.IsNullOrWhiteSpace(dUser.newPassword))
                     {
-                        var result = await UserManager.AddPasswordAsync(dUser.Id, dUser.Password);
-                        if (!result.Succeeded)
-                        {
-                            //TODO : Add notif error
-                        }
+                        UserStore<DiaryUser> store = new UserStore<DiaryUser>();
+                        PasswordHasher hasher = new PasswordHasher();                        
+                        await store.SetPasswordHashAsync(user, hasher.HashPassword(dUser.newPassword));
+                        //var result = await UserManager.se(dUser.Id, dUser.newPassword);
+                        //if (!result.Succeeded)
+
+                            //ModelState.AddModelError("","Неверный пароль");
+                        //}
                     }
 
                     context.SaveChanges();
-                    return RedirectToAction("Index");
                 }
             }
             return View(dUser);
@@ -299,16 +299,16 @@ namespace OnlineDiary.Controllers
         [HttpPost]
         public async Task<ActionResult> CreateLesson(string teacherId, string name)
         {
-            if (!String.IsNullOrWhiteSpace(name))
-            {
+            if (!String.IsNullOrWhiteSpace(name)) {
                 var lesson = new Lesson() { TeacherId = teacherId, Title = name };
                 var identLesson = context.Lessons.Where(x => x.TeacherId == teacherId && x.Title.
                                                        ToLower() == name.ToLower()).FirstOrDefault();
-                if (identLesson == null)
-                {
+                if (identLesson == null) {
                     context.Lessons.Add(lesson);
                     context.SaveChanges();
                 }
+            } else {
+                ModelState.AddModelError("name", "Пустое имя");
             }
             return await CreateLesson();
         }
@@ -342,7 +342,7 @@ namespace OnlineDiary.Controllers
             model.classiD = classId;
             model.Day = day;
             model.EditSchedule(lesson);
-            return RedirectToAction("SelectClass", "Admin");
+            return await EditSchedule(classId, day);
         }
         protected override void Dispose(bool disposing)
         {
