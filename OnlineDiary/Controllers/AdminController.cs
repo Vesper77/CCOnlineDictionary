@@ -158,49 +158,40 @@ namespace OnlineDiary.Controllers
         public async Task<ActionResult> Edit(EditUserViewModel dUser)
         {
 
-            if (ModelState.IsValid)
-            {
+            if (ModelState.IsValid) {
                 var user = await UserManager.FindByIdAsync(dUser.Id);
-                if (user != null)
-                {
+                if (user != null) {
                     user.FirstName = dUser.FirstName;
                     user.LastName = dUser.LastName;
                     user.ParentName = dUser.ParentName;
                     user.Email = dUser.Email;
 
-                    if (dUser.Role == "admin")
-                    {
+                    if (dUser.Role == "admin") {
                         var roles = UserManager.GetRoles(user.Id);
-                        foreach (var r in roles)
-                        {
+                        foreach (var r in roles) {
                             UserManager.RemoveFromRole(user.Id, r);
                         }
                         UserManager.AddToRole(user.Id, dUser.Role);
                     }
 
-                    if (dUser.Role == "parent")
-                    {
+                    if (dUser.Role == "parent") {
                         var roles = UserManager.GetRoles(user.Id);
-                        foreach (var r in roles)
-                        {
+                        foreach (var r in roles) {
                             UserManager.RemoveFromRole(user.Id, r);
                         }
                         UserManager.AddToRole(user.Id, dUser.Role);
                     }
 
-                    if (dUser.Role == "children")
-                    {
+                    if (dUser.Role == "children") {
                         context.ChildrenData.Where(c => c.ChildrenId == dUser.Id).ToArray()[0].ParentId = dUser.ParentId;
                         context.ChildrenData.Where(c => c.ChildrenId == dUser.Id).ToArray()[0].SchoolClassId = dUser.ClassId;
                         UserManager.AddToRole(user.Id, dUser.Role);
                         context.SaveChanges();
                     }
 
-                    if (dUser.Role == "teacher")
-                    {
+                    if (dUser.Role == "teacher") {
                         var roles = UserManager.GetRoles(user.Id);
-                        foreach (var r in roles)
-                        {
+                        foreach (var r in roles) {
                             UserManager.RemoveFromRole(user.Id, r);
                         }
                         UserManager.AddToRole(user.Id, dUser.Role);
@@ -213,30 +204,28 @@ namespace OnlineDiary.Controllers
                         //    }
                         //}
 
-                        for (int i = 0; i < dUser.LessonIds.Count(); i++)
-                        {
+                        for (int i = 0; i < dUser.LessonIds.Count(); i++) {
                             var lessonId = dUser.LessonIds.ToArray()[i];
                             context.Lessons.Where(model => model.Id == lessonId).ToArray()[0].TeacherId = dUser.Id;
-                        }                        
+                        }
 
                     }
                     await UserManager.UpdateAsync(user);
 
-                    if (!string.IsNullOrWhiteSpace(dUser.newPassword))
-                    {
+                    if (!string.IsNullOrWhiteSpace(dUser.newPassword)) {
                         UserStore<DiaryUser> store = new UserStore<DiaryUser>();
-                        PasswordHasher hasher = new PasswordHasher();                        
+                        PasswordHasher hasher = new PasswordHasher();
                         await store.SetPasswordHashAsync(user, hasher.HashPassword(dUser.newPassword));
                         //var result = await UserManager.se(dUser.Id, dUser.newPassword);
                         //if (!result.Succeeded)
 
-                            //ModelState.AddModelError("","Неверный пароль");
+                        //ModelState.AddModelError("","Неверный пароль");
                         //}
                     }
 
                     context.SaveChanges();
                 }
-            }
+            } 
             return View(dUser);
         }
         [HttpPost, ActionName("Delete")]
@@ -257,23 +246,22 @@ namespace OnlineDiary.Controllers
             }
             if (roleName == "children")
             {
-                var children = context.ChildrenData.Where(i => i.ChildrenId == id).ToArray()[0];
-                context.ChildrenData.Remove(children);
-                var childrenTruancys = context.Truancys.Where(i => i.ChildrenId == id).ToArray();
-                foreach (var t in childrenTruancys)
-                {
-                    context.Truancys.Remove(t);
-                }
-                var childrenMarks = context.Marks.Where(i => i.ChildrenId == id).ToArray();
-                foreach (var m in childrenMarks)
-                {
-                    context.Marks.Remove(m);
-                }
-                var childrenFinalMarks = context.FinalMarks.Where(i => i.ChildrenId == id).ToArray();
-                foreach (var fm in childrenFinalMarks)
-                {
-                    context.FinalMarks.Remove(fm);
-                }
+                var children = context.ChildrenData.Where(i => i.ChildrenId == id).FirstOrDefault();
+                if (children != null) {
+                    context.ChildrenData.Remove(children);
+                    var childrenTruancys = context.Truancys.Where(i => i.ChildrenId == id).ToArray();
+                    foreach (var t in childrenTruancys) {
+                        context.Truancys.Remove(t);
+                    }
+                    var childrenMarks = context.Marks.Where(i => i.ChildrenId == id).ToArray();
+                    foreach (var m in childrenMarks) {
+                        context.Marks.Remove(m);
+                    }
+                    var childrenFinalMarks = context.FinalMarks.Where(i => i.ChildrenId == id).ToArray();
+                    foreach (var fm in childrenFinalMarks) {
+                        context.FinalMarks.Remove(fm);
+                    }
+                }   
             }
             if (roleName == "teacher")
             {
