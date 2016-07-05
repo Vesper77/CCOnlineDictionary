@@ -52,6 +52,15 @@
             }
             @Html.DisplayFor(model => nameRole)
         </dd>
+        <dt>
+            @Html.DisplayNameFor(model => Model.Role)
+        </dt>
+        <dd>
+            @{
+                var nameRole = Model.GetRoleNameById(Model.Id);
+            }
+            @Html.DisplayFor(model => nameRole)
+        </dd>
     </dl>
     @using (Html.BeginForm())
     {

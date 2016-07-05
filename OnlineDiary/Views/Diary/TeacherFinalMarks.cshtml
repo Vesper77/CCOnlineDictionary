@@ -12,27 +12,27 @@
 }
 <div>
     @Html.ActionLink("Оценки за предыдущий год", "TeacherFinalMarks", new
-    {
-        LessonId = Model.form.LessonId,
-        ClassId = Model.form.ClassId,
-        year = Model.CurrentYear - 1
-    })
+{
+    LessonId = Model.form.LessonId,
+    ClassId = Model.form.ClassId,
+    year = Model.CurrentYear - 1
+})
     @Html.ActionLink("Оценки за следующий год", "TeacherFinalMarks", new
-    {
-        LessonId = Model.form.LessonId,
-        ClassId = Model.form.ClassId,
-        year = Model.CurrentYear + 1
-    })
+{
+    LessonId = Model.form.LessonId,
+    ClassId = Model.form.ClassId,
+    year = Model.CurrentYear + 1
+})
     @using (Html.BeginForm("TeacherFinalMarksPost", "Diary", FormMethod.Post, new { @class = "form-inline" }))
     {
         if (Model.form.Classes.Count > 1)
         {
             <div class="form-group">
-            <label>Класс</label>
-            @Html.DropDownList("classId", new SelectList(Model.form.Classes, "Key", "Value"), new { @class = "form-control" })
+                <label>Класс</label>
+                @Html.DropDownList("classId", new SelectList(Model.form.Classes, "Key", "Value"), new { @class = "form-control" })
             </div>
         }
-        else
+        else if (Model.form.Lessons.Count > 0)
         {
             <div class="form-group">
                 <label>Класс: @(Model.form.Classes.First().Value)</label>
@@ -45,12 +45,12 @@
                 @Html.DropDownList("lessonId", new SelectList(Model.form.Lessons, "Key", "Value"), new { @class = "form-control" })
             </div>
         }
-        else
+        else if (Model.form.Lessons.Count > 0)
         {
-             <div class="form-group">
+            <div class="form-group">
                 <label>"Предмет: @Model.form.Lessons.First().Value"</label>
-             </div>
-        } 
+            </div>
+        }
         if (Model.form.Classes.Count > 1 || Model.form.Lessons.Count > 1)
         {
             <button type="submit">Показать</button>
@@ -63,7 +63,7 @@
     </h3>
     <div class="">
         @{ var days = Model.GetDays(Model.form.ClassId, Model.form.LessonId);}
-        @if (Model.form != null && days.Count > 0)
+        @if (Model.form != null && days.Count > 0 && Model.form.Classes.Count > 0 && Model.form.Lessons.Count > 0)
         {
             <table class="table table table-bordered">
                 <thead>
@@ -87,25 +87,25 @@
                             {
                                 int val = Model.GetFinalMark(children.Id, Model.form.LessonId, i);
                                 marks[i - 1] = val;
-                                <td class="set--mark-final" data-mark-lesson="@Model.form.LessonId" data-mark-children="@children.Id" data-mark-fourth="@(i)" >
-                                        @val
-                                    </td>
-                                @*else
-                                {
-                                    <td class="set--mark-final" data-mark-lesson="@Model.form.LessonId" data-mark-children="@children.Id" data-mark-fourth="@(i)" ></td>
-                                }*@
+                                <td class="set--mark-final" data-mark-lesson="@Model.form.LessonId" data-mark-children="@children.Id" data-mark-fourth="@(i)">
+                                    @val
+                                </td>
+                                    @*else
+                                        {
+                                            <td class="set--mark-final" data-mark-lesson="@Model.form.LessonId" data-mark-children="@children.Id" data-mark-fourth="@(i)" ></td>
+                                        }*@
                             }
                             @{int finalMark = (int)Math.Round((double)(marks[0] + marks[1] + marks[2] + marks[3]) / 4);}
                             <td><b>@finalMark</b></td>
                         </tr>
-                    }
+                                }
                 </tbody>
             </table>
-        }
-        else
-        {
-            <p>Нет данных</p>
-        }
+                                }
+                                else
+                                {
+                                    <p>Нет данных</p>
+                                }
     </div>
 </div>
 @section Scripts{
@@ -116,4 +116,3 @@
         }
     </script>
 }
-

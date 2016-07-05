@@ -76,7 +76,7 @@
                 @if (endTable)
                 {
                     <th class="b-mark_name">Кол-во Н</th>
-                    <th class="b-mark_name">Средняя оценка+
+                    <th class="b-mark_name">Оценка за четверть+
                 </th>
                 }
             </tr>
@@ -118,7 +118,7 @@
                         <td>@cryancys[i]</td>
                         if (countmarks[i] != 0)
                         {
-                            <td>@(((double)summarks[i] / countmarks[i]).ToString("0.00"))</td>
+                            <td>@((int)Math.Round(((double)summarks[i] / countmarks[i])))</td>
                         }
                         else
                         {
