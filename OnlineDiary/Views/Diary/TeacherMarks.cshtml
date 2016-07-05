@@ -8,24 +8,29 @@
         "третью ",
         "четвертую "
     };
-    var period = Model.GetPeriod(Model.quadmesterNumber);
+    var period = Model.Periods[Model.quadmesterNumber - 1];
+    int countdays = 25;
     int cruancyCounter = 0;
 }
 <div>
-    @Html.ActionLink("Оценки за предыдущий период", "TeacherMarks", new
-{
-    LessonId = Model.form.LessonId,
-    ClassId = Model.form.ClassId,
-    quadmester = Model.quadmesterNumber == 1 ? 4 : Model.quadmesterNumber - 1,
-    year = Model.quadmesterNumber == 1 ? Model.CurrentYear - 1 : Model.CurrentYear,
-}, new { @class = "btn btn-primary" })
-    @Html.ActionLink("Оценки за следующий период", "TeacherMarks", new
-{
-    LessonId = Model.form.LessonId,
-    ClassId = Model.form.ClassId,
-    quadmester = Model.quadmesterNumber == 4 ? 1 : Model.quadmesterNumber + 1,
-    year = Model.quadmesterNumber == 4 ? Model.CurrentYear + 1 : Model.CurrentYear,
-}, new { @class = "btn btn-primary " })
+    @if (Model.quadmesterNumber > 1)
+    {
+        @Html.ActionLink("Оценки за предыдущий период", "TeacherMarks", new
+        {
+            LessonId = Model.form.LessonId,
+            ClassId = Model.form.ClassId,
+            quadmester = Model.quadmesterNumber - 1,
+         }, new { @class = "btn btn-primary" })
+    }
+    @if (Model.quadmesterNumber < 4)
+    {
+        @Html.ActionLink("Оценки за следующий период", "TeacherMarks", new
+        {
+            LessonId = Model.form.LessonId,
+            ClassId = Model.form.ClassId,
+            quadmester = Model.quadmesterNumber + 1,
+        }, new { @class = "btn btn-primary " })
+    }
     @using (Html.BeginForm("TeacherMarksPost", "Diary", FormMethod.Post, new { @class = "form-inline" }))
     {
         if (Model.form.Classes.Count > 1)

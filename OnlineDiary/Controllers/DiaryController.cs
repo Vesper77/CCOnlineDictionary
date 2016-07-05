@@ -88,21 +88,25 @@ namespace OnlineDiary.Controllers
         }
         [Authorize(Roles = "children")]
         [HttpGet]
-        public async Task<ActionResult> ChildrenMarks(int quadmester = 1, int year = 2015)
+        public async Task<ActionResult> ChildrenMarks(int quadmester = 1)
         {
             var user = await UserManager.FindByNameAsync(User.Identity.Name);
-            ChildrenMarksViewModel model = new ChildrenMarksViewModel(year, quadmester);
+            ChildrenMarksViewModel model = new ChildrenMarksViewModel();
+            model.quadmesterNumber = quadmester;
+            model.Periods = model.GetPeriods();
             model.User = user;
             return View("ChildrenMarks", model);
         }
         [Authorize(Roles = "parent")]
         [HttpGet]
-        public async Task<ActionResult> ParentMarks(string childrenId, int quadmester = 1, int year = 2015)
+        public async Task<ActionResult> ParentMarks(string childrenId, int quadmester = 1)
         {
             var user = await UserManager.FindByNameAsync(User.Identity.Name);
-            ParentMarksViewModel model = new ParentMarksViewModel(year, quadmester);
+            ParentMarksViewModel model = new ParentMarksViewModel(quadmester);
             model.User = user;
             model.Childrens = model.GetChildrens();
+            model.quadmesterNumber = quadmester;
+            model.Periods = model.GetPeriods();
             if (model.Childrens.Count > 0)
             {
                 if (childrenId == null)
@@ -127,10 +131,10 @@ namespace OnlineDiary.Controllers
 
         [Authorize(Roles = "teacher")]
         [HttpGet]
-        public async Task<ActionResult> TeacherMarks(int LessonId = 0, int ClassId = 0, int quadmester = 1, int year = 2015)
+        public async Task<ActionResult> TeacherMarks(int LessonId = 0, int ClassId = 0, int quadmester = 1)
         {
             var user = await UserManager.FindByNameAsync(User.Identity.Name);
-            TeacherMarksViewModel model = new TeacherMarksViewModel(year, quadmester);
+            TeacherMarksViewModel model = new TeacherMarksViewModel(quadmester);
             if (LessonId != 0)
             {
                 model.form.LessonId = LessonId;
@@ -139,6 +143,8 @@ namespace OnlineDiary.Controllers
             {
                 model.form.ClassId = ClassId;
             }
+            model.quadmesterNumber = quadmester;
+            model.Periods = model.GetPeriods();
             model.User = user;
             model.form.Classes = model.getSchoolClasses();
             model.form.Lessons = model.getLessons();

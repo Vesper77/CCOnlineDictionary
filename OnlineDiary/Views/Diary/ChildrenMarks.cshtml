@@ -8,10 +8,11 @@
         " третью ",
         " четвертую "
     };
-    var period = Model.GetPeriod(Model.quadmesterNumber);
+    var period = Model.Periods[Model.quadmesterNumber - 1];
     int cruancyCounter = 0;
-    int countDays = (period.Item2 - period.Item1).Days / 2;
-
+    int countdays = 11;
+    int columns = (period.Item2 - period.Item1).Days - (period.Item2 - period.Item1).Days / 7 + 2;
+    int countTables = columns / (countdays - 1) + (columns % (countdays - 1) > 0 ? 1 : 0);
     var lessons = Model.getLessons(Model.User);
     int[] cruancys = new int[lessons.Count];
     int[] summarks = new int[lessons.Count];
@@ -21,16 +22,20 @@
     <h2>Оценки ученика класса @Model.getClassName(Model.User)</h2>
 </div>
 <div class="">
-    @Html.ActionLink("Предыдущий период", "ChildrenMarks", new
+    @if (Model.quadmesterNumber > 1)
     {
-        quadmester = Model.quadmesterNumber  == 1 ? 4 : Model.quadmesterNumber - 1,
-        year = Model.quadmesterNumber == 1 ? Model.CurrentYear - 1 : Model.CurrentYear,
-    }, new {  @class="btn btn-primary pull-left"})
-    @Html.ActionLink("Cледующий период", "ChildrenMarks", new
+        @Html.ActionLink("Предыдущий период", "ChildrenMarks", new
+        {
+            quadmester =  Model.quadmesterNumber - 1,
+        }, new { @class = "btn btn-primary pull-left" })
+    }
+    @if (Model.quadmesterNumber < 4)
     {
-        quadmester = Model.quadmesterNumber == 4 ? 1 : Model.quadmesterNumber + 1,
-        year = Model.quadmesterNumber == 4 ? Model.CurrentYear + 1 : Model.CurrentYear,
-    }, new { @class = "btn btn-primary pull-right" })
+        @Html.ActionLink("Cледующий период", "ChildrenMarks", new
+        {
+            quadmester = Model.quadmesterNumber + 1,
+        }, new { @class = "btn btn-primary pull-right" })
+    }
     <div style="text-align:center;font-weight:bold;">
         <h6>@Model.User.FirstName за @quadmesters[Model.quadmesterNumber - 1] четверть @Model.CurrentYear @(Model.CurrentYear + 1) учебного года</h6>
     </div>
@@ -38,25 +43,40 @@
 <div class="marks--content" style="margin-top:30px;">
     @if (Model.User != null)
     {
+        if (countTables == 1)
+        {
+            @CreateTable(period.Item1, period.Item2,
+                                         cruancys, summarks, countmarks, true, lessons)
+        }
+        else
+        {
         <ul class="nav nav-tabs">
             <li class="active"><a data-toggle="tab" href="#part1">Часть1</a></li>
-            <li><a data-toggle="tab" href="#part2">Часть 2</a></li>
+            @for (int i = 1; i < countTables; i++)
+            {
+                <li><a data-toggle="tab" href="#part@(i + 1)">Часть@(i + 1)</a></li>
+            }
         </ul>
         <div class="tab-content">
             <div id="part1" class="tab-pane active table-responsive">
-                @CreateTable(period.Item1, period.Item1.AddDays(countDays),
-                         cruancys, summarks, countmarks, false, lessons)
+                @CreateTable(period.Item1, period.Item1.AddDays(countdays),
+                                     cruancys, summarks, countmarks, countTables == 1, lessons)
             </div>
-            <div id="part2" class="tab-pane table-responsive">
-                @CreateTable(period.Item1.AddDays(countDays + 1), period.Item2,
-                         cruancys, summarks, countmarks, true, lessons)
+            @for (int i = 1; i < countTables; i++)
+            {
+                <div id="part@(i + 1)" class="tab-pane table-responsive">
+                @CreateTable(period.Item1.AddDays(countdays * i), i == countTables - 1 ?
+                                           period.Item2 : period.Item1.AddDays(countdays * (i + 1)),
+                                           cruancys, summarks, countmarks, i == countTables - 1, lessons)
+                </div>
+            }
             </div>
-        </div>
-    }
+            }
+        }
     else
     {
         <p>Не выбран пользователь</p>
-    }    
+    }
 </div>
 @helper CreateTable(DateTime start, DateTime end, int[] cryancys, int[] summarks,
                     int[] countmarks, bool endTable, List<OnlineDiary.Models.Diary.Lesson> lessons)
@@ -66,7 +86,7 @@
         <thead>
             <tr>
                 <th class="b-mark_name">Предмет</th>
-                @for (DateTime date = start; date <= end; date = date.AddDays(1))
+                @for (DateTime date = start; date < end; date = date.AddDays(1))
                 {
                     if (date.DayOfWeek != DayOfWeek.Sunday)
                     {
@@ -88,7 +108,7 @@
                     <td>
                         @lesson.Title
                     </td>
-                    @for (DateTime date = start; date <= end; date = date.AddDays(1))
+                    @for (DateTime date = start; date < end; date = date.AddDays(1))
                     {
 
                         if (date.DayOfWeek != DayOfWeek.Sunday)

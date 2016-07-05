@@ -9,15 +9,16 @@ namespace OnlineDiary.Models
 {
     public abstract class MarksViewModel
     {
-        public MarksViewModel(int year, int quadmester)
+        private int currentYear;
+        public int FinalMarkYear { get; set; }
+        public MarksViewModel()
         {
-            this.CurrentYear = year;
-            this.quadmesterNumber = quadmester;
         }
         public MarksViewModel(int year)
         {
-            this.CurrentYear = year;
+            this.FinalMarkYear = year;
         }
+        public Tuple<DateTime, DateTime>[] Periods = new Tuple<DateTime, DateTime>[4];
         protected ApplicationDbContext context = new ApplicationDbContext();
         /// <summary>
         /// Текущий пользователь
@@ -26,41 +27,44 @@ namespace OnlineDiary.Models
         /// <summary>
         /// Текущий учебный год
         /// </summary>
-        public int CurrentYear { get; set; }
+        public int CurrentYear
+        {
+            get
+            {
+                currentYear = DateTime.Now.Month > 9 ? DateTime.Now.Year : DateTime.Now.Year - 1;
+                return currentYear;
+            }
+            set
+            {
+                currentYear = value;
+            }
+        }
         /// <summary>
         /// Текущая четверть
         /// </summary>
         public int quadmesterNumber { get; set; }
         /// <summary>
-        /// Определяет дату начала и конца четверти
+        /// Определяет даты начала и конца четвертей
         /// </summary>
-        /// <returns>даты начала и конца четверти</returns>
-        public Tuple<DateTime, DateTime> GetPeriod(int quadmester)
+        /// <returns>даты начала и конца четвертей</returns>
+        public Tuple<DateTime, DateTime>[] GetPeriods()
         {
-            var startDate = new DateTime();
-            var endDate = new DateTime();
-            switch (quadmester)
+            Tuple<DateTime, DateTime>[] periods = new Tuple<DateTime, DateTime>[4];
+            int year = CurrentYear;
+            var quads = context.Quadmesters.ToArray(); // считаю, что они гарантированно есть в бд, иначе не понятно, что возвращать
+            var startdate = new DateTime(year, quads[0].StartDate.Month, quads[0].StartDate.Day);
+            var enddate = new DateTime(quads[0].StartDate.Month > quads[0].EndDate.Month ? 
+                                       ++year : year, quads[0].EndDate.Month, quads[0].EndDate.Day);
+            periods[0] = new Tuple<DateTime, DateTime>(startdate, enddate);
+            for(int i = 1; i < 4; i++)
             {
-                case 1:
-                    startDate = new DateTime(CurrentYear, 9, 1);
-                    endDate = new DateTime(CurrentYear, 10, 30);
-                    break;
-                case 2:
-                    startDate = new DateTime(CurrentYear, 11, 9);
-                    endDate = new DateTime(CurrentYear, 12, 30);
-                    break;
-                case 3:
-                    startDate = new DateTime(CurrentYear + 1, 1, 11);
-                    endDate = new DateTime(CurrentYear + 1, 3, 18);
-                    break;
-                case 4:
-                    startDate = new DateTime(CurrentYear + 1, 3, 28);
-                    endDate = new DateTime(CurrentYear + 1, 5, 27);
-                    break;
-                default:
-                    break;
+                startdate = new DateTime(quads[i].StartDate.Month < quads[i- 1].StartDate.Month ? ++year : year, 
+                                                                quads[i].StartDate.Month, quads[i].StartDate.Day);
+                enddate = new DateTime(quads[i].EndDate.Month < quads[i].StartDate.Month? ++year : year,
+                                                           quads[i].EndDate.Month, quads[i].EndDate.Day);
+                periods[i] = new Tuple<DateTime, DateTime>(startdate, enddate);
             }
-            return new Tuple<DateTime, DateTime>(startDate, endDate);
+            return periods;
         }
         /// <summary>
         /// Выдаёт оценку для ученика по определенному предмету в определенный день
@@ -89,10 +93,11 @@ namespace OnlineDiary.Models
         /// <returns></returns>
         public int GetFinalMark(string ChildrenId, int LessonId, int quadmesterNumber)
         {
-            var period = GetPeriod(quadmesterNumber);
+            var period = GetPeriods();
             int counterMarks = 0;
             int sumMarks = 0;
-            for (DateTime beginDate = period.Item1; beginDate <= period.Item2; beginDate = beginDate.AddDays(1))
+            for (DateTime beginDate = period[quadmesterNumber - 1].Item1; beginDate <= period[quadmesterNumber - 1].Item2;
+                                                                                          beginDate = beginDate.AddDays(1))
             {
                 var mark = context.Marks.Where(x => x.ChildrenId == ChildrenId && x.Day == beginDate && x.LessonId == LessonId).
                                                FirstOrDefault();
@@ -159,12 +164,12 @@ namespace OnlineDiary.Models
     }
     public class ChildrenMarksViewModel : MarksViewModel
     {
-        public ChildrenMarksViewModel(int year, int quadmester) : base(year, quadmester) { }
+        public ChildrenMarksViewModel() : base() { }
         public ChildrenMarksViewModel(int year) : base(year) { }
     }
     public class ParentMarksViewModel : MarksViewModel
     {
-        public ParentMarksViewModel(int year, int quadmester) : base(year, quadmester) { }
+        public ParentMarksViewModel() : base() { }
         public ParentMarksViewModel(int year) : base(year) { }
         /// <summary>
         /// Ребенок, для которого необходимо просмотреть оценки
@@ -191,7 +196,7 @@ namespace OnlineDiary.Models
     }
     public class TeacherMarksViewModel : MarksViewModel
     {
-        public TeacherMarksViewModel(int year, int quadmester) : base(year, quadmester) { }
+        public TeacherMarksViewModel() : base() { }
         public TeacherMarksViewModel(int year) : base(year) { }
         public TeacherDataViewModel form = new TeacherDataViewModel();
         /// <summary>

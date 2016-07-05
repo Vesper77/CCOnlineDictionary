@@ -208,6 +208,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\Diary\Quadmester.cs" />
     <Compile Include="Models\EntityViewModels\CreateUserViewModel.cs" />
     <Compile Include="Models\EntityViewModels\DeleteUserViewModel.cs" />
     <Compile Include="Models\EntityViewModels\DetailUserViewModel.cs" />

@@ -10,17 +10,16 @@
         "Годовая оценка"
     };
 }
-<div>
-    @Html.ActionLink("Оценки за предыдущий год", "ParentMarks", new
+    @*@Html.ActionLink("Оценки за предыдущий год", "ParentFinalMarks", new
 {
     childrenId = ViewBag.ChildId,
-    year = Model.CurrentYear - 1
+    year = Model.FinalMarkYear - 1
 })
     @Html.ActionLink("Оценки за следующий год", "ParentFinalMarks", new
 {
     childrenId = ViewBag.ChildId,
-    year = Model.CurrentYear + 1
-})
+    year = Model.FinalMarkYear + 1
+})*@
     <br />
     <br />
     @using (Html.BeginForm("ParentFinalMarksPost", "Diary", FormMethod.Post, new { @class = "form-inline" }))
@@ -67,7 +66,7 @@
                             {
                                 int val = Model.GetFinalMark(Model.CurrentChildren.Id, lesson.Id, i);
                                 <td>
-                                    <b>val</b>
+                                    <b>@val</b>
                                 </td>
                                 marks[i - 1] = val;
                             }
