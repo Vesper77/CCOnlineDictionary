@@ -13,7 +13,7 @@
             @Html.Partial("_WeekSelect")
             @foreach (var dl in Model.getDaysWithScheduleLessons())
             {
-                @Html.Partial("_DayOfSchedule", dl, new ViewDataDictionary() { { "dayString", Model.StartWeek.AddDays(dayCounter).ToString("dd.MM.YYYY") }, { "day", Model.StartWeek.AddDays(dayCounter) } })
+                @Html.Partial("_DayOfSchedule", dl, new ViewDataDictionary() { { "dayString", Model.StartWeek.AddDays(dayCounter).ToString("dd.MM.yyyy") }, { "day", Model.StartWeek.AddDays(dayCounter) } })
                 dayCounter++;
             }
         </div>

@@ -11,7 +11,7 @@ namespace OnlineDiary.Models.CRUDViewModels
 
         private DiaryUser user = null;
         private ApplicationDbContext context = new ApplicationDbContext();
-        private int itemsPerPage = 10;
+        private int itemsPerPage = 4;
 
         public IndexUserViewModel()
         {

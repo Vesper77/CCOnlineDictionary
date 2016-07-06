@@ -337,7 +337,10 @@ namespace OnlineDiary.Models
             
         }
         public bool isHaveHomeWork(DateTime day) {
-            var homeWork = context.HomeWorks.FirstOrDefault(l => l.Day == day);
+            day = day.AddHours(-day.Hour);
+            day = day.AddMinutes(-day.Minute);
+            day = day.AddSeconds(-day.Second);
+            var homeWork = context.HomeWorks.FirstOrDefault(l => l.ScheludeLessonId == scheduleLesson.Id );
             return homeWork != null;
         }
         public string Title {

@@ -22,7 +22,10 @@ namespace OnlineDiary.Controllers
                 var homeWork = context.HomeWorks.FirstOrDefault(h => h.Day == dayForHomeWork && h.ScheludeLessonId == ScheduleLessonId);
                 if (homeWork != null)
                 {
-                    return Json(new { text = homeWork.Description, result = true, homeWorkId = homeWork.Id });
+                    var id = User.Identity.GetUserId();
+                    var isDone = context.CompltetedHomeWorks.FirstOrDefault(h => h.HomeWorkId == homeWork.Id && h.childrenId == id);
+
+                    return Json(new { text = homeWork.Description, result = true, homeWorkId = homeWork.Id, isDone = isDone });
                 }
                 else
                 {

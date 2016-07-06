@@ -77,21 +77,30 @@ namespace OnlineDiary.Controllers
             // To enable password failures to trigger account lockout, change to shouldLockout: true
             var result = await SignInManager.PasswordSignInAsync(model.Username, model.Password, true, shouldLockout: false);
             if (result == SignInStatus.Success) {
-                
-            }
-            switch (result)
-            {
-                case SignInStatus.Success:
+                var user = UserManager.FindByName(model.Username);
+                var role = UserManager.GetRoles(user.Id).FirstOrDefault();
+
+                if (role != null && role == "admin") {
                     return RedirectToAction("Index", "Admin");
-                //case SignInStatus.LockedOut:
-                //    return View("Lockout");
-                //case SignInStatus.RequiresVerification:
-                //    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
-                case SignInStatus.Failure:
-                default:
-                    ModelState.AddModelError("", "Invalid login attempt.");
-                    return View(model);
+                }
+                return RedirectToAction("Schedule", "diary");
+
             }
+            ModelState.AddModelError("", "Не получилось зайти");
+            return View(model);
+            //switch (result)
+            //{
+            //    case SignInStatus.Success:
+            //        return RedirectToAction("Index", "Admin");
+            //    //case SignInStatus.LockedOut:
+            //    //    return View("Lockout");
+            //    //case SignInStatus.RequiresVerification:
+            //    //    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
+            //    case SignInStatus.Failure:
+            //    default:
+            //        ModelState.AddModelError("", "Invalid login attempt.");
+            //        return View(model);
+            //}
         }
 
         //

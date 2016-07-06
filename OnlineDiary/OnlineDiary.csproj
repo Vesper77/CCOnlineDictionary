@@ -208,6 +208,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\ClassCreateViewModel.cs" />
     <Compile Include="Models\Diary\CompletedHomeWork.cs" />
     <Compile Include="Models\EntityViewModels\CreateUserViewModel.cs" />
     <Compile Include="Models\EntityViewModels\DeleteUserViewModel.cs" />
@@ -315,6 +316,7 @@
     <Content Include="Views\Admin\CreateLesson.cshtml" />
     <Content Include="Views\Admin\SelectClass.cshtml" />
     <Content Include="Views\Admin\EditSchedule.cshtml" />
+    <Content Include="Views\Admin\CreateClass.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

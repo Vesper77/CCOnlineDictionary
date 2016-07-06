@@ -21,6 +21,6 @@ namespace OnlineDiary.Models.Diary
 
         [ForeignKey("LessonId")]
         public virtual Lesson Lesson { get; set; }
-        public virtual SchoolClass SchoolClass { get; set; }
+        //public virtual SchoolClass SchoolClass { get; set; }
     }
 }

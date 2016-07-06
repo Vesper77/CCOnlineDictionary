@@ -12,14 +12,18 @@
                     'ScheduleLessonId': lessonId,
                     'StartWeek' : window.date.startWeek
                 };
+
                 options.method = "POST";
                 $.ajax(urls.getHomeWork, options).done(function (response) {
                     if (response.result) {
                         var $homeWorkText = $('#' + ids['homeWorkText']);
                         if (response.homeWorkId) {
                             homeWorkId = response.homeWorkId;
-                            if (ids.homeWorkReady)
+                            if (ids.homeWorkReady) {
                                 $('#' + ids['homeWorkReady']).show();
+                                $('#' + ids['homeWorkReady']).removeClass("disabled");
+                            }
+                                
                         } else if(ids.homeWorkReady) {
                             $('#' + ids['homeWorkReady']).hide();
                         }
@@ -55,8 +59,12 @@
                 options.data = {
                     homeWorkId: homeWorkId
                 };
-                options.Methood = "POST";
-                $.ajax(urls.readyHomeWork, options);
+                options.method = "POST";
+                $.ajax(urls.readyHomeWork, options).done(function (response) {
+                    if (response.result) {
+                        $('#' + ids['homeWorkReady']).addClass("disabled");
+                    }
+                });
             }            
         }
         $('[data-lesson-id]').click(

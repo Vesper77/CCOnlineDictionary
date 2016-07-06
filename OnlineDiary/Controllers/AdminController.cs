@@ -165,7 +165,6 @@ namespace OnlineDiary.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(EditUserViewModel dUser)
         {
-
             if (ModelState.IsValid) {
                 var user = await UserManager.FindByIdAsync(dUser.Id);
                 if (user != null) {
@@ -200,9 +199,13 @@ namespace OnlineDiary.Controllers
                         if (childrenData != null) {
                             childrenData.ParentId = dUser.ParentId;
                             childrenData.SchoolClassId = dUser.ClassId;
-                            UserManager.AddToRole(user.Id, dUser.Role);
-                            context.SaveChanges();
+                        } else {
+                            childrenData = new ChildrenData();
+                            childrenData.ParentId = dUser.ParentId;
+                            childrenData.SchoolClassId = dUser.ClassId;
                         }
+                        context.SaveChanges();
+                        UserManager.AddToRole(user.Id, dUser.Role);
                     }
 
                     if (dUser.Role == "teacher") {
@@ -212,13 +215,6 @@ namespace OnlineDiary.Controllers
                         }
                         UserManager.AddToRole(user.Id, dUser.Role);
                         context.Lessons.Where(l => l.TeacherId == dUser.Id).ToList().ForEach(l => l.TeacherId = null);
-                        //for (int i = 0; i < context.Lessons.ToArray().Count(); i++)
-                        //{
-                        //    if (context.Lessons.ToArray()[i].TeacherId == dUser.Id)
-                        //    {
-                        //        context.Lessons.ToArray()[i].TeacherId = null;
-                        //    }
-                        //}
 
                         if (dUser.LessonIds != null) {
                             for (int i = 0; i < dUser.LessonIds.Count(); i++) {
@@ -236,16 +232,13 @@ namespace OnlineDiary.Controllers
                         UserStore<DiaryUser> store = new UserStore<DiaryUser>();
                         PasswordHasher hasher = new PasswordHasher();
                         await store.SetPasswordHashAsync(user, hasher.HashPassword(dUser.newPassword));
-                        //var result = await UserManager.se(dUser.Id, dUser.newPassword);
-                        //if (!result.Succeeded)
-
-                        //ModelState.AddModelError("","Неверный пароль");
-                        //}
                     }
 
                     context.SaveChanges();
+                    
                 }
-            } 
+            }
+            dUser.newPassword = "";
             return View(dUser);
         }
         [HttpPost, ActionName("Delete")]
@@ -253,41 +246,47 @@ namespace OnlineDiary.Controllers
         public ActionResult DeleteConfirmed(string id)
         {
             var dUser = context.Users.Find(id);
-            var role = UserManager.GetRoles(id).FirstOrDefault();
-            if (role != null) {
-                UserManager.RemoveFromRoleAsync(id, role);
-                if (role == "parent") {
-                    var parentData = context.ChildrenData.Where(i => i.ParentId == id).ToArray();
-                    foreach (var p in parentData) {
-                        p.ParentId = null;
-                    }
-                }
-                if (role == "children") {
-                    var children = context.ChildrenData.Where(i => i.ChildrenId == id).FirstOrDefault();
-                    if (children != null) {
-                        context.ChildrenData.Remove(children);
-                        var childrenTruancys = context.Truancys.Where(i => i.ChildrenId == id).ToArray();
-                        foreach (var t in childrenTruancys) {
-                            context.Truancys.Remove(t);
-                        }
-                        var childrenMarks = context.Marks.Where(i => i.ChildrenId == id).ToArray();
-                        foreach (var m in childrenMarks) {
-                            context.Marks.Remove(m);
-                        }
-                        var childrenFinalMarks = context.FinalMarks.Where(i => i.ChildrenId == id).ToArray();
-                        foreach (var fm in childrenFinalMarks) {
-                            context.FinalMarks.Remove(fm);
+            if (dUser != null) {
+                var role = UserManager.GetRoles(id).FirstOrDefault();
+                if (role != null) {
+                    UserManager.RemoveFromRoleAsync(id, role);
+                    if (role == "parent") {
+                        var parentData = context.ChildrenData.Where(i => i.ParentId == id).ToArray();
+                        foreach (var p in parentData) {
+                            p.ParentId = null;
                         }
                     }
-                }
-                if (role == "teacher") {
-                    var lessons = context.Lessons.Where(i => i.TeacherId == id).ToArray();
-                    foreach (var lesson in lessons) {
-                        lesson.TeacherId = null;
+                    if (role == "children") {
+                        var children = context.ChildrenData.Where(i => i.ChildrenId == id).FirstOrDefault();
+                        if (children != null) {
+                            context.ChildrenData.Remove(children);
+                            var childrenTruancys = context.Truancys.Where(i => i.ChildrenId == id).ToArray();
+                            foreach (var t in childrenTruancys) {
+                                context.Truancys.Remove(t);
+                            }
+                            var childrenMarks = context.Marks.Where(i => i.ChildrenId == id).ToArray();
+                            foreach (var m in childrenMarks) {
+                                context.Marks.Remove(m);
+                            }
+                            var childrenFinalMarks = context.FinalMarks.Where(i => i.ChildrenId == id).ToArray();
+                            foreach (var fm in childrenFinalMarks) {
+                                context.FinalMarks.Remove(fm);
+                            }
+                        }
                     }
+                    if (role == "teacher") {
+                        var lessons = context.Lessons.Where(i => i.TeacherId == id).ToArray();
+                        foreach (var lesson in lessons) {
+                            lesson.TeacherId = null;
+                        }
 
+                    }
                 }
                 context.Users.Remove(dUser);
+                try {
+                    context.SaveChanges();
+                } catch (Exception e) { }
+                
                 return RedirectToAction("Index");
             } else {
                 return HttpNotFound();
@@ -306,11 +305,12 @@ namespace OnlineDiary.Controllers
         {
             if (!String.IsNullOrWhiteSpace(name)) {
                 var lesson = new Lesson() { TeacherId = teacherId, Title = name };
-                var identLesson = context.Lessons.Where(x => x.TeacherId == teacherId && x.Title.
-                                                       ToLower() == name.ToLower()).FirstOrDefault();
+                var identLesson = context.Lessons.Where(x => x.Title.ToLower() == name.ToLower()).FirstOrDefault();
                 if (identLesson == null) {
                     context.Lessons.Add(lesson);
                     context.SaveChanges();
+                } else {
+                    ModelState.AddModelError("", "Уже существует");
                 }
             } else {
                 ModelState.AddModelError("name", "Пустое имя");
@@ -353,6 +353,24 @@ namespace OnlineDiary.Controllers
         {
             context.Dispose();
             base.Dispose(disposing);
+        }
+
+        public ActionResult CreateClass() {
+            ClassCreateViewModel sch = new ClassCreateViewModel();
+            return View(sch);
+        }
+        [HttpPost]
+        public ActionResult CreateClass(ClassCreateViewModel sch) {
+            SchoolClass sc = new SchoolClass();
+            sc.Title = sch.Title;
+            var schl = context.SchoolClasses.FirstOrDefault(c => c.Title == sch.Title);
+            if (schl == null) {
+                context.SchoolClasses.Add(sc);
+                context.SaveChanges();
+            } else {
+                ModelState.AddModelError("", "Такой класс уже существует");
+            }    
+            return View(sch);
         }
     }
 }
