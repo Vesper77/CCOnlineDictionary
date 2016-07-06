@@ -11,7 +11,7 @@ namespace OnlineDiary.Models.CRUDViewModels
 
         private DiaryUser user = null;
         private ApplicationDbContext context = new ApplicationDbContext();
-        private int itemsPerPage = 10;
+        private int itemsPerPage = 4;
 
         public IndexUserViewModel()
         {
@@ -28,7 +28,7 @@ namespace OnlineDiary.Models.CRUDViewModels
             this.FirstName = user.FirstName;
             this.LastName = user.LastName;
             this.ParentName = user.ParentName;
-            this.PhoneNumber = user.PhoneNumber;
+           // this.PhoneNumber = user.PhoneNumber;
         }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace OnlineDiary.Models.CRUDViewModels
         {
             var list = new List<UserViewModel>();
             var users = context.Users.ToArray();
-            if (role == "all")
+            if (role == "all"  || String.IsNullOrEmpty(role))
             {
                 for (int i = 0; i < context.Users.Count(); i++)
                 {
@@ -58,7 +58,10 @@ namespace OnlineDiary.Models.CRUDViewModels
                     }
                 }
             }
-            list.Sort((x, y) => x.FirstName.CompareTo(y.FirstName));
+            if (list != null && list.Count > 0) {
+                list.Sort((x, y) => x.FirstName.CompareTo(y.FirstName));
+            }
+            
             return list;
         }
 

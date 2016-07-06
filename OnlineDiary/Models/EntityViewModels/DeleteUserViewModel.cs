@@ -26,7 +26,7 @@ namespace OnlineDiary.Models.CRUDViewModels
             this.FirstName = user.FirstName;
             this.LastName = user.LastName;
             this.ParentName = user.ParentName;
-            this.PhoneNumber = user.PhoneNumber;
+            //this.PhoneNumber = user.PhoneNumber;
         }
     }
 }

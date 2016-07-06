@@ -8,28 +8,26 @@
         "третью ",
         "четвертую "
     };
-    var period = Model.Periods[Model.quadmesterNumber - 1];
-    int countdays = 25;
-    int cruancyCounter = 0;
+    var childrens = Model.GetChildrensInClass(Model.form.ClassId);
 }
 <div>
     @if (Model.quadmesterNumber > 1)
     {
-        @Html.ActionLink("Оценки за предыдущий период", "TeacherMarks", new
+        @Html.ActionLink("Оценки за предыдущую четверть", "TeacherMarks", new
         {
             LessonId = Model.form.LessonId,
             ClassId = Model.form.ClassId,
-            quadmester = Model.quadmesterNumber - 1,
-         }, new { @class = "btn btn-primary" })
+            quadmester =  Model.quadmesterNumber - 1,
+        }, new{ @class = "btn btn-primary"})
     }
     @if (Model.quadmesterNumber < 4)
     {
-        @Html.ActionLink("Оценки за следующий период", "TeacherMarks", new
+        @Html.ActionLink("Оценки за следующую четверть", "TeacherMarks", new
         {
             LessonId = Model.form.LessonId,
             ClassId = Model.form.ClassId,
             quadmester = Model.quadmesterNumber + 1,
-        }, new { @class = "btn btn-primary " })
+        }, new{ @class = "btn btn-primary"})
     }
     @using (Html.BeginForm("TeacherMarksPost", "Diary", FormMethod.Post, new { @class = "form-inline" }))
     {
@@ -70,73 +68,40 @@
       quadmesters[Model.quadmesterNumber - 1] + " четверть " + Model.CurrentYear + " - " + (Model.CurrentYear + 1) + "учебного  года")
     </h3>
     <div class="">
-        @{ var days = Model.GetDays(Model.form.ClassId, Model.form.LessonId);}
-        @if (Model.form != null && days.Count > 0 && Model.form.Classes.Count > 0 && Model.form.Lessons.Count > 0)
+        @{ var days = Model.marksModel.GetDays(Model.form.ClassId, Model.form.LessonId);}
+        @if (Model.form != null && days.Count > 0 && Model.form.Classes.Count > 0 && Model.form.Lessons.Count > 0 && childrens.Count > 0)
         {
-            <table class="table table table-bordered" style="font-size:10px;">
-                <thead>
-                    <tr>
-                        <th class="b-mark_name">Ученик</th>
-                        @for (DateTime date = period.Item1; date <= period.Item2; date = date.AddDays(1))
-                        {
-                            if (date.DayOfWeek != DayOfWeek.Sunday && days.Contains(date.DayOfWeek))
-                            {
-                                <th>@date.ToString("dd.MM")</th>
-                            }
-                        }
-                        <th class="b-mark_name">Количество пропусков</th>
-                        <th class="b-mark_name">Оценка за четверть</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var children in Model.GetChildrensInClass(Model.form.ClassId))
+            int[] truancys = new int[childrens.Count];
+            int[] summarks = new int[childrens.Count];
+            int[] countmarks = new int[childrens.Count];
+            if (Model.marksModel.TablesCounter == 0)
+            {
+                @CreateTable(Model.Period.Item1, Model.Period.Item2, truancys, summarks, countmarks, true, childrens, days)
+            }
+            else
+            {
+                <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#part1">Часть1</a></li>
+                    @for (int i = 1; i < Model.marksModel.TablesCounter; i++)
                     {
-                        int sumMarks = 0;
-                        int marksCounter = 0;
-                        cruancyCounter = 0;
-                        <tr>
-                            <td>
-                                @children.FirstName
-                            </td>
-                            @for (DateTime date = period.Item1; date <= period.Item2; date = date.AddDays(1))
-                            {
-                                if (date.DayOfWeek != DayOfWeek.Sunday && days.Contains(date.DayOfWeek))
-                                {
-                                    int? val = Model.getMarkValue(date, Model.form.LessonId, children);
-                                    if (val != null)
-                                    {
-                                        <td class="mark--set" data-mark-lesson="@Model.form.LessonId" data-mark-children="@children.Id" data-mark-date="@date.ToString()">
-                                            @val
-                                        </td>
-                                        sumMarks += (int)val;
-                                        marksCounter++;
-                                    }
-                                    else if (Model.IsTruancyed(children.Id, Model.form.LessonId, date))
-                                    {
-                                        <td class="mark--set" data-mark-lesson="@Model.form.LessonId" data-mark-children="@children.Id" data-mark-date="@date.ToString()">
-                                            Н
-                                        </td>
-                                        cruancyCounter++;
-                                    }
-                                    else
-                                    {
-                                        <td class="mark--set" data-mark-lesson="@Model.form.LessonId" data-mark-children="@children.Id" data-mark-date="@date.ToString()"></td>
-                                    }
-                                }
-                            }
-                            <td id="mark--cruancy">@cruancyCounter</td>
-                            @if (marksCounter > 0)
-                            {
-                                <td id="mark--total">@((int)Math.Round((double)sumMarks / marksCounter))</td>
-                            }
-                            else
-                            {
-                                <td id="mark--total">0</td>
-                            }
-                        </tr>
+                        <li><a data-toggle="tab" href="#part@(i + 1)">Часть@(i + 1)</a></li>
                     }
-                </tbody>
-            </table>
+                </ul>
+                <div class="tab-content">
+                    <div id="part1" class="tab-pane active table-responsive">
+                        @CreateTable(Model.Period.Item1, Model.marksModel.EndDates[0],
+                                     truancys, summarks, countmarks, Model.marksModel.TablesCounter == 1, childrens, days)
+                    </div>
+                    @for (int i = 1; i < Model.marksModel.TablesCounter; i++)
+                    {
+                        <div id="part@(i + 1)" class="tab-pane table-responsive">
+                            @CreateTable(Model.marksModel.EndDates[i - 1].AddDays(1), i == Model.marksModel.TablesCounter - 1 ?
+                                           Model.Period.Item2 : Model.marksModel.EndDates[i],
+                                           truancys, summarks, countmarks, i == Model.marksModel.TablesCounter - 1, childrens, days)
+                        </div>
+                    }
+                </div>
+            }
         }
         else
         {
@@ -144,6 +109,7 @@
         }
     </div>
 </div>
+
 @section Scripts{
     <script>
         window.urls = {
@@ -152,4 +118,79 @@
         };
     </script>
     @Scripts.Render("~/Scripts/marks.js");
+}
+
+
+@helper CreateTable(DateTime start, DateTime end, int[] cryancys, int[] summarks, int[] countmarks, bool endTable, List<OnlineDiary.Models.DiaryUser> childrens, List<DayOfWeek> days)
+{
+    <table class="table table table-bordered" style="font-size:10px;">
+        <thead>
+            <tr>
+                <th class="b-mark_name">Ученик</th>
+                @for (DateTime date = start; date <= end; date = date.AddDays(1))
+                {
+                    if (date.DayOfWeek != DayOfWeek.Sunday && days.Contains(date.DayOfWeek))
+                    {
+                        <th>@date.ToString("dd.MM")</th>
+                    }
+                }
+                @if (endTable)
+                {
+                    <th class="b-mark_name">Количество пропусков</th>
+                    <th class="b-mark_name">Оценка за четверть</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var children in Model.GetChildrensInClass(Model.form.ClassId))
+            {
+                int sumMarks = 0;
+                int marksCounter = 0;
+                int cruancyCounter = 0;
+                <tr>
+                    <td>
+                        @children.FirstName
+                    </td>
+                    @for (DateTime date = start; date <= end; date = date.AddDays(1))
+                    {
+                        if (date.DayOfWeek != DayOfWeek.Sunday && days.Contains(date.DayOfWeek))
+                        {
+                            int? val = Model.getMarkValue(date, Model.form.LessonId, children);
+                            if (val != null)
+                            {
+                                <td class="mark--set" data-mark-lesson="@Model.form.LessonId" data-mark-children="@children.Id" data-mark-date="@date.ToString()">
+                                    @val
+                                </td>
+                                sumMarks += (int) val;
+                                marksCounter++;
+                            }
+                            else if (Model.IsTruancyed(children.Id, Model.form.LessonId, date))
+                            {
+                                <td class="mark--set" data-mark-lesson="@Model.form.LessonId" data-mark-children="@children.Id" data-mark-date="@date.ToString()">
+                                    Н
+                                </td>
+                                cruancyCounter++;
+                            }
+                            else
+                            {
+                                <td class="mark--set" data-mark-lesson="@Model.form.LessonId" data-mark-children="@children.Id" data-mark-date="@date.ToString()"></td>
+                            }
+                        }
+                    }
+                    @if (endTable)
+                    {
+                        <td id="mark--cruancy">@cruancyCounter</td>
+                        if (marksCounter > 0)
+                        {
+                            <td id="mark--total">@((int) Math.Round((double) sumMarks / marksCounter, MidpointRounding.AwayFromZero))</td>
+                        }
+                        else
+                        {
+                            <td id="mark--total">0</td>
+                        }
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
 }

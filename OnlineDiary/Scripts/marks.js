@@ -107,7 +107,7 @@
                         count++;
                     }
                 });
-                $(ids.markTotal).text((summ / count).toFixed(2));
+                $(ids.markTotal).text(Math.round(summ / count));
             }
         }
         function isN(value) {

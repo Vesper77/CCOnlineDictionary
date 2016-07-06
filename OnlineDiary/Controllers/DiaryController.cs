@@ -7,6 +7,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.AspNet.Identity;
+
 namespace OnlineDiary.Controllers
 {
     public class DiaryController : Controller
@@ -90,23 +92,37 @@ namespace OnlineDiary.Controllers
         [HttpGet]
         public async Task<ActionResult> ChildrenMarks(int quadmester = 1)
         {
+            if (quadmester < 1 || quadmester > 4)
+            {
+                return RedirectToAction("Index", "Home");
+            }
             var user = await UserManager.FindByNameAsync(User.Identity.Name);
-            ChildrenMarksViewModel model = new ChildrenMarksViewModel();
-            model.quadmesterNumber = quadmester;
-            model.Periods = model.GetPeriods();
+            ChildrenMarksViewModel model = new ChildrenMarksViewModel(quadmester);
             model.User = user;
+            model.Period = model.GetPeriod()[quadmester - 1];
+            model.marksModel.GetColumnsNumber(model.Period.Item1, model.Period.Item2);
+            model.marksModel.GetTableCount(model.marksModel.ColumnsNumber);
+            model.marksModel.ColumnsInTable = model.marksModel.GetColumnsInTable();
+            model.marksModel.GetEndDates(model.Period.Item1, model.Period.Item2, "children");
             return View("ChildrenMarks", model);
         }
         [Authorize(Roles = "parent")]
         [HttpGet]
         public async Task<ActionResult> ParentMarks(string childrenId, int quadmester = 1)
         {
+            if (quadmester < 1 || quadmester > 4)
+            {
+                return RedirectToAction("Index", "Home");
+            }
             var user = await UserManager.FindByNameAsync(User.Identity.Name);
             ParentMarksViewModel model = new ParentMarksViewModel(quadmester);
             model.User = user;
+            model.Period = model.GetPeriod()[quadmester - 1];
+            model.marksModel.GetColumnsNumber(model.Period.Item1, model.Period.Item2);
+            model.marksModel.GetTableCount(model.marksModel.ColumnsNumber);
+            model.marksModel.ColumnsInTable = model.marksModel.GetColumnsInTable();
+            model.marksModel.GetEndDates(model.Period.Item1, model.Period.Item2, "parent");
             model.Childrens = model.GetChildrens();
-            model.quadmesterNumber = quadmester;
-            model.Periods = model.GetPeriods();
             if (model.Childrens.Count > 0)
             {
                 if (childrenId == null)
@@ -133,6 +149,10 @@ namespace OnlineDiary.Controllers
         [HttpGet]
         public async Task<ActionResult> TeacherMarks(int LessonId = 0, int ClassId = 0, int quadmester = 1)
         {
+            if (quadmester < 1 || quadmester > 4)
+            {
+                return RedirectToAction("Index", "Home");
+            }
             var user = await UserManager.FindByNameAsync(User.Identity.Name);
             TeacherMarksViewModel model = new TeacherMarksViewModel(quadmester);
             if (LessonId != 0)
@@ -143,11 +163,14 @@ namespace OnlineDiary.Controllers
             {
                 model.form.ClassId = ClassId;
             }
-            model.quadmesterNumber = quadmester;
-            model.Periods = model.GetPeriods();
             model.User = user;
             model.form.Classes = model.getSchoolClasses();
             model.form.Lessons = model.getLessons();
+            model.Period = model.GetPeriod()[quadmester - 1];
+            model.marksModel.GetColumnsNumber(model.Period.Item1, model.Period.Item2, model.form.ClassId, model.form.LessonId);
+            model.marksModel.GetTableCount(model.marksModel.ColumnsNumber);
+            model.marksModel.ColumnsInTable = model.marksModel.GetColumnsInTable();
+            model.marksModel.GetEndDates(model.Period.Item1, model.Period.Item2, "teacher", model.form.ClassId, model.form.LessonId);
             return View("TeacherMarks", model);
         }
         [Authorize(Roles = "teacher")]
@@ -158,19 +181,19 @@ namespace OnlineDiary.Controllers
         }
         [Authorize(Roles = "children")]
         [HttpGet]
-        public async Task<ActionResult> ChildrenFinalMarks(int year = 2015)
+        public async Task<ActionResult> ChildrenFinalMarks()
         {
             var user = await UserManager.FindByNameAsync(User.Identity.Name);
-            ChildrenMarksViewModel model = new ChildrenMarksViewModel(year);
+            ChildrenMarksViewModel model = new ChildrenMarksViewModel();
             model.User = user;
             return View("ChildrenFinalMarks", model);
         }
         [Authorize(Roles = "parent")]
         [HttpGet]
-        public async Task<ActionResult> ParentFinalMarks(string childrenId, int year = 2015)
+        public async Task<ActionResult> ParentFinalMarks(string childrenId)
         {
             var user = await UserManager.FindByNameAsync(User.Identity.Name);
-            ParentMarksViewModel model = new ParentMarksViewModel(year);
+            ParentMarksViewModel model = new ParentMarksViewModel();
             model.User = user;
             model.Childrens = model.GetChildrens();
             if (model.Childrens.Count > 0)
@@ -196,10 +219,10 @@ namespace OnlineDiary.Controllers
         }
         [Authorize(Roles = "teacher")]
         [HttpGet]
-        public async Task<ActionResult> TeacherFinalMarks(int classId = 0, int lessonId = 0, int year = 2015)
+        public async Task<ActionResult> TeacherFinalMarks(int classId = 0, int lessonId = 0)
         {
             var user = await UserManager.FindByNameAsync(User.Identity.Name);
-            TeacherMarksViewModel model = new TeacherMarksViewModel(year);
+            TeacherMarksViewModel model = new TeacherMarksViewModel();
             if (lessonId != 0)
             {
                 model.form.LessonId = lessonId;

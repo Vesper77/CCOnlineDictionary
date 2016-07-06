@@ -25,5 +25,8 @@ namespace OnlineDiary.Models
             Teachers = new Dictionary<string, string>();
             return Teachers;
         }
+
+        public string teacherId { get; set; }
+        public string name { get; set; }
     }
 }

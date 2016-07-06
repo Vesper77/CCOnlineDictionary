@@ -15,13 +15,13 @@
 {
     LessonId = Model.form.LessonId,
     ClassId = Model.form.ClassId,
-    year = Model.FinalMarkYear - 1
+    year = Model.CurrentYear - 1
 })
     @Html.ActionLink("Оценки за следующий год", "TeacherFinalMarks", new
 {
     LessonId = Model.form.LessonId,
     ClassId = Model.form.ClassId,
-    year = Model.FinalMarkYear + 1
+    year = Model.CurrentYear + 1
 })*@
     @using (Html.BeginForm("TeacherFinalMarksPost", "Diary", FormMethod.Post, new { @class = "form-inline" }))
     {
@@ -62,7 +62,7 @@
         Model.CurrentYear + " - " + (Model.CurrentYear + 1) + "учебный  год")
     </h3>
     <div class="">
-        @{ var days = Model.GetDays(Model.form.ClassId, Model.form.LessonId);}
+        @{ var days = Model.marksModel.GetDays(Model.form.ClassId, Model.form.LessonId);}
         @if (Model.form != null && days.Count > 0 && Model.form.Classes.Count > 0 && Model.form.Lessons.Count > 0)
         {
             <table class="table table table-bordered">
@@ -87,7 +87,7 @@
                             {
                                 int val = Model.GetFinalMark(children.Id, Model.form.LessonId, i);
                                 marks[i - 1] = val;
-                                <td class="set--mark-final" data-mark-lesson="@Model.form.LessonId" data-mark-children="@children.Id" data-mark-fourth="@(i)">
+                                <td  data-mark-lesson="@Model.form.LessonId" data-mark-children="@children.Id" data-mark-fourth="@(i)">
                                     @val
                                 </td>
                                     @*else
@@ -95,7 +95,30 @@
                                             <td class="set--mark-final" data-mark-lesson="@Model.form.LessonId" data-mark-children="@children.Id" data-mark-fourth="@(i)" ></td>
                                         }*@
                             }
-                            @{int finalMark = (int)Math.Round((double)(marks[0] + marks[1] + marks[2] + marks[3]) / 4);}
+                            @{  int count = 0;
+                                if (marks[0] != 0)
+                                {
+                                    count++;
+                                }
+                                if (marks[1] != 0)
+                                {
+                                    count++;
+                                }
+                                if (marks[2] != 0)
+                                {
+                                    count++;
+                                }
+                                if (marks[3] != 0)
+                                {
+                                    count++;
+                                }
+                                int finalMark = 0;
+                                if (count != 0)
+                                {
+                                    finalMark = (int)Math.Round((double)(marks[0] + marks[1] + marks[2] + marks[3]) / count, MidpointRounding.AwayFromZero);
+                                }
+
+                            }
                             <td><b>@finalMark</b></td>
                         </tr>
                                 }

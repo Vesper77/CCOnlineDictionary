@@ -29,7 +29,7 @@
                         <div role="tabpanel" class="tab-pane @Html.Raw( c == 0 ? "active" : "" )" id="@Html.Raw("child" + Model.Childrens[c].Id)">
                             @foreach (var dl in Model.getDaysWithScheduleLessons(Model.Childrens[c].Id))
                             {
-                                @Html.Partial("_DayOfSchedule", dl, new ViewDataDictionary() { { "day", Model.StartWeek.AddDays(dayCounter).ToString("dd.MM") } })
+                                @Html.Partial("_DayOfSchedule", dl, new ViewDataDictionary() { { "dayString", Model.StartWeek.AddDays(dayCounter).ToString("dd.MM.yyyy") }, { "day", Model.StartWeek.AddDays(dayCounter) } })
                                 dayCounter++;
                             }
                         </div>
@@ -44,7 +44,7 @@
     </div>
 </div>
 
-@Html.Partial("_ModalSchedule", false)
+@Html.Partial("_ModalSchedule", "p")
 @section Scripts{
     <script>
         window.date = {

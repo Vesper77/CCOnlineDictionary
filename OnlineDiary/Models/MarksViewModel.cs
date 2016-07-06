@@ -10,15 +10,16 @@ namespace OnlineDiary.Models
     public abstract class MarksViewModel
     {
         private int currentYear;
-        public int FinalMarkYear { get; set; }
-        public MarksViewModel()
+        public HelpTableMarksViewModel marksModel = new HelpTableMarksViewModel();
+        public MarksViewModel() { }
+        public MarksViewModel(int quadmester)
         {
+            this.quadmesterNumber = quadmester;
         }
-        public MarksViewModel(int year)
-        {
-            this.FinalMarkYear = year;
-        }
-        public Tuple<DateTime, DateTime>[] Periods = new Tuple<DateTime, DateTime>[4];
+        /// <summary>
+        /// Даты начала и конца четверти учебного года
+        /// </summary>
+        public Tuple<DateTime, DateTime> Period;
         protected ApplicationDbContext context = new ApplicationDbContext();
         /// <summary>
         /// Текущий пользователь
@@ -47,20 +48,20 @@ namespace OnlineDiary.Models
         /// Определяет даты начала и конца четвертей
         /// </summary>
         /// <returns>даты начала и конца четвертей</returns>
-        public Tuple<DateTime, DateTime>[] GetPeriods()
+        public Tuple<DateTime, DateTime>[] GetPeriod()
         {
             Tuple<DateTime, DateTime>[] periods = new Tuple<DateTime, DateTime>[4];
             int year = CurrentYear;
             var quads = context.Quadmesters.ToArray(); // считаю, что они гарантированно есть в бд, иначе не понятно, что возвращать
             var startdate = new DateTime(year, quads[0].StartDate.Month, quads[0].StartDate.Day);
-            var enddate = new DateTime(quads[0].StartDate.Month > quads[0].EndDate.Month ? 
+            var enddate = new DateTime(quads[0].StartDate.Month > quads[0].EndDate.Month ?
                                        ++year : year, quads[0].EndDate.Month, quads[0].EndDate.Day);
             periods[0] = new Tuple<DateTime, DateTime>(startdate, enddate);
-            for(int i = 1; i < 4; i++)
+            for (int i = 1; i < 4; i++)
             {
-                startdate = new DateTime(quads[i].StartDate.Month < quads[i- 1].StartDate.Month ? ++year : year, 
+                startdate = new DateTime(quads[i].StartDate.Month < quads[i - 1].StartDate.Month ? ++year : year,
                                                                 quads[i].StartDate.Month, quads[i].StartDate.Day);
-                enddate = new DateTime(quads[i].EndDate.Month < quads[i].StartDate.Month? ++year : year,
+                enddate = new DateTime(quads[i].EndDate.Month < quads[i].StartDate.Month ? ++year : year,
                                                            quads[i].EndDate.Month, quads[i].EndDate.Day);
                 periods[i] = new Tuple<DateTime, DateTime>(startdate, enddate);
             }
@@ -93,7 +94,7 @@ namespace OnlineDiary.Models
         /// <returns></returns>
         public int GetFinalMark(string ChildrenId, int LessonId, int quadmesterNumber)
         {
-            var period = GetPeriods();
+            var period = GetPeriod();
             int counterMarks = 0;
             int sumMarks = 0;
             for (DateTime beginDate = period[quadmesterNumber - 1].Item1; beginDate <= period[quadmesterNumber - 1].Item2;
@@ -154,23 +155,38 @@ namespace OnlineDiary.Models
         /// <returns>Список предметов</returns>
         public List<Lesson> getLessons(DiaryUser user)
         {
-            var lessons = context.Marks.Where(x => x.ChildrenId == user.Id).Select(x => x.LessonId).Distinct();
-            var res = from i in lessons
-                      from j in context.Lessons
-                      where i == j.Id
-                      select j;
-            return res.ToList();
+            //var lessons = context.Marks.Where(x => x.ChildrenId == user.Id).Select(x => x.LessonId).Distinct();
+            //var res = from i in lessons
+            //          from j in context.Lessons
+            //          where i == j.Id
+            //          select j;
+            if (user == null)
+            {
+                return new List<Lesson>();
+            }
+            var childrenData = context.ChildrenData.FirstOrDefault(x => x.ChildrenId == user.Id);
+            if (childrenData != null)
+            {
+                var schlessons = context.ScheduleLessons.Where(l => l.SchoolClassId == childrenData.SchoolClassId).ToList();
+                var lessons = new Dictionary<int, Lesson>();
+
+                schlessons.ForEach(sc => {
+                    if (!lessons.ContainsKey(sc.LessonId)) lessons.Add(sc.LessonId, sc.Lesson);
+                });
+                return lessons.Values.ToList();
+            }
+            return new List<Lesson>();
         }
     }
     public class ChildrenMarksViewModel : MarksViewModel
     {
         public ChildrenMarksViewModel() : base() { }
-        public ChildrenMarksViewModel(int year) : base(year) { }
+        public ChildrenMarksViewModel(int quadmester) : base(quadmester) { }
     }
     public class ParentMarksViewModel : MarksViewModel
     {
         public ParentMarksViewModel() : base() { }
-        public ParentMarksViewModel(int year) : base(year) { }
+        public ParentMarksViewModel(int quadmester) : base(quadmester) { }
         /// <summary>
         /// Ребенок, для которого необходимо просмотреть оценки
         /// </summary>
@@ -197,7 +213,7 @@ namespace OnlineDiary.Models
     public class TeacherMarksViewModel : MarksViewModel
     {
         public TeacherMarksViewModel() : base() { }
-        public TeacherMarksViewModel(int year) : base(year) { }
+        public TeacherMarksViewModel(int quadmester) : base(quadmester) { }
         public TeacherDataViewModel form = new TeacherDataViewModel();
         /// <summary>
         /// Определяет классы, в которых преподает учитель. 
@@ -242,10 +258,17 @@ namespace OnlineDiary.Models
         public Dictionary<int, string> getLessons()
         {
             Dictionary<int, string> lessons = new Dictionary<int, string>();
-            if (form.ClassId != default(int))
+            if (User != null && form.ClassId != default(int))
             {
-                context.ScheduleLessons.Where(l => l.SchoolClassId == form.ClassId).Select(y => y.LessonId).Distinct().ToList().
-                    ForEach(l => lessons.Add(l, context.Lessons.FirstOrDefault(x => x.Id == l).Title));
+                var lessonIds = context.ScheduleLessons.Where(l => l.SchoolClassId == form.ClassId).Select(y => y.LessonId).Distinct().ToList();
+                foreach (var item in lessonIds)
+                {
+                    var lesson = context.Lessons.Where(x => x.Id == item && x.TeacherId == User.Id).FirstOrDefault();
+                    if (lesson != null)
+                    {
+                        lessons.Add(lesson.Id, lesson.Title);
+                    }
+                }
             }
             if (lessons.Count > 0 && form.LessonId == 0)
             {
@@ -276,11 +299,159 @@ namespace OnlineDiary.Models
         /// Определяет дни, в которые у определенного класса есть данный урок
         /// </summary>
         /// <returns></returns>
+    }
+    public class HelpTableMarksViewModel
+    {
+        private ApplicationDbContext context = new ApplicationDbContext();
+        /// <summary>
+        /// минимум столбцов в таблице (при разбиении)
+        /// </summary>
+        public const int MinColumns = 13;
+        /// <summary>
+        /// максимум стобцов в таблице
+        /// </summary>
+        public const int MaxColumns = 25;
+        /// <summary>
+        /// Число столбцов в таблице
+        /// </summary>
+        public int ColumnsInTable { get; set; }
+        /// <summary>
+        /// Число столбцов в таблице
+        /// </summary>
+        public int ColumnsNumber { get; set; }
+        /// <summary>
+        /// Количество частей таблицы
+        /// </summary>
+        public int TablesCounter { get; set; }
+        /// <summary>
+        /// Возвращает список дней, в которые у определенного класса есть определенный урок
+        /// </summary>
+        /// <param name="classId"></param>
+        /// <param name="LessonId"></param>
+        /// <returns></returns>
         public List<DayOfWeek> GetDays(int classId, int LessonId)
         {
             var schedule = context.ScheduleLessons.Where(x => x.SchoolClassId == classId && x.LessonId == LessonId).ToList();
             return schedule == null || schedule.Count == 0 ? new List<DayOfWeek>() : schedule.
-                                       Select(x => (DayOfWeek)x.DayNumber).Distinct().ToList();
+                                       Select(x => (DayOfWeek) x.DayNumber).Distinct().ToList();
+        }
+        private int GetDayInPeriod(DateTime beginDate, DateTime endDate)
+        {
+            return endDate > beginDate ? (endDate - beginDate).Days : 0;
+        }
+        /// <summary>
+        /// Вычисляет число столбцов в таблице
+        /// </summary>
+        /// <param name="beginDate"></param>
+        /// <param name="endDate"></param>
+        public void GetColumnsNumber(DateTime beginDate, DateTime endDate)
+        {
+            int res = 0;
+            for (DateTime date = beginDate; date <= endDate; date = date.AddDays(1))
+            {
+                if (date.DayOfWeek != DayOfWeek.Sunday)
+                {
+                    res++;
+                }
+            }
+            ColumnsNumber = res > 0 ? res + 2 : 0;
+        }
+        /// <summary>
+        /// Вычисляет число строк в таблице
+        /// </summary>
+        /// <param name="beginDate"></param>
+        /// <param name="endDate"></param>
+        /// <param name="classId"></param>
+        /// <param name="lessonId"></param>
+        public void GetColumnsNumber(DateTime beginDate, DateTime endDate, int classId = 0, int lessonId = 0)
+        {
+            int res = 0;
+            List<DayOfWeek> days = GetDays(classId, lessonId);
+            for (DateTime date = beginDate; date <= endDate; date = date.AddDays(1))
+            {
+                if (date.DayOfWeek != DayOfWeek.Sunday && days.Contains(date.DayOfWeek))
+                {
+                    res++;
+                }
+            }
+            ColumnsNumber = res > 0 ? res + 2 : 0;
+        }
+        /// <summary>
+        /// Возвращает количество частей, на которые надо разбить талицу
+        /// </summary>
+        /// <param name="columns"></param>
+        public void GetTableCount(int columns)
+        {
+            if (columns <= MaxColumns)
+            {
+                TablesCounter = 0;
+                return;
+            }
+            int i = 2;
+            while (!(columns / i >= MinColumns && columns / i <= MaxColumns))
+            {
+                i++;
+            }
+            TablesCounter = i;
+            return;
+        }
+        /// <summary>
+        /// Вычисляет число столбцов в части таблицы
+        /// </summary>
+        /// <returns></returns>
+        public int GetColumnsInTable()
+        {
+            if (TablesCounter == 0)
+            {
+                return ColumnsNumber;
+            }
+            return ColumnsNumber / TablesCounter;
+        }
+        public List<DateTime> EndDates = new List<DateTime>();
+        /// <summary>
+        /// Возвращает список конечных дат в частях таблицы
+        /// </summary>
+        /// <returns></returns>
+        public void GetEndDates(DateTime startDate, DateTime endDate, string Role = "", int classId = 0, int lessonId = 0)
+        {
+            int days = 0;
+            if (Role == "children" || Role == "parent")
+            {
+                for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
+                {
+                    if (date.DayOfWeek != DayOfWeek.Sunday)
+                    {
+                        days++;
+                        if (days % ColumnsInTable == 0)
+                        {
+                            EndDates.Add(date);
+                        }
+                    }
+                    if (EndDates.Count == TablesCounter - 1)
+                    {
+                        break;
+                    }
+                }
+            }
+            else if (Role == "teacher")
+            {
+                List<DayOfWeek> teacherdays = GetDays(classId, lessonId);
+                for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
+                {
+                    if (date.DayOfWeek != DayOfWeek.Sunday && teacherdays.Contains(date.DayOfWeek))
+                    {
+                        days++;
+                        if (days % ColumnsInTable == 0)
+                        {
+                            EndDates.Add(date);
+                        }
+                    }
+                    if (EndDates.Count == TablesCounter - 1)
+                    {
+                        break;
+                    }
+                }
+            }
         }
     }
     public class TeacherDataViewModel

@@ -1,55 +1,54 @@
 ﻿@model OnlineDiary.Models.CRUDViewModels.DeleteUserViewModel
 @{
-    ViewBag.Title = "Delete";
+    ViewBag.Title = "Удаление";
 }
-<h2>Delete</h2>
-<h3>Are you sure you want to delete this?</h3>
+<h2>Удаление</h2>
+<h3>Вы точно хотите удалить этого пользователя?</h3>
 <div>
-    <h4>DiaryUser</h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => Model.UserName)
+            @Html.Label("Логин", htmlAttributes: new { @class = "control-label col-md-2" })
         </dt>
         <dd>
             @Html.DisplayFor(model => Model.UserName)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => Model.FirstName)
+            @Html.Label("Имя", htmlAttributes: new { @class = "control-label col-md-2" })
         </dt>
         <dd>
             @Html.DisplayFor(model => Model.FirstName)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => Model.LastName)
+            @Html.Label("Фамилия", htmlAttributes: new { @class = "control-label col-md-2" })
         </dt>
         <dd>
             @Html.DisplayFor(model => Model.LastName)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => Model.ParentName)
+            @Html.Label("Отчество", htmlAttributes: new { @class = "control-label col-md-2" })
         </dt>
         <dd>
             @Html.DisplayFor(model => Model.ParentName)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => Model.Email)
+            @Html.Label("Email", htmlAttributes: new { @class = "control-label col-md-2" })
         </dt>
         <dd>
             @Html.DisplayFor(model => Model.Email)
         </dd>
-        <dt>
+        @*<dt>
             @Html.DisplayNameFor(model => Model.PhoneNumber)
         </dt>
         <dd>
             @Html.DisplayFor(model => Model.PhoneNumber)
-        </dd>
+        </dd>*@
         <dt>
-            @Html.DisplayNameFor(model => Model.Role)
+            @Html.Label("Роль", htmlAttributes: new { @class = "control-label col-md-2" })
         </dt>
         <dd>
             @{
-                var nameRole = Model.GetRoleNameById(Model.Id);
+                var nameRole = Model.GetRoleNameById(Model.Id, true);
             }
             @Html.DisplayFor(model => nameRole)
         </dd>
@@ -59,8 +58,8 @@
         @Html.AntiForgeryToken()
 
         <div class="form-actions no-color">
-            <input type="submit" value="Delete" class="btn btn-default" /> |
-            @Html.ActionLink("Back to List", "Index")
+            @Html.ActionLink("Назад к списку", "Index", null, new { @class="btn btn-default"})
+            <input type="submit" value="Удалить" class="btn btn-primary" />
         </div>
     }
 </div>

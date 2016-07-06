@@ -13,13 +13,13 @@
             @Html.Partial("_WeekSelect")
             @foreach (var dl in Model.getDaysWithScheduleLessons())
             {
-                @Html.Partial("_DayOfSchedule", dl, new ViewDataDictionary() { { "day", Model.StartWeek.AddDays(dayCounter).ToString("dd.MM") } })
+                @Html.Partial("_DayOfSchedule", dl, new ViewDataDictionary() { { "dayString", Model.StartWeek.AddDays(dayCounter).ToString("dd.MM.yyyy") }, { "day", Model.StartWeek.AddDays(dayCounter) } })
                 dayCounter++;
             }
         </div>
     </div>
 </div>
-@Html.Partial("_ModalSchedule", false)
+@Html.Partial("_ModalSchedule", "c")
 @section Scripts{
     <script>
         window.date = {
@@ -27,11 +27,13 @@
             endWeek: '@Model.EndWeek.ToString()'
         };
         window.urls = {
-            getHomeWork: '@Url.Action("GetHomeWork","Work")'
+            getHomeWork: '@Url.Action("GetHomeWork","Work")',
+            readyHomeWork : '@Url.Action("setCompletedHomeWork", "Work")'
         };
         window.ids = {
             homeworkModal: 'home-work-modal',
-            homeWorkText: 'home-work-text'
+            homeWorkText: 'home-work-text',
+            homeWorkReady: 'home-work-ready'
         };
     </script>
     @Scripts.Render("~/Scripts/Schedule.js")

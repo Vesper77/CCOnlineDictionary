@@ -87,20 +87,22 @@ namespace OnlineDiary.Models
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public Dictionary<string, ScheduleLesson[]> getDaysWithScheduleLessons(string userId)
+        public Dictionary<string, ScheduleLessonViewModel[]> getDaysWithScheduleLessons(string userId)
         {
-            var schedule = new Dictionary<string, ScheduleLesson[]>();
+            var schedule = new Dictionary<string, ScheduleLessonViewModel[]>();
 
             var childrenData = context.ChildrenData.FirstOrDefault(d => d.ChildrenId == userId);
             var lessons = context.ScheduleLessons.Where(l => childrenData.SchoolClassId == l.SchoolClassId).Select(x => x).ToArray();
 
             for (int i = 0; i < days.Length; i++)
             {
-                var schLessons = new ScheduleLesson[ScheduleLesson.MAX_LESSONS_PER_DAY];
+                var schLessons = new ScheduleLessonViewModel[ScheduleLesson.MAX_LESSONS_PER_DAY];
                 var ls = lessons.Where(l => l.DayNumber == i + 1).OrderBy(l => l.Order).Select(x => x).ToArray();
                 for (int o = 0; o < ls.Length; o++)
                 {
-                    schLessons[ls[o].Order - 1] = ls[o];
+                    if (ls[o] != null) {
+                        schLessons[ls[o].Order - 1] = new ScheduleLessonViewModel(ls[o]);
+                    }
                 }
                 schedule.Add(days[i], schLessons);
             }
@@ -143,7 +145,7 @@ namespace OnlineDiary.Models
     {
         public DiaryUser User;
 
-        public Dictionary<string, ScheduleLesson[]> getDaysWithScheduleLessons()
+        public Dictionary<string, ScheduleLessonViewModel[]> getDaysWithScheduleLessons()
         {
             return getDaysWithScheduleLessons(User.Id);
         }
@@ -190,19 +192,19 @@ namespace OnlineDiary.Models
     public class TeacherScheduleViewModel : ScheduleViewModel
     {
         public DiaryUser Teacher;
-        public Dictionary<string, ScheduleLesson[]> getDaysWuthScheduleLessons()
+        public Dictionary<string, ScheduleLessonViewModel[]> getDaysWithScheduleLessons()
         {
-            var schedule = new Dictionary<string, ScheduleLesson[]>();
+            var schedule = new Dictionary<string, ScheduleLessonViewModel[]>();
             var lessons = context.Lessons.Where(l => l.TeacherId == Teacher.Id).ToList();
-            var schLessons = new List<ScheduleLesson>();
+            var schLessons = new List<ScheduleLessonViewModel>();
             lessons.ForEach(
                 l => {
-                    schLessons.AddRange(context.ScheduleLessons.Where(x => x.LessonId == l.Id).ToArray());
+                context.ScheduleLessons.Where(x => x.LessonId == l.Id).ToList().ForEach(sc => schLessons.Add(new ScheduleLessonViewModel(sc)));
                 }
             );
             for (int i = 0; i < days.Length; i++)
             {
-                var dayLessons = new ScheduleLesson[ScheduleLesson.MAX_LESSONS_PER_DAY];
+                var dayLessons = new ScheduleLessonViewModel[ScheduleLesson.MAX_LESSONS_PER_DAY];
                 schLessons.ForEach(
                     l => {
                         if (l.DayNumber == i + 1)
@@ -299,9 +301,16 @@ namespace OnlineDiary.Models
                             context.SaveChanges();
                         }
                     }
-                    context.ScheduleLessons.Remove(removeobj);
+                    if (lesson[i] != 0) {
+                        removeobj.LessonId = lesson[i];
+                    }
+                    else 
+                    {
+                        context.ScheduleLessons.Remove(removeobj);
+                    }
                     context.SaveChanges();
-                }
+                } 
+                else 
                 if (lesson[i] != 0)
                 {
                     var schedulelesson = new ScheduleLesson()
@@ -314,6 +323,44 @@ namespace OnlineDiary.Models
                     context.ScheduleLessons.Add(schedulelesson);
                     context.SaveChanges();
                 }
+            }
+        }
+    }
+    public class ScheduleLessonViewModel {
+        private ScheduleLesson scheduleLesson { get; set; }
+        private ApplicationDbContext context = new ApplicationDbContext();
+
+        public ScheduleLessonViewModel(ScheduleLesson ScheduleLessons) {
+            if (ScheduleLessons == null)
+                throw new Exception("Need Schedule lesson");
+            this.scheduleLesson = ScheduleLessons;
+            
+        }
+        public bool isHaveHomeWork(DateTime day) {
+            day = day.AddHours(-day.Hour);
+            day = day.AddMinutes(-day.Minute);
+            day = day.AddSeconds(-day.Second);
+            var homeWork = context.HomeWorks.FirstOrDefault(l => l.ScheludeLessonId == scheduleLesson.Id );
+            return homeWork != null;
+        }
+        public string Title {
+            get {
+                return scheduleLesson.Lesson.Title;
+            }
+        }
+        public int Id {
+            get {
+                return scheduleLesson.Id;
+            }
+        }
+        public int DayNumber {
+            get {
+                return scheduleLesson.DayNumber;
+            }
+        }
+        public int Order {
+            get {
+                return scheduleLesson.Order;
             }
         }
     }

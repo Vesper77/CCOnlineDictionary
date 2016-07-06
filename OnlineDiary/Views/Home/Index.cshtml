@@ -1,24 +1,25 @@
 ﻿@model OnlineDiary.Models.LoginViewModel
 @{
-    ViewBag.Title = "Домашняя страница";
+    ViewBag.Title = "Home Page";
 }
-<div class="panel panel-default b_preview-enter b_preview-form">
-    <div class="panel-heading b_preview-enter ">Вход в дневник</div>
-    <div class="panel-body">
-        @using (Html.BeginForm("Login", "Home", FormMethod.Post, new { role = "form" }))
-        {
-            @Html.AntiForgeryToken()
-            <div class="form-group">
-                <label>Логин</label>
-                @Html.TextBoxFor((model => model.Email), new { @class = "form-control" })
-                @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
-            </div>
-            <div class="form-group">
-                <label>Пароль</label>
-                @Html.PasswordFor((model => model.Password), new { @class = "form-control" })
-                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
-            </div>
-            <button type="submit" class="btn btn-primary">Войти</button>
-        }
+<div class="container b-preview-form ">
+    <div class="panel panel-default  b-preview-enter ">
+        <div class="panel-heading b-preview-enter ">Вход в дневник</div>
+        <div class="panel-body">
+            @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { role = "form" })) {
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    <label>Логин</label>
+                    @Html.TextBoxFor((model => model.Username), new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Username)
+                </div>
+                <div class="form-group">
+                    <label>Пароль</label>
+                    @Html.PasswordFor((model => model.Password), new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Password)
+                </div>
+                <button type="submit" class="btn btn-primary">Войти</button>
+            }
+        </div>
     </div>
 </div>
