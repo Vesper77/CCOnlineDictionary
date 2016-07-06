@@ -40,7 +40,7 @@ namespace OnlineDiary.Models.CRUDViewModels
         {
             var list = new List<UserViewModel>();
             var users = context.Users.ToArray();
-            if (role == "all")
+            if (role == "all"  || String.IsNullOrEmpty(role))
             {
                 for (int i = 0; i < context.Users.Count(); i++)
                 {

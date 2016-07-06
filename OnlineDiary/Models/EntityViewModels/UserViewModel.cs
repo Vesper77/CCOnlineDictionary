@@ -78,7 +78,7 @@ namespace OnlineDiary.Models.CRUDViewModels
         /// Список всех ролей пользователя
         /// </summary>
         public SelectListItem[] Roles = new[] {
-                new SelectListItem() { Text = "Все", Value = "all"},
+                //new SelectListItem() { Text = "Все", Value = "all"},
                 new SelectListItem() { Text = "Администратор", Value = "admin"},
                 new SelectListItem() { Text = "Ученик",Value = "children"},
                 new SelectListItem() { Text = "Родитель",Value = "parent"},

@@ -154,13 +154,18 @@ namespace OnlineDiary.Models
             //          from j in context.Lessons
             //          where i == j.Id
             //          select j;
+            if (user == null)
+            {
+                return new List<Lesson>();
+            }
             var childrenData = context.ChildrenData.FirstOrDefault(x => x.ChildrenId == user.Id);
-            if (childrenData != null) {
+            if (childrenData != null)
+            {
                 var schlessons = context.ScheduleLessons.Where(l => l.SchoolClassId == childrenData.SchoolClassId).ToList();
                 var lessons = new Dictionary<int, Lesson>();
-                
+
                 schlessons.ForEach(sc => {
-                    if (!lessons.ContainsKey(sc.Id)) lessons.Add(sc.Id, sc.Lesson);
+                    if (!lessons.ContainsKey(sc.LessonId)) lessons.Add(sc.LessonId, sc.Lesson);
                 });
                 return lessons.Values.ToList();
             }
