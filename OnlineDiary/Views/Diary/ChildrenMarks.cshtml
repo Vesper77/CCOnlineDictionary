@@ -9,7 +9,6 @@
         " четвертую "
     };
     var period = Model.GetPeriod(Model.quadmesterNumber);
-    int cruancyCounter = 0;
     int countDays = (period.Item2 - period.Item1).Days / 2;
 
     var lessons = Model.getLessons(Model.User);
@@ -36,25 +35,27 @@
     </div>
 </div>
 <div class="marks--content" style="margin-top:30px;">
-    @if (Model.User != null)
-    {
-        <ul class="nav nav-tabs">
-            <li class="active"><a data-toggle="tab" href="#part1">Часть1</a></li>
-            <li><a data-toggle="tab" href="#part2">Часть 2</a></li>
-        </ul>
-        <div class="tab-content">
-            <div id="part1" class="tab-pane active table-responsive">
-                @CreateTable(period.Item1, period.Item1.AddDays(countDays),
-                         cruancys, summarks, countmarks, false, lessons)
+    @if (Model.User != null) {
+        if (lessons.Count > 0) {
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#part1">Часть1</a></li>
+                <li><a data-toggle="tab" href="#part2">Часть 2</a></li>
+            </ul>
+            <div class="tab-content">
+                <div id="part1" class="tab-pane active table-responsive">
+                    @CreateTable(period.Item1, period.Item1.AddDays(countDays),
+                      cruancys, summarks, countmarks, false, lessons)
+                </div>
+                <div id="part2" class="tab-pane table-responsive">
+                    @CreateTable(period.Item1.AddDays(countDays + 1), period.Item2,
+                      cruancys, summarks, countmarks, true, lessons)
+                </div>
             </div>
-            <div id="part2" class="tab-pane table-responsive">
-                @CreateTable(period.Item1.AddDays(countDays + 1), period.Item2,
-                         cruancys, summarks, countmarks, true, lessons)
-            </div>
-        </div>
-    }
-    else
-    {
+        } else {
+            <p>нет данных</p>
+        }
+
+    } else {
         <p>Не выбран пользователь</p>
     }    
 </div>

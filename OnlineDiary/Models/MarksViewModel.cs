@@ -149,12 +149,22 @@ namespace OnlineDiary.Models
         /// <returns>Список предметов</returns>
         public List<Lesson> getLessons(DiaryUser user)
         {
-            var lessons = context.Marks.Where(x => x.ChildrenId == user.Id).Select(x => x.LessonId).Distinct();
-            var res = from i in lessons
-                      from j in context.Lessons
-                      where i == j.Id
-                      select j;
-            return res.ToList();
+            //var lessons = context.Marks.Where(x => x.ChildrenId == user.Id).Select(x => x.LessonId).Distinct();
+            //var res = from i in lessons
+            //          from j in context.Lessons
+            //          where i == j.Id
+            //          select j;
+            var childrenData = context.ChildrenData.FirstOrDefault(x => x.ChildrenId == user.Id);
+            if (childrenData != null) {
+                var schlessons = context.ScheduleLessons.Where(l => l.SchoolClassId == childrenData.SchoolClassId).ToList();
+                var lessons = new Dictionary<int, Lesson>();
+                
+                schlessons.ForEach(sc => {
+                    if (!lessons.ContainsKey(sc.Id)) lessons.Add(sc.Id, sc.Lesson);
+                });
+                return lessons.Values.ToList();
+            }
+            return new List<Lesson>();
         }
     }
     public class ChildrenMarksViewModel : MarksViewModel
