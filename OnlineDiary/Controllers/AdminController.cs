@@ -159,7 +159,6 @@ namespace OnlineDiary.Controllers
                 }
             }
             return View(dUser);
-            //return HttpNotFound();
         }
         [HttpPost]
         [ValidateAntiForgeryToken]

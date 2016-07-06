@@ -71,7 +71,30 @@
                                 </td>
                                 marks[i - 1] = val;
                             }
-                            @{int finalMark = (int)Math.Round((double)(marks[0] + marks[1] + marks[2] + marks[3]) / 4);}
+                            @{  int count = 0;
+                                if (marks[0] != 0)
+                                {
+                                    count++;
+                                }
+                                if (marks[1] != 0)
+                                {
+                                    count++;
+                                }
+                                if (marks[2] != 0)
+                                {
+                                    count++;
+                                }
+                                if (marks[3] != 0)
+                                {
+                                    count++;
+                                }
+                                int finalMark = 0;
+                                if (count != 0)
+                                {
+                                    finalMark = (int)Math.Round((double)(marks[0] + marks[1] + marks[2] + marks[3]) / count);
+                                }
+
+                            }
                             <td><b>@finalMark</b></td>
                         </tr>
                                 }

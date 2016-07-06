@@ -252,10 +252,17 @@ namespace OnlineDiary.Models
         public Dictionary<int, string> getLessons()
         {
             Dictionary<int, string> lessons = new Dictionary<int, string>();
-            if (form.ClassId != default(int))
+            if (User != null && form.ClassId != default(int))
             {
-                context.ScheduleLessons.Where(l => l.SchoolClassId == form.ClassId).Select(y => y.LessonId).Distinct().ToList().
-                    ForEach(l => lessons.Add(l, context.Lessons.FirstOrDefault(x => x.Id == l).Title));
+                var lessonIds = context.ScheduleLessons.Where(l => l.SchoolClassId == form.ClassId).Select(y => y.LessonId).Distinct().ToList();
+                foreach (var item in lessonIds)
+                {
+                    var lesson = context.Lessons.Where(x => x.Id == item && x.TeacherId == User.Id).FirstOrDefault();
+                    if (lesson != null)
+                    {
+                        lessons.Add(lesson.Id, lesson.Title);
+                    }
+                }
             }
             if (lessons.Count > 0 && form.LessonId == 0)
             {
