@@ -349,11 +349,32 @@ namespace OnlineDiary.Controllers
             model.EditSchedule(lesson);
             return RedirectToAction("EditSchedule", new { classId = classId, day = day });
         }
-        protected override void Dispose(bool disposing)
-        {
-            context.Dispose();
-            base.Dispose(disposing);
+
+        public ActionResult ListLessons(int page = 0) {
+            var LessonsView = new ListLessonsViewModel();
+            LessonsView.page = page;
+            var lessons = context.Lessons.OrderBy(l => l.Title).Skip(page * ListLessonsViewModel.ITEMS_PER_PAGE).Take(ListLessonsViewModel.ITEMS_PER_PAGE).ToArray();
+            LessonsView.Lessons = lessons;
+            return View(LessonsView);
         }
+        public ActionResult DeleteLesson(int Id) {
+            var lesson = context.Lessons.FirstOrDefault(l => l.Id == Id);
+            if (lesson != null) {
+
+            }
+            return RedirectToAction("ListLessons");
+        }
+        public ActionResult EditLesson(int Id) {
+            var lesson = context.Lessons.FirstOrDefault(l => l.Id == Id);
+            if (lesson != null) {
+                var viewModel = new EditLessonViewModel();
+                viewModel.Id = lesson.Id;
+                viewModel.Title = lesson.Title;
+                return View(viewModel);
+            }
+            return HttpNotFound();
+        }
+        //public ActionResult EditLesson(EditLessonViewModel lesson) { }
 
         public ActionResult CreateClass() {
             ClassCreateViewModel sch = new ClassCreateViewModel();
@@ -371,6 +392,64 @@ namespace OnlineDiary.Controllers
                 ModelState.AddModelError("", "Такой класс уже существует");
             }    
             return View(sch);
+        }
+        public ActionResult EditClass(int Id) 
+        {
+            var schoolClass = context.SchoolClasses.FirstOrDefault(s => s.Id == Id);
+            if (schoolClass != null) 
+            {
+                var viewModel = new ClassEditViewModel();
+                viewModel.Id = schoolClass.Id;
+                viewModel.Title = schoolClass.Title;
+                return View(viewModel);
+            }
+            return HttpNotFound();            
+            
+        }
+        [HttpPost]
+        public ActionResult EditClass(ClassEditViewModel viewModel) 
+        {
+            if (ModelState.IsValid)
+            {
+                var sch = context.SchoolClasses.FirstOrDefault(s => s.Id == viewModel.Id);
+                if (sch != null) {
+                    sch.Title = viewModel.Title;
+                    context.SaveChanges();
+                }
+                return RedirectToAction("EditClass", new { Id = viewModel.Id });
+            } 
+            else
+            {
+                return View(viewModel);
+            }
+        }
+        public ActionResult DeleteClass(int Id) {
+            var schClass = context.SchoolClasses.FirstOrDefault(s => s.Id == Id);
+            if (schClass != null) {
+                context.SchoolClasses.Remove(schClass);
+                context.ChildrenData.Where(c => c.SchoolClassId == schClass.Id).ToList().ForEach(
+                    c => { c.SchoolClassId = 0; }
+                );
+                context.ScheduleLessons.Where(l => l.SchoolClassId == schClass.Id).ToList().ForEach(
+                    l => { l.SchoolClassId = 0; }    
+                );
+                context.SaveChanges();
+            }
+            return RedirectToAction("ListClasses");
+            
+        }
+        public ActionResult ListClasses(int page = 0) {
+            var viewModel = new ClassListViewModel();
+            var classes = context.SchoolClasses.OrderBy(x => x.Title).Skip(page * ClassListViewModel.PER_PAGE).Take(ClassListViewModel.PER_PAGE).ToArray();
+            viewModel.Classes = classes;
+            viewModel.Page = page;
+            return View(viewModel);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            context.Dispose();
+            base.Dispose(disposing);
         }
     }
 }
