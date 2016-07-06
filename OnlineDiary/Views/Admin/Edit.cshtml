@@ -66,42 +66,55 @@
                 @Html.ValidationMessageFor(model => model.Role, "", new { @class = "text-danger" })
             </div>
         </div>
-                <div class="form-group" id="DropDownParents" @if (string.IsNullOrEmpty(Model.Role) || Model.Role != "children") { <text>style = "display:none;"</text>}>
-                    @Html.Label("Родитель ученика", htmlAttributes: new { @class = "control-label col-md-2" })
-                    <div class="col-md-10">
-                        @Html.DropDownListFor(mo => mo.ParentId, new SelectList(Model.GetAllParent(), "Key", "Value"), new { @class = "form-control" })
-                        @Html.ValidationMessageFor(mo => mo.ParentId, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-                <div class="form-group" id="DropDownClass" @if (string.IsNullOrEmpty(Model.Role) || Model.Role != "children") { <text>style = "display:none;"</text> } >
-                    @Html.Label("Класс ученика", htmlAttributes: new { @class = "control-label col-md-2" })
-                    <div class="col-md-10">
-                        @Html.DropDownListFor(model => model.ClassId, new SelectList(Model.GetAllClass(), "Key", "Value"), new { @class = "form-control" })
-                        @Html.ValidationMessageFor(model => model.ClassId, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-                <div class="form-group" id="CheckBoxLessons" @if (string.IsNullOrEmpty(Model.Role) || Model.Role != "teacher") { <text>style = "display:none;"</text> } >
-                    <div class="col-md-offset-2 col-md-10">
-                        @foreach (var item in Model.GetAllLessons()) {
-                            @item.Title
-                            if (item.TeacherId == Model.Id) {
-                                <input type="checkbox" name="LessonIds[]" value="@item.Id" class="checkbox-inline" checked='checked' />
-                            } else {
-                                <input type="checkbox" name="LessonIds[]" value="@item.Id" class="checkbox-inline" />
-                            }
-
-                        }
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-md-offset-2 col-md-10">
-                        <input type="submit" value="Сохранить" class="btn btn-primary" />
-                        @Html.ActionLink("Назад к списку", "Index", null, new { @class = "btn btn-default " })
-                    </div>
-                </div>
+        <div class="form-group" id="DropDownParents" @if (string.IsNullOrEmpty(Model.Role) || Model.Role != "children") { <text>style = "display:none;"</text>}>
+            @Html.Label("Родитель ученика", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(mo => mo.ParentId, new SelectList(Model.GetAllParent(), "Key", "Value"), new { @class = "form-control" })
+                @Html.ValidationMessageFor(mo => mo.ParentId, "", new { @class = "text-danger" })
             </div>
+        </div>
+        <div class="form-group" id="DropDownClass" @if (string.IsNullOrEmpty(Model.Role) || Model.Role != "children") { <text>style = "display:none;"</text> } >
+            @Html.Label("Класс ученика", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.ClassId, new SelectList(Model.GetAllClass(), "Key", "Value"), new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.ClassId, "", new { @class = "text-danger" })
+            </div>
+        </div>
 
-    }
+
+
+
+        <div class="form-group" id="CheckBoxLessons" @if (string.IsNullOrEmpty(Model.Role) || Model.Role != "teacher") { <text>style = "display:none;"</text> } >
+            @Html.Label("Предметы", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-offset-2 col-md-10">
+                @foreach (var item in Model.GetAllLessons(Model.Id)) {
+                    if (item.TeacherId == Model.Id) {
+                        <input type="checkbox" name="LessonIds[]" value="@item.Id" class="checkbox-inline" checked='checked' />
+                    } else {
+                        <input type="checkbox" name="LessonIds[]" value="@item.Id" class="checkbox-inline" />
+                    }
+                    @item.Title
+                    <br/>
+                }
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Сохранить" class="btn btn-primary" />
+                @Html.ActionLink("Назад к списку", "Index", null, new { @class = "btn btn-default " })
+            </div>
+        </div>
+    </div>
+}
     
 
 

@@ -32,6 +32,7 @@ namespace OnlineDiary.Models
         public DbSet<Lesson> Lessons { get; set; }
         public DbSet<SchoolClass> SchoolClasses { get; set; }
         public DbSet<Mark> Marks { get; set; }
+        public DbSet<QuadMester> QuadMesters { get; set; }
         public DbSet<ScheduleLesson> ScheduleLessons { get; set; }
         public DbSet<ChildrenData> ChildrenData { get; set; }
         public DbSet<Truancy> Truancys { get; set; }

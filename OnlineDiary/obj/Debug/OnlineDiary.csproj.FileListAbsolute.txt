@@ -407,7 +407,6 @@ D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Micro
 D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\Microsoft.Owin.Security.MicrosoftAccount.xml
 D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\obj\Debug\OnlineDiary.dll
 D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\obj\Debug\OnlineDiary.pdb
-D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\obj\Debug\OnlineDiary.csprojResolveAssemblyReference.cache
 C:\Users\Мартынов\Source\Repos\CCOnlineDictionary\OnlineDiary\bin\ApplicationInsights.config
 C:\Users\Мартынов\Source\Repos\CCOnlineDictionary\OnlineDiary\bin\roslyn\csc.exe
 C:\Users\Мартынов\Source\Repos\CCOnlineDictionary\OnlineDiary\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
@@ -490,3 +489,10 @@ C:\Users\Мартынов\Source\Repos\CCOnlineDictionary\OnlineDiary\bin\Micros
 C:\Users\Мартынов\Source\Repos\CCOnlineDictionary\OnlineDiary\obj\Debug\OnlineDiary.csprojResolveAssemblyReference.cache
 C:\Users\Мартынов\Source\Repos\CCOnlineDictionary\OnlineDiary\obj\Debug\OnlineDiary.dll
 C:\Users\Мартынов\Source\Repos\CCOnlineDictionary\OnlineDiary\obj\Debug\OnlineDiary.pdb
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\ru\System.Web.Helpers.resources.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\ru\System.Web.Mvc.resources.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\ru\System.Web.Razor.resources.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\ru\System.Web.WebPages.resources.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\ru\System.Web.WebPages.Deployment.resources.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\bin\ru\System.Web.WebPages.Razor.resources.dll
+D:\Program Files\Репозитории\CCOnlineDictionary\OnlineDiary\obj\Debug\OnlineDiary.csprojResolveAssemblyReference.cache

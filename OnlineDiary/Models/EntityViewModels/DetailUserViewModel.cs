@@ -9,7 +9,6 @@ namespace OnlineDiary.Models.CRUDViewModels
     {
         private DiaryUser user = null;
         private ApplicationDbContext context = new ApplicationDbContext();
-        private int itemsPerPage = 10;
 
         public DetailUserViewModel()
         {
@@ -28,5 +27,8 @@ namespace OnlineDiary.Models.CRUDViewModels
             this.ParentName = user.ParentName;
           //  this.PhoneNumber = user.PhoneNumber;
         }
+
+
+        
     }
 }

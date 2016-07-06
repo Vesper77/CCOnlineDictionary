@@ -25,13 +25,20 @@
                      <h3>ФИО</h3>
                  </th>
                  <th>
+                     <h3>Email</h3>
+                 </th>
+                 <th>
                      <h3>Роль</h3>                     
                  </th>
-                @if (Model.Role == "children") {
+                 @if (Model.Role == "children") {
                     <th><h3>Класс</h3></th>
-                }
+                 }
+                 @if (Model.Role == "teacher")
+                 {
+                    <th><h3>Предметы</h3></th>
+                 }
                  <th>
-                     <h3>Действия</h3>                     
+                     <h3>Действия</h3>
                  </th>
              </tr>
          </thead>
@@ -42,6 +49,9 @@
                         @Html.DisplayFor(model => item.FirstName)
                         @Html.DisplayFor(model => item.LastName)
                         @Html.DisplayFor(model => item.ParentName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => item.Email)
                     </td>
                     <td>
                         @{
@@ -56,14 +66,27 @@
                             }
                             @Html.DisplayFor(model => className)
                         </td>
+                     }
+                    @if (Model.Role == "teacher")
+                    {
+                        <td>
+                            @{
+                                var lessons = Model.GetAllLessons(Model.Id);
+                                foreach (var lesson in lessons)
+                                {
+                                    @Html.DisplayFor(model => lesson.Title)
+                                    <br />
                                 }
+                            }
+                        </td>
+                    }
                     <td>
                         @Html.ActionLink("Изменить", "Edit", new { id = item.Id }) |
                         @Html.ActionLink("Информация", "Details", new { id = item.Id }) |
                         @Html.ActionLink("Удалить", "Delete", new { id = item.Id })
                     </td>
                 </tr>
-                                }
+            }
         </tbody>
     </table>
     <div style="text-align:center">

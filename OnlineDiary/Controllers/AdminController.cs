@@ -5,6 +5,7 @@ using OnlineDiary.DAL;
 using OnlineDiary.Models;
 using OnlineDiary.Models.CRUDViewModels;
 using OnlineDiary.Models.Diary;
+using OnlineDiary.Models.EntityViewModels;
 using OnlineDiary.Models.People;
 using System;
 using System.Collections.Generic;
@@ -34,6 +35,35 @@ namespace OnlineDiary.Controllers
             }
         }
 
+        public ActionResult QuadMester()
+        {
+            var qMester = new List<QuadMesterViewModel>();
+            qMester.Add(new QuadMesterViewModel());
+            qMester.Add(new QuadMesterViewModel());
+            qMester.Add(new QuadMesterViewModel());
+            qMester.Add(new QuadMesterViewModel());
+            return View(qMester);
+        }
+        [HttpPost]
+        public ActionResult QuadMester(List<QuadMesterViewModel> viewQMest)
+        {
+            if (ModelState.IsValid)
+            {
+                if (viewQMest != null)
+                {
+                    for (int i = 0; i < viewQMest.Count; i++)
+                    {
+                        var qMester = new QuadMester();
+                        qMester.StartDate = viewQMest[i].StartDate;
+                        qMester.EndDate = viewQMest[i].EndDate;
+                        qMester.Number = viewQMest[i].Number;
+                        context.QuadMesters.Add(qMester);
+                    }
+                    context.SaveChanges();
+                }
+            }
+            return View();
+        }
         public ActionResult Index(int page = 0)
         {
             var viewModel = new IndexUserViewModel();

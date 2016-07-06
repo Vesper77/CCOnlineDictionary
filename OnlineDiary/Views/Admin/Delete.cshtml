@@ -52,6 +52,34 @@
             }
             @Html.DisplayFor(model => nameRole)
         </dd>
+        @{
+            var lessons = Model.GetAllLessons(Model.Id);
+        }
+        @if (nameRole == "Учитель")
+        {
+            <dt>
+                @Html.Label("Предмет", htmlAttributes: new { @class = "control-label col-md-2" })
+            </dt>
+            if (lessons != null)
+            {
+                foreach (var lesson in lessons)
+                {
+                    <dd>
+                        @Html.DisplayFor(model => lesson.Title)
+                    </dd>
+                }
+            }
+        }
+        @if (nameRole == "Ученик")
+        {
+            <dt>
+                @Html.Label("Класс", htmlAttributes: new { @class = "control-label col-md-2" })
+            </dt>
+            var className = Model.GetClassNameByChildrenId(Model.Id);
+            <dd>
+                @Html.DisplayFor(model => className)
+            </dd>
+        }
     </dl>
     @using (Html.BeginForm())
     {

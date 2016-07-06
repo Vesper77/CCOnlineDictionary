@@ -110,9 +110,54 @@ namespace OnlineDiary.Models.CRUDViewModels
         /// Возвращает список всех элементов из таблицы Lesson
         /// </summary>
         /// <returns></returns>
-        public Lesson[] GetAllLessons()
+        public Lesson[] GetAllLessons(string id = "")
         {
-            return context.Lessons.Where(l => l.TeacherId == null || l.TeacherId == Id).ToArray();
+            var allLessons = context.Lessons.Where(l => l.TeacherId == null || l.TeacherId == id).ToArray();
+            if (id != "")
+            {
+                var teacherLessons = allLessons.Where(i => i.TeacherId == id).ToArray();
+                if (teacherLessons != null)
+                {
+                    return teacherLessons;
+                }
+            }
+            if (allLessons != null)
+                return allLessons;
+            return new Lesson[0];
+        }
+
+        /// <summary>
+        /// Возвращает список незанятых предметов
+        /// </summary>
+        /// <returns></returns>
+        public Lesson[] GetNotBusyLessons()
+        {
+            var allLessons = context.Lessons.Where(l => l.TeacherId == null && l.Title != null).ToArray();
+            if (allLessons != null)
+            {
+                return allLessons;
+            }
+            return new Lesson[0];
+        }
+
+        /// <summary>
+        /// Возвращает имя школьного класса с помощью id ученика
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public string GetClassNameByChildrenId(string id)
+        {
+            var arrChild = context.ChildrenData.Where(i => i.ChildrenId == id).ToArray();
+            if (arrChild != null)
+            {
+                var schClassId = arrChild.First().SchoolClassId;
+                var nameClass = context.SchoolClasses.Where(i => i.Id == schClassId).ToArray();
+                if (nameClass != null)
+                {
+                    return nameClass.First().Title;
+                }
+            }
+            return "";
         }
 
         /// <summary>
@@ -197,7 +242,7 @@ namespace OnlineDiary.Models.CRUDViewModels
                 case "children": return "Ученик";
                 case "parent": return "Родитель";
                 case "teacher": return "Учитель";
-                case "admin": return "Админ";
+                case "admin": return "Администратор";
                 default: return "Человек";
             }
         }
