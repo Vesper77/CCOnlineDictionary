@@ -18,7 +18,6 @@ namespace OnlineDiary.Models.CRUDViewModels
 
         public EditUserViewModel()
         {
-            //    this.user = new DiaryUser();
         }
 
         public EditUserViewModel(DiaryUser user)
@@ -31,7 +30,6 @@ namespace OnlineDiary.Models.CRUDViewModels
             this.FirstName = user.FirstName;
             this.LastName = user.LastName;
             this.ParentName = user.ParentName;
-            //this.PhoneNumber = user.PhoneNumber;
         }
     }
 }

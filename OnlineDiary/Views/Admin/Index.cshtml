@@ -10,7 +10,7 @@
 @using (Html.BeginForm("Index", "Admin", FormMethod.Post)) {
     <div class="form-group">
         <div class="col-md-2 col-xs-5">
-            @Html.DropDownListFor(model => Model.Role, Model.Roles, "Все", new { @class = "form-control", id = "DropDownRoles" })
+            @Html.DropDownListFor(model => Model.Role, Model.Roles, new { @class = "form-control", id = "DropDownRoles" })
         </div>
         <input type="submit" value="Выбрать роль" class="btn btn-primary" />
     </div>

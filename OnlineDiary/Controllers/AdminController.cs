@@ -57,16 +57,24 @@ namespace OnlineDiary.Controllers
         }
         public ActionResult Edit(string id)
         {
-            var user = context.Users.Find(id);
-            var viewModel = new EditUserViewModel(user);
-            var userRoleId = context.Users.Where(i => i.Id == viewModel.Id).ToArray()[0].Roles.ToArray()[0].RoleId;
-            var roleName = context.Roles.Where(i => i.Id == userRoleId).ToArray()[0].Name;
-            viewModel.Role = roleName;
-            if (viewModel == null)
-            {
+            var user = context.Users.FirstOrDefault(i => i.Id == id);
+            if (user != null) {
+                var viewModel = new EditUserViewModel(user);
+                var role = UserManager.GetRoles(user.Id).FirstOrDefault();
+                if (role != null) {
+                    viewModel.Role = role;
+                }      
+                var data = context.ChildrenData.FirstOrDefault(d => d.ChildrenId == id);
+                if (data != null) {
+                    viewModel.ClassId = data.SchoolClassId;
+                    data.ParentId = data.ParentId;
+                }
+                return View(viewModel);
+
+            } else {
                 return HttpNotFound();
             }
-            return View(viewModel);
+
         }
         public ActionResult Details(string id)
         {
@@ -165,6 +173,7 @@ namespace OnlineDiary.Controllers
                     user.LastName = dUser.LastName;
                     user.ParentName = dUser.ParentName;
                     user.Email = dUser.Email;
+                    user.UserName = dUser.UserName;
 
                     if (dUser.Role == "admin") {
                         var roles = UserManager.GetRoles(user.Id);
@@ -183,10 +192,17 @@ namespace OnlineDiary.Controllers
                     }
 
                     if (dUser.Role == "children") {
-                        context.ChildrenData.Where(c => c.ChildrenId == dUser.Id).ToArray()[0].ParentId = dUser.ParentId;
-                        context.ChildrenData.Where(c => c.ChildrenId == dUser.Id).ToArray()[0].SchoolClassId = dUser.ClassId;
-                        UserManager.AddToRole(user.Id, dUser.Role);
-                        context.SaveChanges();
+                        var roles = UserManager.GetRoles(user.Id);
+                        foreach (var r in roles) {
+                            UserManager.RemoveFromRole(user.Id, r);
+                        }
+                        var childrenData = context.ChildrenData.FirstOrDefault(c => c.ChildrenId == dUser.Id);
+                        if (childrenData != null) {
+                            childrenData.ParentId = dUser.ParentId;
+                            childrenData.SchoolClassId = dUser.ClassId;
+                            UserManager.AddToRole(user.Id, dUser.Role);
+                            context.SaveChanges();
+                        }
                     }
 
                     if (dUser.Role == "teacher") {
@@ -204,11 +220,15 @@ namespace OnlineDiary.Controllers
                         //    }
                         //}
 
-                        for (int i = 0; i < dUser.LessonIds.Count(); i++) {
-                            var lessonId = dUser.LessonIds.ToArray()[i];
-                            context.Lessons.Where(model => model.Id == lessonId).ToArray()[0].TeacherId = dUser.Id;
+                        if (dUser.LessonIds != null) {
+                            for (int i = 0; i < dUser.LessonIds.Count(); i++) {
+                                var lessonId = dUser.LessonIds.ToArray()[i];
+                                var lesson = context.Lessons.FirstOrDefault(model => model.Id == lessonId);
+                                if (lesson != null) {
+                                    lesson.TeacherId = dUser.Id;
+                                }
+                            }
                         }
-
                     }
                     await UserManager.UpdateAsync(user);
 
@@ -233,49 +253,46 @@ namespace OnlineDiary.Controllers
         public ActionResult DeleteConfirmed(string id)
         {
             var dUser = context.Users.Find(id);
-            var userRole = context.Users.Where(i => i.Id == dUser.Id).ToArray()[0].Roles.ToArray()[0];
-            var roleName = context.Roles.Where(i => i.Id == userRole.RoleId).ToArray()[0].Name;
-            UserManager.RemoveFromRoleAsync(id, roleName);
-            if (roleName == "parent")
-            {
-                var parentData = context.ChildrenData.Where(i => i.ParentId == id).ToArray();
-                foreach (var p in parentData)
-                {
-                    p.ParentId = null;
+            var role = UserManager.GetRoles(id).FirstOrDefault();
+            if (role != null) {
+                UserManager.RemoveFromRoleAsync(id, role);
+                if (role == "parent") {
+                    var parentData = context.ChildrenData.Where(i => i.ParentId == id).ToArray();
+                    foreach (var p in parentData) {
+                        p.ParentId = null;
+                    }
                 }
-            }
-            if (roleName == "children")
-            {
-                var children = context.ChildrenData.Where(i => i.ChildrenId == id).FirstOrDefault();
-                if (children != null) {
-                    context.ChildrenData.Remove(children);
-                    var childrenTruancys = context.Truancys.Where(i => i.ChildrenId == id).ToArray();
-                    foreach (var t in childrenTruancys) {
-                        context.Truancys.Remove(t);
+                if (role == "children") {
+                    var children = context.ChildrenData.Where(i => i.ChildrenId == id).FirstOrDefault();
+                    if (children != null) {
+                        context.ChildrenData.Remove(children);
+                        var childrenTruancys = context.Truancys.Where(i => i.ChildrenId == id).ToArray();
+                        foreach (var t in childrenTruancys) {
+                            context.Truancys.Remove(t);
+                        }
+                        var childrenMarks = context.Marks.Where(i => i.ChildrenId == id).ToArray();
+                        foreach (var m in childrenMarks) {
+                            context.Marks.Remove(m);
+                        }
+                        var childrenFinalMarks = context.FinalMarks.Where(i => i.ChildrenId == id).ToArray();
+                        foreach (var fm in childrenFinalMarks) {
+                            context.FinalMarks.Remove(fm);
+                        }
                     }
-                    var childrenMarks = context.Marks.Where(i => i.ChildrenId == id).ToArray();
-                    foreach (var m in childrenMarks) {
-                        context.Marks.Remove(m);
-                    }
-                    var childrenFinalMarks = context.FinalMarks.Where(i => i.ChildrenId == id).ToArray();
-                    foreach (var fm in childrenFinalMarks) {
-                        context.FinalMarks.Remove(fm);
-                    }
-                }   
-            }
-            if (roleName == "teacher")
-            {
-                var lessons = context.Lessons.Where(i => i.TeacherId == id).ToArray();
-                foreach (var lesson in lessons)
-                {
-                    lesson.TeacherId = null;
                 }
+                if (role == "teacher") {
+                    var lessons = context.Lessons.Where(i => i.TeacherId == id).ToArray();
+                    foreach (var lesson in lessons) {
+                        lesson.TeacherId = null;
+                    }
 
+                }
+                context.Users.Remove(dUser);
+                return RedirectToAction("Index");
+            } else {
+                return HttpNotFound();
             }
-            context.Users.Remove(dUser);
-
-            context.SaveChanges();
-            return RedirectToAction("Index");
+            
         }
         [HttpGet]
         public async Task<ActionResult> CreateLesson()
@@ -330,7 +347,7 @@ namespace OnlineDiary.Controllers
             model.classiD = classId;
             model.Day = day;
             model.EditSchedule(lesson);
-            return await EditSchedule(classId, day);
+            return RedirectToAction("EditSchedule", new { classId = classId, day = day });
         }
         protected override void Dispose(bool disposing)
         {

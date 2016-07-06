@@ -52,29 +52,29 @@ namespace OnlineDiary.Controllers
             return View(viewModel);
         }
 
-        [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
+        //[HttpPost]
+        //[AllowAnonymous]
+        //[ValidateAntiForgeryToken]
+        //public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return View(model);
+        //    }
 
-            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
-            if (result == SignInStatus.Success) {
-                var user = await UserManager.FindByNameAsync(User.Identity.Name);
-                if (await UserManager.IsInRoleAsync(user.Id, "admin"))
-                {
-                    return RedirectToAction("Index", "Admin");
-                }
-                else
-                {
-                    return RedirectToAction("Schedule", "Diary");
-                }
-            }
-            return View();
-        }
+        //    var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+        //    if (result == SignInStatus.Success) {
+        //        var user = await UserManager.FindByNameAsync(User.Identity.Name);
+        //        if (await UserManager.IsInRoleAsync(user.Id, "admin"))
+        //        {
+        //            return RedirectToAction("Index", "Admin");
+        //        }
+        //        else
+        //        {
+        //            return RedirectToAction("Schedule", "Diary");
+        //        }
+        //    }
+        //    return View();
+        //}
     }
 }

@@ -1,4 +1,4 @@
-﻿@model bool
+﻿@model string
 @using Microsoft.AspNet.Identity
 <div id="home-work-modal" class="modal fade" role="dialog">
     <div class="modal-dialog">
@@ -9,19 +9,20 @@
                 <h4 class="modal-title">Домашняя работа</h4>
             </div>
             <div class="modal-body" >
-                @if (!Model)
+                @if (Model == "p" || Model == "c")
                 {
                     <p id="home-work-text"></p>
                 }
-                else
+                else if(Model == "t")
                 {
                     <textarea id="home-work-text" class="form-control"></textarea>
                 }
             </div>
             <div class="modal-footer">
-                @if (Model)
-                {
+                @if (Model == "t") {
                     <button type="button" class="btn btn-primary"  id="home-work-send"  data-dismiss="modal">Отправить</button>
+                } else if (Model == "c") {
+                    <button class="btn btn-primary" type="button" id="home-work-ready">Сделал</button>
                 }
                 <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
             </div>

@@ -4,6 +4,7 @@
             lessonId : 'data-lesson-id'
         };
         var currentLessonId = null;
+        var homeWorkId = null;
         function openHomeWork(lessonId) {
             if (window.date) {
                 var options = {};
@@ -15,6 +16,13 @@
                 $.ajax(urls.getHomeWork, options).done(function (response) {
                     if (response.result) {
                         var $homeWorkText = $('#' + ids['homeWorkText']);
+                        if (response.homeWorkId) {
+                            homeWorkId = response.homeWorkId;
+                            if (ids.homeWorkReady)
+                                $('#' + ids['homeWorkReady']).show();
+                        } else if(ids.homeWorkReady) {
+                            $('#' + ids['homeWorkReady']).hide();
+                        }
                         if ($homeWorkText.length > 0) {
                             if ($homeWorkText.is('textarea')) {
                                 $('#' + ids['homeWorkText']).val(response.text);
@@ -41,16 +49,26 @@
                 currentLessonId = null;
             }
         }
+        function readyHomeWork() {
+            if(homeWorkId != null && urls.readyHomeWork){
+                var options = {};
+                options.data = {
+                    homeWorkId: homeWorkId
+                };
+                options.Methood = "POST";
+                $.ajax(urls.readyHomeWork, options);
+            }            
+        }
         $('[data-lesson-id]').click(
             function () {
                 openHomeWork($(this).attr(attrs['lessonId'])
             );
-            });
+        });
         if (ids.homeWorkSend) {
-            $('#' + ids['homeWorkSend']).click(function () {
-                sendHomeWork();
-            });
-        };
-
+            $('#' + ids['homeWorkSend']).click(sendHomeWork);
+        }
+        if (ids.homeWorkReady) {
+            $('#' + ids['homeWorkReady']).click(readyHomeWork); 
+        }
     });
 })(jQuery);

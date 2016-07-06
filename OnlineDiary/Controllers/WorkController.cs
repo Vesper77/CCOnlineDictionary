@@ -1,11 +1,12 @@
 ﻿using OnlineDiary.Models;
+using OnlineDiary.Models.Diary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-
+using Microsoft.AspNet.Identity;
 namespace OnlineDiary.Controllers
 {
     public class WorkController : Controller
@@ -21,7 +22,7 @@ namespace OnlineDiary.Controllers
                 var homeWork = context.HomeWorks.FirstOrDefault(h => h.Day == dayForHomeWork && h.ScheludeLessonId == ScheduleLessonId);
                 if (homeWork != null)
                 {
-                    return Json(new { text = homeWork.Description, result = true });
+                    return Json(new { text = homeWork.Description, result = true, homeWorkId = homeWork.Id });
                 }
                 else
                 {
@@ -54,6 +55,19 @@ namespace OnlineDiary.Controllers
                 return Json(new { result = true });
             }
             return Json(new { result = false });
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "children")]
+        public JsonResult setCompletedHomeWork(int homeWorkId) {
+            if (homeWorkId > 0) {
+                var homeWork = new CompletedHomeWork();
+                homeWork.HomeWorkId = homeWorkId;
+                homeWork.childrenId = System.Web.HttpContext.Current.User.Identity.GetUserId();
+                return Json(new { result = true });
+            } else {
+                return Json(new { result = false });
+            }
         }
     }
 }

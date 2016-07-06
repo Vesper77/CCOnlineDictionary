@@ -1,8 +1,17 @@
-﻿using OnlineDiary.Models.Diary;
+﻿using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.AspNet.Identity.Owin;
+using OnlineDiary.DAL;
+using OnlineDiary.Models;
+using OnlineDiary.Models.CRUDViewModels;
+using OnlineDiary.Models.Diary;
+using OnlineDiary.Models.People;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Data.Entity;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
@@ -22,7 +31,6 @@ namespace OnlineDiary.Models.CRUDViewModels
             //    this.user = new DiaryUser();
 
         }
-
         public UserViewModel(DiaryUser user)
         {
             this.user = user;
@@ -53,7 +61,7 @@ namespace OnlineDiary.Models.CRUDViewModels
         [RegularExpression(@"^[а-яА-Я]+$", ErrorMessage = "Используйте буквы")]
         public string FirstName { get; set; }
         [Required(ErrorMessage = "Введите фамилию")]
-        [RegularExpression(@"^[а-яФ-Я]+$", ErrorMessage = "Используйте буквы")]
+        [RegularExpression(@"^[а-яА-Я]+$", ErrorMessage = "Используйте буквы")]
         public string LastName { get; set; }
         [Required(ErrorMessage = "Введите отчество")]
         [RegularExpression(@"^[а-яА-Я]+$", ErrorMessage = "Используйте буквы")]
@@ -70,6 +78,7 @@ namespace OnlineDiary.Models.CRUDViewModels
         /// Список всех ролей пользователя
         /// </summary>
         public SelectListItem[] Roles = new[] {
+                new SelectListItem() { Text = "Все", Value = "all"},
                 new SelectListItem() { Text = "Администратор", Value = "admin"},
                 new SelectListItem() { Text = "Ученик",Value = "children"},
                 new SelectListItem() { Text = "Родитель",Value = "parent"},
@@ -156,12 +165,19 @@ namespace OnlineDiary.Models.CRUDViewModels
         /// <returns></returns>
         public string GetRoleNameById(string userId, bool isLocalization = false)
         {
-            var userRoleId = context.Users.Where(i => i.Id == userId).ToArray()[0].Roles.ToArray()[0].RoleId;
-            var name = context.Roles.First(i => i.Id == userRoleId).Name;
-            if (isLocalization) {
-                return GetRoleTitle(name);
+            var user = context.Users.FirstOrDefault(i => i.Id == userId);
+            if (user != null) {
+                var role = user.Roles.FirstOrDefault();
+                if (role != null) {
+                    var name = context.Roles.First(i => i.Id == role.RoleId).Name;
+                    if (isLocalization) {
+                        return GetRoleTitle(name);
+                    }
+                    return name;
+                }
             }
-            return name;
+            return "none";
+            
         }
 
         /// <summary>
