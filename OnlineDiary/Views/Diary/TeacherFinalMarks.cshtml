@@ -87,7 +87,7 @@
                             {
                                 int val = Model.GetFinalMark(children.Id, Model.form.LessonId, i);
                                 marks[i - 1] = val;
-                                <td class="set--mark-final" data-mark-lesson="@Model.form.LessonId" data-mark-children="@children.Id" data-mark-fourth="@(i)">
+                                <td  data-mark-lesson="@Model.form.LessonId" data-mark-children="@children.Id" data-mark-fourth="@(i)">
                                     @val
                                 </td>
                                     @*else
