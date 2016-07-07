@@ -62,19 +62,22 @@ namespace OnlineDiary.Controllers
             if (user != null)
             {
                 var viewModel = new EditUserViewModel(user);
-                var userRoleId = context.Users.Where(i => i.Id == viewModel.Id).FirstOrDefault();
-                if (userRoleId != null)
+
+                var name = GetRoleNameById(id);
+                if (name == "children")
                 {
-                    var role = context.Roles.Where(i => i.Id == userRoleId.Id).FirstOrDefault();
-                    if (role != null)
+                    var chilData = context.ChildrenData.Where(i => i.ChildrenId == id).FirstOrDefault();
+                    if (chilData != null)
                     {
-                        viewModel.Role = role.Name;
+                        viewModel.ClassId = chilData.SchoolClassId;
+                        viewModel.ParentId = chilData.ParentId;
                     }
                 }
+                viewModel.Role = name;
                 return View(viewModel);
             }
             return HttpNotFound();
-            
+
         }
         public ActionResult Details(string id)
         {
@@ -269,7 +272,7 @@ namespace OnlineDiary.Controllers
                             UserManager.RemoveFromRole(user.Id, r);
                         }
                         var chData = context.ChildrenData.Where(c => c.ChildrenId == dUser.Id).FirstOrDefault();
-                        if (chData != null)
+                        if (chData.ChildrenId != null)
                         {
                             chData.ParentId = dUser.ParentId;
                             chData.SchoolClassId = dUser.ClassId;
@@ -313,7 +316,8 @@ namespace OnlineDiary.Controllers
 
                     if (dUser.newPassword != null && dUser.newPassword.Length > 0)
                     {
-                        var result = await UserManager.AddPasswordAsync(dUser.Id, dUser.newPassword);
+                        await UserManager.RemovePasswordAsync(dUser.Id);
+                        await UserManager.AddPasswordAsync(dUser.Id, dUser.newPassword);
                     }
 
                     context.SaveChanges();

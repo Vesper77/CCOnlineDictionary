@@ -20,7 +20,7 @@ namespace OnlineDiary.Models
                 Teachers = new Dictionary<string, string>();
                 foreach (var u in usersIdRole)
                 {
-                    Teachers.Add(u.Id, u.FirstName);
+                    Teachers.Add(u.Id, u.FirstName + " " + u.LastName + " " + u.ParentName);
                 }
                 return Teachers;
             }

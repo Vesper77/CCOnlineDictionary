@@ -327,18 +327,29 @@ namespace OnlineDiary.Controllers
             context.SaveChanges();
             return Json(new { result = true, markValue = markvalue });
         }
+        public class MarkViewModel {
+            public DateTime day { get; set; }
+            public string value { get; set; }
+            public string childrenId { get; set; }
+            public int lessonId { get; set; }
+        }
         [HttpPost]
-        public void setMarks() {
-            dynamic model;
-            var resolveRequest = HttpContext.Request;
-            List<dynamic> marks = new List<dynamic>();
-            resolveRequest.InputStream.Seek(0, SeekOrigin.Begin);
-            string jsonString = new StreamReader(resolveRequest.InputStream).ReadToEnd();
-            if (jsonString != null)
-            {
-                JavaScriptSerializer serializer = new JavaScriptSerializer();
-                model = (List<dynamic>)serializer.Deserialize(jsonString, typeof(List<dynamic>));
+        [Authorize(Roles = "teacher")]
+        public ActionResult setMarks(List<MarkViewModel> marks) {
+            foreach (var m in marks) {
+
+                if (m.value == "1" || m.value == "3" || m.value == "2" || m.value == "4" || m.value == "5")
+                {
+                    SetMark(m.day, Convert.ToInt32(m.value), m.childrenId, m.lessonId);
+                } else if (string.IsNullOrWhiteSpace(m.value)) {
+                    //context.Marks.FirstOrDefault(ma => ma.Day == m.day && ma.ChildrenId == m.childrenId && ma.LessonId == m.lessonId);
+                    
+                }else
+                {
+                    SetTruancy(m.day, m.childrenId, m.lessonId);
+                }
             }
+            return Redirect(Request.UrlReferrer.ToString());
         }
     }
 }

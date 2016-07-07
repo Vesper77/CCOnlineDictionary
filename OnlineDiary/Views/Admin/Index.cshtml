@@ -75,7 +75,7 @@
                     {
                         <td>
                             @{
-                                var lessons = Model.GetAllLessons(Model.Id);
+                                var lessons = Model.GetTeacherLessons(item.Id);
                                 foreach (var lesson in lessons)
                                 {
                                     @Html.DisplayFor(model => lesson.Title)

@@ -27,8 +27,8 @@
                     'day': currentMark.day,
                     'lessonId': currentMark.lessonId,
                     'markValue': currentMark.$input.val()
-                }
-            );
+                });
+            //returnMarkToView($selInput);
             //if (currentMark != null && window.urls) {
             //    isEdit = false;
             //    var markValue = currentMark.$input.val();
@@ -122,13 +122,16 @@
         function isN(value) {
             return typeof value === 'string' && $.trim(value).toUpperCase() == 'Н';
         }
+        var i = 0;
         $('td.' + css['markSet']).click(function (e) {
             var $this = $(this);
             if ($this.children('input.' + css['inputMark']).length == 0) {
                 if (isEdit) {
                     saveMark();
                 }
-                var $input = $('<input type="text" class="' + css['inputMark'] + '" />');
+
+                var name = 'name="marks[' + i + '].value"';
+                var $input = $('<input type="text" class="' + css['inputMark'] + '" ' + name + '  />');
                 $input.keypress(function (e, data) {
                     return( (e.keyCode >= 49 && e.keyCode <= 53) || e.keyCode == 1085 || e.keyCode == 1053) && e.currentTarget.value.length == 0 ;
                 });
@@ -142,7 +145,11 @@
                 }
                 
                 $this.html($input);
+                $this.append('<input type="hidden" name="marks[' + i + '].day" value="' + $this.attr(attrs['date']) + '" />');
+                $this.append('<input type="hidden" name="marks[' + i + '].lessonId" value="' + $this.attr(attrs['lesson']) + '" />');
+                $this.append('<input type="hidden" name="marks[' + i + '].childrenId" value="' + $this.attr(attrs['children']) + '" />');
                 setMark($this.attr(attrs['children']), $this.attr(attrs['date']), $this.attr(attrs['lesson']), $input);
+                i++;
             };
         });
         $(document).click(function (e) {

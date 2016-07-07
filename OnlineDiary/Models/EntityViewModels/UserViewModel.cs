@@ -230,6 +230,16 @@ namespace OnlineDiary.Models.CRUDViewModels
             context.SchoolClasses.Add(schClass);
             context.SaveChanges();
         }
+
+        public Lesson[] GetTeacherLessons(string id)
+        {
+            var allLessons = context.Lessons.Where(l => l.TeacherId == id).ToArray();
+            if (allLessons != null)
+            {
+                return allLessons;
+            }
+            return new Lesson[0];
+        }
         private string GetRoleTitle(string role)
         {
             switch (role)
