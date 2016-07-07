@@ -41,7 +41,7 @@ namespace OnlineDiary.Models.CRUDViewModels
             this.FirstName = user.FirstName;
             this.LastName = user.LastName;
             this.ParentName = user.ParentName;
-           // this.PhoneNumber = user.PhoneNumber;
+            // this.PhoneNumber = user.PhoneNumber;
         }
 
 
@@ -55,7 +55,7 @@ namespace OnlineDiary.Models.CRUDViewModels
         [Required(ErrorMessage = "Введите логин")]
         public string UserName { get; set; }
         [Required(ErrorMessage = "Введите email")]
-        [EmailAddress(ErrorMessage ="Ввдеите нормальный емейл")]
+        [EmailAddress(ErrorMessage = "Ввдеите нормальный емейл")]
         public string Email { get; set; }
         [Required(ErrorMessage = "Введите имя")]
         [RegularExpression(@"^[а-яА-Я]+$", ErrorMessage = "Используйте буквы")]
@@ -70,7 +70,7 @@ namespace OnlineDiary.Models.CRUDViewModels
         [Required]
         [Display(Name = "Role")]
         public string Role { get; set; } = "all";
-       
+
         public string ParentId { get; set; }
         public int ClassId { get; set; }
 
@@ -100,7 +100,7 @@ namespace OnlineDiary.Models.CRUDViewModels
                     FirstName = this.FirstName,
                     LastName = this.LastName,
                     ParentName = this.ParentName,
-                  //  PhoneNumber = this.PhoneNumber
+                    //  PhoneNumber = this.PhoneNumber
                 };
             }
             return user;
@@ -110,9 +110,54 @@ namespace OnlineDiary.Models.CRUDViewModels
         /// Возвращает список всех элементов из таблицы Lesson
         /// </summary>
         /// <returns></returns>
-        public Lesson[] GetAllLessons()
+        public Lesson[] GetAllLessons(string id = "")
         {
-            return context.Lessons.Where(l => l.TeacherId == null || l.TeacherId == Id).ToArray();
+            var allLessons = context.Lessons.Where(l => l.TeacherId == null || l.TeacherId == id).ToArray();
+            if (id != "")
+            {
+                var teacherLessons = allLessons.Where(i => i.TeacherId == id).ToArray();
+                if (teacherLessons != null)
+                {
+                    return teacherLessons;
+                }
+            }
+            if (allLessons != null)
+                return allLessons;
+            return new Lesson[0];
+        }
+
+        /// <summary>
+        /// Возвращает список незанятых предметов
+        /// </summary>
+        /// <returns></returns>
+        public Lesson[] GetNotBusyLessons()
+        {
+            var allLessons = context.Lessons.Where(l => l.TeacherId == null && l.Title != null).ToArray();
+            if (allLessons != null)
+            {
+                return allLessons;
+            }
+            return new Lesson[0];
+        }
+
+        /// <summary>
+        /// Возвращает имя школьного класса с помощью id ученика
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public string GetClassNameByChildrenId(string id)
+        {
+            var arrChild = context.ChildrenData.Where(i => i.ChildrenId == id).ToArray();
+            if (arrChild != null)
+            {
+                var schClassId = arrChild.First().SchoolClassId;
+                var nameClass = context.SchoolClasses.Where(i => i.Id == schClassId).ToArray();
+                if (nameClass != null)
+                {
+                    return nameClass.First().Title;
+                }
+            }
+            return "";
         }
 
         /// <summary>
@@ -166,18 +211,21 @@ namespace OnlineDiary.Models.CRUDViewModels
         public string GetRoleNameById(string userId, bool isLocalization = false)
         {
             var user = context.Users.FirstOrDefault(i => i.Id == userId);
-            if (user != null) {
+            if (user != null)
+            {
                 var role = user.Roles.FirstOrDefault();
-                if (role != null) {
+                if (role != null)
+                {
                     var name = context.Roles.First(i => i.Id == role.RoleId).Name;
-                    if (isLocalization) {
+                    if (isLocalization)
+                    {
                         return GetRoleTitle(name);
                     }
                     return name;
                 }
             }
             return "none";
-            
+
         }
 
         /// <summary>
@@ -191,13 +239,15 @@ namespace OnlineDiary.Models.CRUDViewModels
             context.SchoolClasses.Add(schClass);
             context.SaveChanges();
         }
-        private string GetRoleTitle(string role) {
-            switch (role) {
+        private string GetRoleTitle(string role)
+        {
+            switch (role)
+            {
                 case "all": return "Все";
                 case "children": return "Ученик";
                 case "parent": return "Родитель";
                 case "teacher": return "Учитель";
-                case "admin": return "Админ";
+                case "admin": return "Администратор";
                 default: return "Человек";
             }
         }
