@@ -11,16 +11,6 @@
     };
     var lessons = Model.getLessons(Model.User);
 }
-<div>
-    @*@Html.ActionLink("Оценки за предыдущий год", "ChildrenFinalMarks", new
-        {
-            year = Model.CurrentYear - 1
-        })
-            @Html.ActionLink("Оценки за следующий год", "ChildrenFinalMarks", new
-        {
-            year = Model.CurrentYear + 1
-        })*@
-</div>
 <h2>Итоговые оценки ученика класса @(" " + Model.getClassName(Model.User) ) </h2>
 <h3>
     @(Model.GetUserName(Model.User) + " за " + Model.CurrentYear + " - " + (Model.CurrentYear + 1) + " учебный год")

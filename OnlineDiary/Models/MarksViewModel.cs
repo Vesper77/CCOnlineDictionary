@@ -260,13 +260,20 @@ namespace OnlineDiary.Models
                      Select(x => x.SchoolClassId).Distinct().ToArray())
             );
             Dictionary<int, string> SchoolClasses = new Dictionary<int, string>();
-            classesIds.ForEach(
-                c =>
+            if (classesIds.Count > 0)
+            {
+                foreach (var item in classesIds)
                 {
-                    if (!SchoolClasses.Keys.Any(k => k == c))
-                        SchoolClasses.Add(c, context.SchoolClasses.FirstOrDefault(x => x.Id == c).Title);
+                    var schoolClass = context.SchoolClasses.Where(x => x.Id == item).FirstOrDefault();
+                    if (schoolClass != null)
+                    {
+                        if (!SchoolClasses.ContainsKey(schoolClass.Id))
+                        {
+                            SchoolClasses.Add(schoolClass.Id, schoolClass.Title);
+                        }
+                    }
                 }
-            );
+            }
             if (SchoolClasses.Count > 0 && form.ClassId == 0)
             {
                 form.ClassId = SchoolClasses.Keys.First();

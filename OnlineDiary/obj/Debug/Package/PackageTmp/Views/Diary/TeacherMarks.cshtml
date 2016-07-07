@@ -11,24 +11,34 @@
     var childrens = Model.GetChildrensInClass(Model.form.ClassId);
 }
 <div>
+    <div class="page-header">
+        <h2>Оценки учеников класса @(" " + Model.getClassName(Model.form.ClassId)) </h2>
+        <h3>
+            @("По предмету " + "\"" + Model.getLessonName(Model.form.LessonId) + "\"" + " за " +
+      quadmesters[Model.quadmesterNumber - 1] + " четверть " + Model.CurrentYear + " - " + (Model.CurrentYear + 1) + "учебного  года")
+        </h3>
+    </div>
     @if (Model.quadmesterNumber > 1)
     {
         @Html.ActionLink("Оценки за предыдущую четверть", "TeacherMarks", new
-   {
-       LessonId = Model.form.LessonId,
-       ClassId = Model.form.ClassId,
-       quadmester = Model.quadmesterNumber - 1,
-   }, new { @class = "btn btn-primary" })
+        {
+           LessonId = Model.form.LessonId,
+           ClassId = Model.form.ClassId,
+           quadmester = Model.quadmesterNumber - 1,
+        }, new { @class = "btn btn-primary pull-left" })
     }
     @if (Model.quadmesterNumber < 4)
     {
         @Html.ActionLink("Оценки за следующую четверть", "TeacherMarks", new
-   {
-       LessonId = Model.form.LessonId,
-       ClassId = Model.form.ClassId,
-       quadmester = Model.quadmesterNumber + 1,
-   }, new { @class = "btn btn-primary" })
+        {
+           LessonId = Model.form.LessonId,
+           ClassId = Model.form.ClassId,
+           quadmester = Model.quadmesterNumber + 1,
+        }, new { @class = "btn btn-primary pull-right" })
     }
+    <button class="btn btn-primary" id="saveMarks">
+        Сохранить
+    </button>
     @using (Html.BeginForm("TeacherMarksPost", "Diary", FormMethod.Post, new { @class = "form-inline" }))
     {
         if (Model.form.Classes.Count > 1)
@@ -59,14 +69,9 @@
         }
         if (Model.form.Classes.Count > 1 || Model.form.Lessons.Count > 1)
         {
-            <button type="submit">Показать</button>
+            <button type="submit" class="btn btn-primary">Показать</button>
         }
     }
-    <h2>Оценки учеников класса @(" " + Model.getClassName(Model.form.ClassId)) </h2>
-    <h3>
-        @("По предмету " + "\"" + Model.getLessonName(Model.form.LessonId) + "\"" + " за " +
-      quadmesters[Model.quadmesterNumber - 1] + " четверть " + Model.CurrentYear + " - " + (Model.CurrentYear + 1) + "учебного  года")
-    </h3>
     <div class="">
         @{ var days = Model.marksModel.GetDays(Model.form.ClassId, Model.form.LessonId);}
         @if (Model.form != null && Model.Period != null && Model.Period.Item1 != null && Model.Period.Item2 != null &&

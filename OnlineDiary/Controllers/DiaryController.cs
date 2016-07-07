@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
+using System.IO;
+using System.Web.Script.Serialization;
 
 namespace OnlineDiary.Controllers
 {
@@ -324,6 +326,19 @@ namespace OnlineDiary.Controllers
             }
             context.SaveChanges();
             return Json(new { result = true, markValue = markvalue });
+        }
+        [HttpPost]
+        public void setMarks() {
+            dynamic model;
+            var resolveRequest = HttpContext.Request;
+            List<dynamic> marks = new List<dynamic>();
+            resolveRequest.InputStream.Seek(0, SeekOrigin.Begin);
+            string jsonString = new StreamReader(resolveRequest.InputStream).ReadToEnd();
+            if (jsonString != null)
+            {
+                JavaScriptSerializer serializer = new JavaScriptSerializer();
+                model = (List<dynamic>)serializer.Deserialize(jsonString, typeof(List<dynamic>));
+            }
         }
     }
 }

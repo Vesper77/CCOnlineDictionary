@@ -287,7 +287,7 @@ namespace OnlineDiary.Models
         {
             for (int i = 0; i < 6; i++)
             {
-                var removeobj = context.ScheduleLessons.SingleOrDefault(x => x.SchoolClassId == classiD &&
+                var removeobj = context.ScheduleLessons.FirstOrDefault(x => x.SchoolClassId == classiD &&
                                                                         x.DayNumber == Day &&
                                                                         x.Order == i + 1);
                 if (removeobj != null)

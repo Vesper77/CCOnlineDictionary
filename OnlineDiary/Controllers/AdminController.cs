@@ -164,6 +164,25 @@ namespace OnlineDiary.Controllers
             return View(dUser);
             //return HttpNotFound();
         }
+        /// Находит и возвращает название роли с помощью id пользователя
+        /// </summary>
+        /// <param name="userId">Id пользователя</param>
+        /// <returns></returns>
+        public string GetRoleNameById(string userId)
+        {
+            var user = context.Users.FirstOrDefault(i => i.Id == userId);
+            if (user != null)
+            {
+                var role = user.Roles.FirstOrDefault();
+                if (role != null)
+                {
+                    var name = context.Roles.First(i => i.Id == role.RoleId).Name;
+                    return name;
+                }
+            }
+            return "none";
+
+        }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(EditUserViewModel dUser)
@@ -178,6 +197,49 @@ namespace OnlineDiary.Controllers
                     user.ParentName = dUser.ParentName;
                     user.Email = dUser.Email;
                     user.UserName = dUser.UserName;
+
+                    var roleName = GetRoleNameById(dUser.Id);
+
+                    if (roleName == "parent")
+                    {
+                        var parentData = context.ChildrenData.Where(i => i.ParentId == dUser.Id).ToArray();
+                        foreach (var p in parentData)
+                        {
+                            p.ParentId = null;
+                        }
+                    }
+                    if (roleName == "children")
+                    {
+                        var children = context.ChildrenData.Where(i => i.ChildrenId == dUser.Id).FirstOrDefault();
+                        if (children != null)
+                        {
+                            context.ChildrenData.Remove(children);
+                            var childrenTruancys = context.Truancys.Where(i => i.ChildrenId == dUser.Id).ToArray();
+                            foreach (var t in childrenTruancys)
+                            {
+                                context.Truancys.Remove(t);
+                            }
+                            var childrenMarks = context.Marks.Where(i => i.ChildrenId == dUser.Id).ToArray();
+                            foreach (var m in childrenMarks)
+                            {
+                                context.Marks.Remove(m);
+                            }
+                            var childrenFinalMarks = context.FinalMarks.Where(i => i.ChildrenId == dUser.Id).ToArray();
+                            foreach (var fm in childrenFinalMarks)
+                            {
+                                context.FinalMarks.Remove(fm);
+                            }
+                        }
+                    }
+                    if (roleName == "teacher")
+                    {
+                        var lessons = context.Lessons.Where(i => i.TeacherId == dUser.Id).ToArray();
+                        foreach (var lesson in lessons)
+                        {
+                            lesson.TeacherId = null;
+                        }
+
+                    }
 
                     if (dUser.Role == "admin")
                     {
@@ -201,12 +263,24 @@ namespace OnlineDiary.Controllers
 
                     if (dUser.Role == "children")
                     {
+                        var roles = UserManager.GetRoles(user.Id);
+                        foreach (var r in roles)
+                        {
+                            UserManager.RemoveFromRole(user.Id, r);
+                        }
                         var chData = context.ChildrenData.Where(c => c.ChildrenId == dUser.Id).FirstOrDefault();
-                        if (chData != null) {
+                        if (chData != null)
+                        {
                             chData.ParentId = dUser.ParentId;
                             chData.SchoolClassId = dUser.ClassId;
+                        } else
+                        {
+                            ChildrenData newData = new ChildrenData();
+                            newData.ParentId = dUser.ParentId;
+                            newData.ChildrenId = dUser.Id;
+                            newData.SchoolClassId = dUser.ClassId;
+                            context.ChildrenData.Add(newData);
                         }
-                        
                         UserManager.AddToRole(user.Id, dUser.Role);
                         context.SaveChanges();
                     }
@@ -220,14 +294,19 @@ namespace OnlineDiary.Controllers
                         }
                         UserManager.AddToRole(user.Id, dUser.Role);
                         context.Lessons.Where(l => l.TeacherId == dUser.Id).ToList().ForEach(l => l.TeacherId = null);
-                        for (int i = 0; i < dUser.LessonIds.Count(); i++)
+                        if (dUser.LessonIds != null)
                         {
-                            var lessonId = dUser.LessonIds[i];
-                            var lesson = context.Lessons.FirstOrDefault(model => model.Id == lessonId);
-                            if (lesson != null) {
-                                lesson.TeacherId = dUser.Id;
+                            for (int i = 0; i < dUser.LessonIds.Count(); i++)
+                            {
+                                var lessonId = dUser.LessonIds[i];
+                                var lesson = context.Lessons.FirstOrDefault(model => model.Id == lessonId);
+                                if (lesson != null)
+                                {
+                                    lesson.TeacherId = dUser.Id;
+                                }
                             }
-                        }                        
+
+                        }
 
                     }
                     await UserManager.UpdateAsync(user);
@@ -238,7 +317,7 @@ namespace OnlineDiary.Controllers
                     }
 
                     context.SaveChanges();
-                    return RedirectToAction("Edit", new {  Id = dUser.Id });
+                    return RedirectToAction("Edit", new { Id = dUser.Id });
                 }
             }
             return View(dUser);

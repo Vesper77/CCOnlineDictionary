@@ -18,52 +18,61 @@
             markTotal: '#mark--total'
         };
         var currentMark = null;
+        var jsonresult = [];
 
         function saveMark() {
-            if (currentMark != null && window.urls) {
-                isEdit = false;
-                var markValue = currentMark.$input.val();
-                //Russian H                
-                if (markValue.length > 0 && (isN(markValue)) || !isNaN(parseInt(currentMark.$input.val()))) {
-                    var $selInput = currentMark.$input;
-                    var options = {};
-                    options.data = {
-                        'childrenId': currentMark.childrenId,
-                        'day': currentMark.day,
-                        'lessonId': currentMark.lessonId,
-                        'markValue': currentMark.$input.val()
-                    };
-                    if (currentMark.fourth) {
-                        options.data.fourth = currentMark.fourth;
-                    }
-                    var url = "";
-                    options.method = "POST"
-                    if (currentMark.isFinal) {
-                        var url = window.urls.setFinalMark;
-                    } else {
-                        var url = options.data.markValue % 1 === 0 ? window.urls.setMark : window.urls.setTruancy;
-                    }
-                    
-                    $.ajax(url, options).done(function (response) {
-                        if (response.result && response.markValue) {
-                            if (isN(response.markValue) && !isN(currentMark.oldValue)) {                                
-                                plusCruancy(1);
-                            } else if (!isN(response.markValue) && isN(currentMark.oldValue)) {
-                                plusCruancy(-1);
-                            }
-                            var $tr = $selInput.parents('tr');
-                            returnMarkToView($selInput, response.markValue);
-                            recalculateMarks($tr);
-                        } else {
-                            returnMarkToView($selInput);
-                        }
-                    }).error(function (response) {
-                        returnMarkToView($selInput);
-                    });
-                } else {
-                    returnMarkToView(currentMark.$input,currentMark.oldValue);                    
+            jsonresult.push(
+                {
+                    'childrenId': currentMark.childrenId,
+                    'day': currentMark.day,
+                    'lessonId': currentMark.lessonId,
+                    'markValue': currentMark.$input.val()
                 }
-            }
+            );
+            //if (currentMark != null && window.urls) {
+            //    isEdit = false;
+            //    var markValue = currentMark.$input.val();
+            //    //Russian H                
+            //    if (markValue.length > 0 && (isN(markValue)) || !isNaN(parseInt(currentMark.$input.val()))) {
+            //        var $selInput = currentMark.$input;
+            //        var options = {};
+            //        options.data = {
+            //            'childrenId': currentMark.childrenId,
+            //            'day': currentMark.day,
+            //            'lessonId': currentMark.lessonId,
+            //            'markValue': currentMark.$input.val()
+            //        };
+            //        if (currentMark.fourth) {
+            //            options.data.fourth = currentMark.fourth;
+            //        }
+            //        var url = "";
+            //        options.method = "POST"
+            //        if (currentMark.isFinal) {
+            //            var url = window.urls.setFinalMark;
+            //        } else {
+            //            var url = options.data.markValue % 1 === 0 ? window.urls.setMark : window.urls.setTruancy;
+            //        }
+                    
+            //        $.ajax(url, options).done(function (response) {
+            //            if (response.result && response.markValue) {
+            //                if (isN(response.markValue) && !isN(currentMark.oldValue)) {                                
+            //                    plusCruancy(1);
+            //                } else if (!isN(response.markValue) && isN(currentMark.oldValue)) {
+            //                    plusCruancy(-1);
+            //                }
+            //                var $tr = $selInput.parents('tr');
+            //                returnMarkToView($selInput, response.markValue);
+            //                recalculateMarks($tr);
+            //            } else {
+            //                returnMarkToView($selInput);
+            //            }
+            //        }).error(function (response) {
+            //            returnMarkToView($selInput);
+            //        });
+            //    } else {
+            //        returnMarkToView(currentMark.$input,currentMark.oldValue);                    
+            //    }
+            //}
         }
         function setMark(childrenId, date, lessonId, $input, isFinal, fourth) {
             if (typeof isFinal === 'undefiened') {
@@ -170,16 +179,8 @@
                 setMark($this.attr(attrs['children']), $this.attr(attrs['date']), $this.attr(attrs['lesson']), $input, true, $this.attr(attrs['fourth']));
             };
         });
-    });
-    //Size change 
-    $(function () {        
-        if (typeof ids != 'undefined' && ids.markTable) {
-            var $window = $(window);
-            var $markTable = $(ids.markTable);
-            var tables = {};
-            $window.resize(function (e, data) {
-                console.log($window.width(), $window.height(), $markTable.width());
-            });
-        }
+        $('#saveMarks').click(function () {
+            console.log(jsonresult);
+        });
     });
 })(jQuery);
