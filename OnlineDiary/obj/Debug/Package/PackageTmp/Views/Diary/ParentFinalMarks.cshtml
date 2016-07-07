@@ -1,0 +1,109 @@
+﻿@model OnlineDiary.Models.ParentMarksViewModel
+@{
+    ViewBag.Title = "Итоговые Оценки Ребенка";
+    string[] head = new string[]
+    {
+        "Оценка за первую четверть",
+        "Оценка за вторую четверть",
+        "Оценка за третью четверть",
+        "Оценка за четвертую четверть",
+        "Годовая оценка"
+    };
+    var lessons = Model.getLessons(Model.CurrentChildren);
+}
+<div>
+    @*@Html.ActionLink("Оценки за предыдущий год", "ParentMarks", new
+        {
+            childrenId = ViewBag.ChildId,
+            year = Model.CurrentYear - 1
+        })
+            @Html.ActionLink("Оценки за следующий год", "ParentFinalMarks", new
+        {
+            childrenId = ViewBag.ChildId,
+            year = Model.CurrentYear + 1
+        })*@
+    <br />
+    <br />
+    @using (Html.BeginForm("ParentFinalMarksPost", "Diary", FormMethod.Post, new { @class = "form-inline" }))
+    {
+        if (Model.Childrens.Count > 1)
+        {
+            <div class="form-group">
+                <label>Выберите ребенка</label>
+                @Html.DropDownList("ChildrenId", new SelectList(Model.Childrens, "Key", "Value"), new { @class = "form-control" });
+            </div>
+            <button type="submit">Показать</button>
+        }
+        else
+        {
+            <label>Ребёнок: @Model.GetUserName(Model.CurrentChildren)</label>
+        }
+    }
+    <h2> Итоговые оценки ученика класса @(" " + Model.getClassName(Model.CurrentChildren) ) </h2>
+    <h3>
+        @(Model.GetUserName(Model.CurrentChildren) + " за " + Model.CurrentYear + " - " + (Model.CurrentYear + 1) + " учебный год")
+    </h3>
+    <div class="">
+        @if (Model.CurrentChildren != null && lessons.Count > 0)
+        {
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Предмет</th>
+                        @for (int i = 0; i < 5; i++)
+                        {
+                            <th>@head[i]</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var lesson in lessons)
+                    {
+                        int[] marks = new int[4];
+                        <tr>
+                            <td>
+                                @lesson.Title
+                            </td>
+                            @for (int i = 1; i < 5; i++)
+                            {
+                                int val = Model.GetFinalMark(Model.CurrentChildren.Id, lesson.Id, i);
+                                <td>
+                                    <b>@val</b>
+                                </td>
+                                marks[i - 1] = val;
+                            }
+                            @{  int count = 0;
+                                if (marks[0] != 0)
+                                {
+                                    count++;
+                                }
+                                if (marks[1] != 0)
+                                {
+                                    count++;
+                                }
+                                if (marks[2] != 0)
+                                {
+                                    count++;
+                                }
+                                if (marks[3] != 0)
+                                {
+                                    count++;
+                                }
+                                int finalMark = 0;
+                                if (count != 0)
+                                {
+                                    finalMark = (int)Math.Round((double)(marks[0] + marks[1] + marks[2] + marks[3]) / count, MidpointRounding.AwayFromZero);
+                                }
+
+                            }
+                            <td><b>@finalMark</b></td>
+                        </tr>
+                                }
+                </tbody>
+            </table>
+                                }
+                                else
+                                {
+                                    <p>Нет Данных</p>
+                                }
+    </div>

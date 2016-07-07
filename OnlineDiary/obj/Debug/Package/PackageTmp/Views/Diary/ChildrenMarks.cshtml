@@ -1,0 +1,153 @@
+﻿@model OnlineDiary.Models.ChildrenMarksViewModel
+@{
+    ViewBag.Title = "Оценки";
+    string[] quadmesters = new string[]
+    {
+        " первую ",
+        " вторую ",
+        " третью ",
+        " четвертую "
+    };
+    var lessons = Model.getLessons(Model.User);
+}
+<div class="page-header">
+    <h2>Оценки ученика класса @Model.getClassName(Model.User)</h2>
+</div>
+<div class="">
+    @if (Model.quadmesterNumber > 1)
+    {
+        @Html.ActionLink("Оценки за предыдущую четверть", "ChildrenMarks", new
+   {
+       quadmester = Model.quadmesterNumber - 1,
+   }, new { @class = "btn btn-primary pull-left" })
+    }
+    @if (Model.quadmesterNumber < 4)
+    {
+        @Html.ActionLink("Оценки за следующую четверть", "ChildrenMarks", new
+   {
+       quadmester = Model.quadmesterNumber + 1,
+   }, new { @class = "btn btn-primary pull-right" })
+    }
+    <div style="text-align:center;font-weight:bold;">
+        <h6>@(Model.GetUserName(Model.User)) за @quadmesters[Model.quadmesterNumber - 1] четверть @Model.CurrentYear @(Model.CurrentYear + 1) учебного года</h6>
+    </div>
+</div>
+<div class="marks--content" style="margin-top:30px;">
+    @if (Model.User != null)
+    {
+        if (lessons.Count > 0 && Model.Period != null && Model.Period.Item1 != null && Model.Period.Item2 != null)
+        {
+            int[] cruancys = new int[lessons.Count];
+            int[] summarks = new int[lessons.Count];
+            int[] countmarks = new int[lessons.Count];
+            if (Model.marksModel.TablesCounter == 0)
+            {
+                @CreateTable(Model.Period.Item1, Model.Period.Item2, cruancys, summarks, countmarks, true, lessons)
+            }
+            else
+            {
+                <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#part1">Часть1</a></li>
+                    @for (int i = 1; i < Model.marksModel.TablesCounter; i++)
+                    {
+                        <li><a data-toggle="tab" href="#part@(i + 1)">Часть@(i + 1)</a></li>
+                    }
+                </ul>
+                <div class="tab-content">
+                    <div id="part1" class="tab-pane active table-responsive">
+                        @CreateTable(Model.Period.Item1, Model.marksModel.EndDates[0],
+                                     cruancys, summarks, countmarks, Model.marksModel.TablesCounter == 1, lessons)
+                    </div>
+                    @for (int i = 1; i < Model.marksModel.TablesCounter; i++)
+                    {
+                        <div id="part@(i + 1)" class="tab-pane table-responsive">
+                            @CreateTable(Model.marksModel.EndDates[i - 1].AddDays(1), i == Model.marksModel.TablesCounter - 1 ?
+                                           Model.Period.Item2 : Model.marksModel.EndDates[i],
+                                           cruancys, summarks, countmarks, i == Model.marksModel.TablesCounter - 1, lessons)
+                        </div>
+                    }
+                </div>
+            }
+        }
+        else
+        {
+            <p>нет данных</p>
+        }
+    }
+    else
+    {
+        <p>Не выбран пользователь</p>
+    }
+</div>
+@helper CreateTable(DateTime start, DateTime end, int[] cryancys, int[] summarks,
+                    int[] countmarks, bool endTable, List<OnlineDiary.Models.Diary.Lesson> lessons)
+{
+int i = 0;
+    <table class="table table-bordered" style="font-size:10px;">
+        <thead>
+            <tr>
+                <th class="b-mark_name">Предмет</th>
+                @for (DateTime date = start; date <= end; date = date.AddDays(1))
+                {
+                    if (date.DayOfWeek != DayOfWeek.Sunday)
+                    {
+                        <th>@date.ToString("dd.MM")</th>
+                    }
+                }
+                @if (endTable)
+                {
+                    <th class="b-mark_name">Кол-во Н</th>
+                    <th class="b-mark_name">Оценка за четверть</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var lesson in lessons)
+            {
+                <tr>
+                    <td>
+                        @lesson.Title
+                    </td>
+                    @for (DateTime date = start; date <= end; date = date.AddDays(1))
+                    {
+
+                        if (date.DayOfWeek != DayOfWeek.Sunday)
+                        {
+                            int? val = Model.getMarkValue(date, lesson.Id, Model.User);
+                            if (val != null)
+                            {
+                                <td>
+                                    <b>@val</b>
+                                </td>
+                                countmarks[i]++;
+                                summarks[i] += (int)val;
+                            }
+                            else if (Model.IsTruancyed(Model.User.Id, lesson.Id, date))
+                            {
+                                <td style="color:red;"><b>Н</b></td>
+                                cryancys[i]++;
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
+                        }
+                    }
+                    @if (endTable)
+                    {
+                        <td>@cryancys[i]</td>
+                        if (countmarks[i] != 0)
+                        {
+                            <td>@((int)Math.Round((double)summarks[i] / countmarks[i], MidpointRounding.AwayFromZero))</td>
+                        }
+                        else
+                        {
+                            <td>0</td>
+                        }
+                    }
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+}

@@ -36,9 +36,9 @@
                 <fieldset>
                     @Html.Label("1 четверть", htmlAttributes: new { @class = "control-label col-md-2" })
                     С
-                    @Html.TextBoxFor(model => Model.ToArray()[0].StartDate, new { @class = "datefield", type = "date" })
+                    @Html.TextBoxFor(model => Model.ToArray()[0].StartDate, "{0:yyyy-MM-dd}", new { @class = "datefield", type = "date" })
                     До
-                    @Html.TextBoxFor(model => Model.ToArray()[0].EndDate, new { @class = "datefield", type = "date" })
+                    @Html.TextBoxFor(model => Model.ToArray()[0].EndDate, "{0:yyyy-MM-dd}", new { @class = "datefield", type = "date" })
                 </fieldset>
             </div>
             <br />
@@ -46,9 +46,9 @@
                 <fieldset>
                     @Html.Label("2 четверть", htmlAttributes: new { @class = "control-label col-md-2" })
                     С
-                    @Html.TextBoxFor(model => Model.ToArray()[1].StartDate, new { @class = "datefield", type = "date" })
+                    @Html.TextBoxFor(model => Model.ToArray()[1].StartDate, "{0:yyyy-MM-dd}", new { @class = "datefield", type = "date" })
                     До
-                    @Html.TextBoxFor(model => Model.ToArray()[1].EndDate, new { @class = "datefield", type = "date" })
+                    @Html.TextBoxFor(model => Model.ToArray()[1].EndDate, "{0:yyyy-MM-dd}", new { @class = "datefield", type = "date" })
                 </fieldset>
             </div>
             <br />
@@ -56,9 +56,9 @@
                 <fieldset>
                     @Html.Label("3 четверть", htmlAttributes: new { @class = "control-label col-md-2" })
                     С
-                    @Html.TextBoxFor(model => Model.ToArray()[2].StartDate, new { @class = "datefield", type = "date" })
+                    @Html.TextBoxFor(model => Model.ToArray()[2].StartDate, "{0:yyyy-MM-dd}", new { @class = "datefield", type = "date" })
                     До
-                    @Html.TextBoxFor(model => Model.ToArray()[2].EndDate, new { @class = "datefield", type = "date" })
+                    @Html.TextBoxFor(model => Model.ToArray()[2].EndDate, "{0:yyyy-MM-dd}", new { @class = "datefield", type = "date" })
                 </fieldset>
             </div>
             <br />
@@ -66,9 +66,9 @@
                 <fieldset>
                     @Html.Label("4 четверть", htmlAttributes: new { @class = "control-label col-md-2" })
                     С
-                    @Html.TextBoxFor(model => Model.ToArray()[3].StartDate, new { @class = "datefield", type = "date" })
+                    @Html.TextBoxFor(model => Model.ToArray()[3].StartDate, "{0:yyyy-MM-dd}", new { @class = "datefield", type = "date" })
                     До
-                    @Html.TextBoxFor(model => Model.ToArray()[3].EndDate, new { @class = "datefield", type = "date" })
+                    @Html.TextBoxFor(model => Model.ToArray()[3].EndDate, "{0:yyyy-MM-dd}", new { @class = "datefield", type = "date" })
                 </fieldset>
             </div>
             <br />
@@ -77,7 +77,6 @@
                 if (!Modernizr.inputtypes.date) {
                     $(function () {
                         $("#datefield").datepicker({
-                            pickTime: false,
                         });
                     });
                 }

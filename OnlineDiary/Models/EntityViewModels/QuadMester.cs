@@ -18,7 +18,7 @@ namespace OnlineDiary.Models
         public DateTime EndDate { get; set; }
         public QuadMesterViewModel() { }
 
-        public QuadMesterViewModel(QuadMesterViewModel qMester)
+        public QuadMesterViewModel(Quadmester qMester)
         {
             this.Id = qMester.Id;
             this.Number = qMester.Number;

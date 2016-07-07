@@ -57,6 +57,14 @@ namespace OnlineDiary.Controllers
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
+            //string password = "123456";
+            //var user = new DiaryUser()
+            //{
+            //    Email = "admin@admin.com",
+            //    UserName = "admin@admin.com"
+            //};
+            //UserManager.Create(user, password);
+            //UserManager.AddToRole(user.Id, "admin");
             //ViewBag.ReturnUrl = returnUrl;
             return View();
         }

@@ -177,7 +177,7 @@ namespace OnlineDiary.Controllers
                     user.LastName = dUser.LastName;
                     user.ParentName = dUser.ParentName;
                     user.Email = dUser.Email;
-                    //user.PhoneNumber = dUser.PhoneNumber;
+                    user.UserName = dUser.UserName;
 
                     if (dUser.Role == "admin")
                     {
@@ -250,7 +250,7 @@ namespace OnlineDiary.Controllers
             var dUser = context.Users.Find(id);
             var userRole = context.Users.Where(i => i.Id == dUser.Id).ToArray()[0].Roles.ToArray()[0];
             var roleName = context.Roles.Where(i => i.Id == userRole.RoleId).ToArray()[0].Name;
-            UserManager.RemoveFromRoleAsync(id, roleName);
+            
             if (roleName == "parent")
             {
                 var parentData = context.ChildrenData.Where(i => i.ParentId == id).ToArray();
@@ -261,22 +261,24 @@ namespace OnlineDiary.Controllers
             }
             if (roleName == "children")
             {
-                var children = context.ChildrenData.Where(i => i.ChildrenId == id).ToArray()[0];
-                context.ChildrenData.Remove(children);
-                var childrenTruancys = context.Truancys.Where(i => i.ChildrenId == id).ToArray();
-                foreach (var t in childrenTruancys)
-                {
-                    context.Truancys.Remove(t);
-                }
-                var childrenMarks = context.Marks.Where(i => i.ChildrenId == id).ToArray();
-                foreach (var m in childrenMarks)
-                {
-                    context.Marks.Remove(m);
-                }
-                var childrenFinalMarks = context.FinalMarks.Where(i => i.ChildrenId == id).ToArray();
-                foreach (var fm in childrenFinalMarks)
-                {
-                    context.FinalMarks.Remove(fm);
+                var children = context.ChildrenData.Where(i => i.ChildrenId == id).FirstOrDefault();
+                if (children != null) {
+                    context.ChildrenData.Remove(children);
+                    var childrenTruancys = context.Truancys.Where(i => i.ChildrenId == id).ToArray();
+                    foreach (var t in childrenTruancys)
+                    {
+                        context.Truancys.Remove(t);
+                    }
+                    var childrenMarks = context.Marks.Where(i => i.ChildrenId == id).ToArray();
+                    foreach (var m in childrenMarks)
+                    {
+                        context.Marks.Remove(m);
+                    }
+                    var childrenFinalMarks = context.FinalMarks.Where(i => i.ChildrenId == id).ToArray();
+                    foreach (var fm in childrenFinalMarks)
+                    {
+                        context.FinalMarks.Remove(fm);
+                    }
                 }
             }
             if (roleName == "teacher")
@@ -288,8 +290,8 @@ namespace OnlineDiary.Controllers
                 }
 
             }
-            context.Users.Remove(dUser);
-
+            UserManager.RemoveFromRoleAsync(id, roleName);
+            context.Users.Remove(dUser);            
             context.SaveChanges();
             return RedirectToAction("Index");
         }
@@ -335,17 +337,15 @@ namespace OnlineDiary.Controllers
 
         public ActionResult QuadMester()
         {
-            var qMester = new List<QuadMesterViewModel>();
-            var quas = context.Quadmesters.Where(q => q.Number == 1 || q.Number == 2 || q.Number == 3 || q.Number == 4).ToArray();
-            int count = quas.Length;
-            for (int i = 0; i < quas.Length; i++) {
-                qMester.Add(new QuadMesterViewModel() { StartDate = quas[i].StartDate, EndDate = quas[i].EndDate, Number = quas[i].Number } );
+            var quadMesters = context.Quadmesters.ToList();
+            var model = new List<QuadMesterViewModel>();
+
+            foreach (var item in quadMesters)
+            {
+                var view = new QuadMesterViewModel(item);
+                model.Add(view);
             }
-            for (int i = quas.Length; i < 5; i++) {
-                qMester.Add(new QuadMesterViewModel());
-            }
-           
-            return View(qMester);
+            return View(model);
         }
         [HttpPost]
         public ActionResult QuadMester(List<QuadMesterViewModel> viewQMest)
@@ -356,19 +356,8 @@ namespace OnlineDiary.Controllers
                 {
                     if (viewQMest[i].StartDate.ToShortDateString() != "01.01.0001" && viewQMest[i].EndDate.ToShortDateString() != "01.01.0001")
                     {
-                        var qua = context.Quadmesters.FirstOrDefault(q => q.Number == i + 1);
-                        if (qua == null)
-                        {
-                            var qMester = new Quadmester();
-                            qMester.StartDate = viewQMest[i].StartDate;
-                            qMester.EndDate = viewQMest[i].EndDate;
-                            qMester.Number = i + 1;
-                            context.Quadmesters.Add(qMester);
-                        } else
-                        {
-                            qua.StartDate = viewQMest[i].StartDate;
-                            qua.EndDate = viewQMest[i].EndDate;
-                        }
+                        context.Quadmesters.Where(x => x.Number == i + 1).First().StartDate = viewQMest[i].StartDate;
+                        context.Quadmesters.Where(x => x.Number == i + 1).First().EndDate = viewQMest[i].EndDate;
                     }
                 }
                 context.SaveChanges();
@@ -394,7 +383,7 @@ namespace OnlineDiary.Controllers
             {
                 ModelState.AddModelError("name", "Пустое имя");
             }
-            return await CreateLesson();
+            return Redirect("ListLessons");
         }
 
         public ActionResult ListLessons(int page = 0)
@@ -403,7 +392,7 @@ namespace OnlineDiary.Controllers
             LessonsView.page = page;
             var lessons = context.Lessons.OrderBy(l => l.Title).Skip(page * ListLessonsViewModel.ITEMS_PER_PAGE).Take(ListLessonsViewModel.ITEMS_PER_PAGE).ToArray();
             LessonsView.Lessons = lessons;
-            LessonsView.PageCount = (int)Math.Floor((float)context.Lessons.Count() / (float)ListLessonsViewModel.ITEMS_PER_PAGE);
+            LessonsView.PageCount = (int)Math.Round((float)context.Lessons.Count() / (float)ListLessonsViewModel.ITEMS_PER_PAGE);
             return View(LessonsView);
         }
         public ActionResult DeleteLesson(int Id)
@@ -493,7 +482,7 @@ namespace OnlineDiary.Controllers
             {
                 ModelState.AddModelError("", "Такой класс уже существует");
             }
-            return View(sch);
+            return RedirectToAction("ListClasses");
         }
         public ActionResult EditClass(int Id)
         {
@@ -548,7 +537,7 @@ namespace OnlineDiary.Controllers
             var classes = context.SchoolClasses.OrderBy(x => x.Title).Skip(page * ClassListViewModel.PER_PAGE).Take(ClassListViewModel.PER_PAGE).ToArray();
             viewModel.Classes = classes;
             viewModel.Page = page;
-            viewModel.PageCount = (int)Math.Floor((float)context.SchoolClasses.Count() / (float)ClassListViewModel.PER_PAGE);
+            viewModel.PageCount = (int)Math.Round((float)context.SchoolClasses.Count() / (float)ClassListViewModel.PER_PAGE);
             return View(viewModel);
         }
 
