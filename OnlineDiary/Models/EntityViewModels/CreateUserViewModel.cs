@@ -10,14 +10,14 @@ namespace OnlineDiary.Models.CRUDViewModels
     {
         private DiaryUser user = null;
         private ApplicationDbContext context = new ApplicationDbContext();
+        private int itemsPerPage = 10;
 
-        [Required(ErrorMessage = "Введите пароль")]
-        [StringLength(100, ErrorMessage = "Миниум 6 символов", MinimumLength = 6)]
-        [DataType(DataType.Password)]
+        [Required]
         public string Password { get; set; }
 
         public CreateUserViewModel()
-        {            
+        {
+            //    this.user = new DiaryUser();
         }
 
         public CreateUserViewModel(DiaryUser user)
@@ -30,6 +30,9 @@ namespace OnlineDiary.Models.CRUDViewModels
             this.FirstName = user.FirstName;
             this.LastName = user.LastName;
             this.ParentName = user.ParentName;
+            //this.PhoneNumber = user.PhoneNumber;
         }
+
+        
     }
 }

@@ -37,20 +37,50 @@
             @Html.DisplayFor(model => Model.Email)
         </dd>
         @*<dt>
-            @Html.DisplayNameFor(model => Model.PhoneNumber)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => Model.PhoneNumber)
-        </dd>*@
+                @Html.DisplayNameFor(model => Model.PhoneNumber)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => Model.PhoneNumber)
+            </dd>*@
         <dt>
             @Html.Label("Роль", htmlAttributes: new { @class = "control-label col-md-2" })
         </dt>
         <dd>
             @{
-                var nameRole = Model.GetRoleNameById(Model.Id);
+                var nameRole = Model.GetRoleNameById(Model.Id, true);
             }
             @Html.DisplayFor(model => nameRole)
         </dd>
+
+        @{
+            var lessons = Model.GetAllLessons(Model.Id);
+        }
+        @if (nameRole == "Учитель")
+        {
+            <dt>
+                @Html.Label("Предмет", htmlAttributes: new { @class = "control-label col-md-2" })
+            </dt>
+            if (lessons != null)
+            {
+                foreach (var lesson in lessons)
+                {
+                    <dd>
+                        @Html.DisplayFor(model => lesson.Title)
+                    </dd>
+                }
+            }
+        }
+        @if (nameRole == "Ученик")
+        {
+            <dt>
+                @Html.Label("Класс", htmlAttributes: new { @class = "control-label col-md-2" })
+            </dt>
+            var className = Model.GetClassNameByChildrenId(Model.Id);
+            <dd>
+                @Html.DisplayFor(model => className)
+            </dd>
+        }
+
     </dl>
 </div>
 <p>

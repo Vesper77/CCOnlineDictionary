@@ -12,23 +12,23 @@
 }
 <div class="marks-content">
     <div class="page-header">
-        <h1>Оценки ученика класса @Model.getClassName(Model.CurrentChildren) <small>, @Model.CurrentChildren.FirstName за @quadmesters[Model.quadmesterNumber - 1] четверть @Model.CurrentYear -  @(Model.CurrentYear + 1)  учебного года </small> </h1>
+        <h1>Оценки ученика класса @Model.getClassName(Model.CurrentChildren) <small>, @Model.GetUserName(Model.CurrentChildren) за @quadmesters[Model.quadmesterNumber - 1] четверть @Model.CurrentYear -  @(Model.CurrentYear + 1)  учебного года </small> </h1>
     </div>
     @if (Model.quadmesterNumber > 1)
     {
         @Html.ActionLink("Оценки за предыдущую четверть", "ParentMarks", new
-        {
-            childrenId = Model.CurrentChildren == null ? "" : Model.CurrentChildren.Id,
-            quadmester = Model.quadmesterNumber - 1,
-        }, new { @class = "btn btn-primary" })
+   {
+       childrenId = Model.CurrentChildren == null ? "" : Model.CurrentChildren.Id,
+       quadmester = Model.quadmesterNumber - 1,
+   }, new { @class = "btn btn-primary" })
     }
     @if (Model.quadmesterNumber < 4)
     {
         @Html.ActionLink("Оценки за следующую четверть", "ParentMarks", new
-        {
-            childrenId = Model.CurrentChildren == null ? "" : Model.CurrentChildren.Id,
-            quadmester = Model.quadmesterNumber + 1,
-        }, new{@class = "btn btn-primary"})
+   {
+       childrenId = Model.CurrentChildren == null ? "" : Model.CurrentChildren.Id,
+       quadmester = Model.quadmesterNumber + 1,
+   }, new { @class = "btn btn-primary" })
     }
     <br />
     <br />
@@ -38,19 +38,19 @@
         {
             <div class="form-group">
                 <label>Выберите ребенка</label>
-                @Html.DropDownList("ChildrenId", new SelectList(Model.Childrens, "Id", "FirstName"), new { @class = "form-control" });
+                @Html.DropDownList("ChildrenId", new SelectList(Model.Childrens, "Key", "Value"), new { @class = "form-control" });
             </div>
             <button type="submit">Показать</button>
         }
         else
         {
-            <label>Ребёнок: @Model.CurrentChildren.FirstName</label>
+            <label>Ребёнок: @Model.GetUserName(Model.CurrentChildren)</label>
         }
     }
 </div>
 @if (Model.CurrentChildren != null)
 {
-    if (lessons.Count > 0)
+    if (lessons.Count > 0 && Model.Period != null && Model.Period.Item1 != null && Model.Period.Item2 != null)
     {
         int[] cruancys = new int[lessons.Count];
         int[] summarks = new int[lessons.Count];
@@ -68,26 +68,26 @@
                     <li><a data-toggle="tab" href="#part@(i + 1)">Часть@(i + 1)</a></li>
                 }
             </ul>
-                <div class="tab-content">
-                    <div id="part1" class="tab-pane active table-responsive">
-                        @CreateTable(Model.Period.Item1, Model.marksModel.EndDates[0],
+            <div class="tab-content">
+                <div id="part1" class="tab-pane active table-responsive">
+                    @CreateTable(Model.Period.Item1, Model.marksModel.EndDates[0],
                                      cruancys, summarks, countmarks, Model.marksModel.TablesCounter == 1, lessons)
-                    </div>
-                    @for (int i = 1; i < Model.marksModel.TablesCounter; i++)
-                    {
-                        <div id="part@(i + 1)" class="tab-pane table-responsive">
-                            @CreateTable(Model.marksModel.EndDates[i - 1].AddDays(1), i == Model.marksModel.TablesCounter - 1 ?
+                </div>
+                @for (int i = 1; i < Model.marksModel.TablesCounter; i++)
+                {
+                    <div id="part@(i + 1)" class="tab-pane table-responsive">
+                        @CreateTable(Model.marksModel.EndDates[i - 1].AddDays(1), i == Model.marksModel.TablesCounter - 1 ?
                                            Model.Period.Item2 : Model.marksModel.EndDates[i],
                                            cruancys, summarks, countmarks, i == Model.marksModel.TablesCounter - 1, lessons)
-                        </div>
-                    }
-                </div>
+                    </div>
+                }
+            </div>
         }
     }
     else
     {
         <p>Нет данных</p>
-   }
+    }
 }
 else
 {
@@ -152,7 +152,7 @@ int i = 0;
                         <td>@cryancys[i]</td>
                         if (countmarks[i] != 0)
                         {
-                            <td>@((int)(Math.Round((double)summarks[i] / countmarks[i], MidpointRounding.AwayFromZero))</td>
+                            <td>@((int)(Math.Round((double)summarks[i] / countmarks[i], MidpointRounding.AwayFromZero)))</td>
                         }
                         else
                         {

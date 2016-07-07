@@ -5,11 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OnlineDiary.Models.Diary {
-    public class CompletedHomeWork {
+namespace OnlineDiary.Models.Diary
+{
+    public class CompletedHomeWork
+    {
         [Key]
         public int Id { get; set; }
-        
+
         public string childrenId { get; set; }
         public int HomeWorkId { get; set; }
 

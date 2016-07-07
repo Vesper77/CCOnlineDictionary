@@ -9,23 +9,24 @@
         "Оценка за четвертую четверть",
         "Годовая оценка"
     };
+    var lessons = Model.getLessons(Model.User);
 }
 <div>
-@*@Html.ActionLink("Оценки за предыдущий год", "ChildrenFinalMarks", new
-{
-    year = Model.CurrentYear - 1
-})
-    @Html.ActionLink("Оценки за следующий год", "ChildrenFinalMarks", new
-{
-    year = Model.CurrentYear + 1
-})*@
+    @*@Html.ActionLink("Оценки за предыдущий год", "ChildrenFinalMarks", new
+        {
+            year = Model.CurrentYear - 1
+        })
+            @Html.ActionLink("Оценки за следующий год", "ChildrenFinalMarks", new
+        {
+            year = Model.CurrentYear + 1
+        })*@
 </div>
 <h2>Итоговые оценки ученика класса @(" " + Model.getClassName(Model.User) ) </h2>
 <h3>
-    @(Model.User.FirstName + " за " + Model.CurrentYear + " - " + (Model.CurrentYear + 1) + " учебный год")
+    @(Model.GetUserName(Model.User) + " за " + Model.CurrentYear + " - " + (Model.CurrentYear + 1) + " учебный год")
 </h3>
 <div class="">
-    @if (Model.User != null)
+    @if (Model.User != null && lessons.Count > 0)
     {
         <table class="table table-bordered">
             <thead>
@@ -71,12 +72,13 @@
                                 count++;
                             }
                             int finalMark = 0;
-                            if (count != 0) {
+                            if (count != 0)
+                            {
                                 finalMark = (int)Math.Round((double)(marks[0] + marks[1] + marks[2] + marks[3]) / count, MidpointRounding.AwayFromZero);
                             }
 
                         }
-                        
+
                         <td><b>@finalMark</b></td>
                     </tr>
                             }
@@ -85,6 +87,6 @@
                             }
                             else
                             {
-                                <p>Ошибка</p>
+                                <p>Нет данных</p>
                             }
 </div>

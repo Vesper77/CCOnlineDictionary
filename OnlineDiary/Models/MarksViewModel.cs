@@ -52,20 +52,40 @@ namespace OnlineDiary.Models
         {
             Tuple<DateTime, DateTime>[] periods = new Tuple<DateTime, DateTime>[4];
             int year = CurrentYear;
-            var quads = context.Quadmesters.ToArray(); // считаю, что они гарантированно есть в бд, иначе не понятно, что возвращать
+            var quads = context.Quadmesters.ToList();
+            if (quads == null || quads.Count == 0)
+            {
+                return periods;
+            }
+            quads.Sort((x, y) => x.Number < y.Number ? -1 : x.Number > y.Number ? 1 : 0);
             var startdate = new DateTime(year, quads[0].StartDate.Month, quads[0].StartDate.Day);
             var enddate = new DateTime(quads[0].StartDate.Month > quads[0].EndDate.Month ?
                                        ++year : year, quads[0].EndDate.Month, quads[0].EndDate.Day);
-            periods[0] = new Tuple<DateTime, DateTime>(startdate, enddate);
-            for (int i = 1; i < 4; i++)
+            periods[quads[0].Number - 1] = new Tuple<DateTime, DateTime>(startdate, enddate);
+            for (int i = quads[0].Number; i < Math.Min(4, quads.Count); i++)
             {
-                startdate = new DateTime(quads[i].StartDate.Month < quads[i - 1].StartDate.Month ? ++year : year,
-                                                                quads[i].StartDate.Month, quads[i].StartDate.Day);
-                enddate = new DateTime(quads[i].EndDate.Month < quads[i].StartDate.Month ? ++year : year,
-                                                           quads[i].EndDate.Month, quads[i].EndDate.Day);
-                periods[i] = new Tuple<DateTime, DateTime>(startdate, enddate);
+                for (int j = 2; j <= 4; j++)
+                {
+                    if (quads[i].Number == j)
+                    {
+                        startdate = new DateTime(quads[i].StartDate.Month < quads[i - 1].StartDate.Month ? ++year : year,
+                                                                        quads[i].StartDate.Month, quads[i].StartDate.Day);
+                        enddate = new DateTime(quads[i].EndDate.Month < quads[i].StartDate.Month ? ++year : year,
+                                                                   quads[i].EndDate.Month, quads[i].EndDate.Day);
+                        periods[j - 1] = new Tuple<DateTime, DateTime>(startdate, enddate);
+                    }
+                }
             }
             return periods;
+        }
+        public string GetUserName(DiaryUser user)
+        {
+            if (User == null)
+            {
+                return "Пользователь не найден";
+            }
+            var curUser = context.Users.Where(x => x.Id == user.Id).FirstOrDefault();
+            return curUser == null ? "Пользователь не найден" : curUser.FirstName + " " + curUser.LastName[0] + '.' + curUser.ParentName[0] + '.';
         }
         /// <summary>
         /// Выдаёт оценку для ученика по определенному предмету в определенный день
@@ -94,25 +114,28 @@ namespace OnlineDiary.Models
         /// <returns></returns>
         public int GetFinalMark(string ChildrenId, int LessonId, int quadmesterNumber)
         {
-            var period = GetPeriod();
+            var period = GetPeriod()[quadmesterNumber - 1];
             int counterMarks = 0;
             int sumMarks = 0;
-            for (DateTime beginDate = period[quadmesterNumber - 1].Item1; beginDate <= period[quadmesterNumber - 1].Item2;
-                                                                                          beginDate = beginDate.AddDays(1))
+            if (period != null && period.Item1 != null && period.Item2 != null)
             {
-                var mark = context.Marks.Where(x => x.ChildrenId == ChildrenId && x.Day == beginDate && x.LessonId == LessonId).
-                                               FirstOrDefault();
-                if (mark != null)
+                for (DateTime beginDate = period.Item1; beginDate <= period.Item2; beginDate = beginDate.AddDays(1))
                 {
-                    sumMarks += mark.MarkValue;
-                    counterMarks++;
+                    var mark = context.Marks.Where(x => x.ChildrenId == ChildrenId && x.Day == beginDate && x.LessonId == LessonId).
+                                                   FirstOrDefault();
+                    if (mark != null)
+                    {
+                        sumMarks += mark.MarkValue;
+                        counterMarks++;
+                    }
                 }
+                if (counterMarks == 0)
+                {
+                    return 0;
+                }
+                return (int)Math.Round((double)sumMarks / counterMarks, MidpointRounding.AwayFromZero);
             }
-            if (counterMarks == 0)
-            {
-                return 0;
-            }
-            return (int)Math.Round((double)sumMarks / counterMarks);
+            return 0;
         }
         /// <summary>
         /// Определяет, прогулял ли ученик определенный предмет в определеный день
@@ -133,10 +156,10 @@ namespace OnlineDiary.Models
             var children = context.ChildrenData.Where(x => x.ChildrenId == user.Id).FirstOrDefault();
             if (children == null)
             {
-                return "";
+                return "Класс не найден";
             }
             var schoolClass = context.SchoolClasses.Where(x => x.Id == children.SchoolClassId).FirstOrDefault();
-            return schoolClass == null ? "" : schoolClass.Title;
+            return schoolClass == null ? "Класс не найден" : schoolClass.Title;
         }
         /// <summary>
         /// Определяет название класса по его Id
@@ -146,7 +169,7 @@ namespace OnlineDiary.Models
         public string getClassName(int classId)
         {
             var schoolClass = context.SchoolClasses.Where(x => x.Id == classId).FirstOrDefault();
-            return schoolClass == null ? "" : schoolClass.Title;
+            return schoolClass == null ? "Класс не найден" : schoolClass.Title;
         }
         /// <summary>
         /// Определяет предметы, которые изучает ученик
@@ -195,19 +218,28 @@ namespace OnlineDiary.Models
         /// Определяет детей данного родителя
         /// </summary>
         /// <returns>Список детей</returns>
-        public List<DiaryUser> Childrens { get; set; }
-        public List<DiaryUser> GetChildrens()
+        public Dictionary<string, string> Childrens { get; set; }
+        public Dictionary<string, string> GetChildrens()
         {
             var childrenIDs = context.ChildrenData.Where(x => x.ParentId == User.Id).Select(x => x.ChildrenId);
             if (childrenIDs == null)
             {
-                return new List<DiaryUser>();
+                return new Dictionary<string, string>();
             }
             var allChildrens = (from i in childrenIDs
                                 from j in context.Users
                                 where j.Id == i
                                 select j).ToList();
-            return allChildrens == null ? new List<DiaryUser>() : allChildrens;
+            if (allChildrens == null || allChildrens.Count == 0)
+            {
+                return new Dictionary<string, string>();
+            }
+            var childrens = new Dictionary<string, string>();
+            foreach (var item in allChildrens)
+            {
+                childrens.Add(item.Id, item.FirstName + '.' + item.LastName[0] + '.' + item.ParentName[0] + '.');
+            }
+            return childrens;
         }
     }
     public class TeacherMarksViewModel : MarksViewModel
@@ -249,7 +281,7 @@ namespace OnlineDiary.Models
         public string getLessonName(int lessonId)
         {
             var lesson = context.Lessons.Where(x => x.Id == lessonId).FirstOrDefault();
-            return lesson == null ? "" : lesson.Title;
+            return lesson == null ? "Предмет не найден" : lesson.Title;
         }
         /// <summary>
         /// Определяет предметы, которые ведет учитель у определенного класса
@@ -333,7 +365,7 @@ namespace OnlineDiary.Models
         {
             var schedule = context.ScheduleLessons.Where(x => x.SchoolClassId == classId && x.LessonId == LessonId).ToList();
             return schedule == null || schedule.Count == 0 ? new List<DayOfWeek>() : schedule.
-                                       Select(x => (DayOfWeek) x.DayNumber).Distinct().ToList();
+                                       Select(x => (DayOfWeek)x.DayNumber).Distinct().ToList();
         }
         private int GetDayInPeriod(DateTime beginDate, DateTime endDate)
         {

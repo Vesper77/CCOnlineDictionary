@@ -14,20 +14,20 @@
     @if (Model.quadmesterNumber > 1)
     {
         @Html.ActionLink("Оценки за предыдущую четверть", "TeacherMarks", new
-        {
-            LessonId = Model.form.LessonId,
-            ClassId = Model.form.ClassId,
-            quadmester =  Model.quadmesterNumber - 1,
-        }, new{ @class = "btn btn-primary"})
+   {
+       LessonId = Model.form.LessonId,
+       ClassId = Model.form.ClassId,
+       quadmester = Model.quadmesterNumber - 1,
+   }, new { @class = "btn btn-primary" })
     }
     @if (Model.quadmesterNumber < 4)
     {
         @Html.ActionLink("Оценки за следующую четверть", "TeacherMarks", new
-        {
-            LessonId = Model.form.LessonId,
-            ClassId = Model.form.ClassId,
-            quadmester = Model.quadmesterNumber + 1,
-        }, new{ @class = "btn btn-primary"})
+   {
+       LessonId = Model.form.LessonId,
+       ClassId = Model.form.ClassId,
+       quadmester = Model.quadmesterNumber + 1,
+   }, new { @class = "btn btn-primary" })
     }
     @using (Html.BeginForm("TeacherMarksPost", "Diary", FormMethod.Post, new { @class = "form-inline" }))
     {
@@ -69,7 +69,8 @@
     </h3>
     <div class="">
         @{ var days = Model.marksModel.GetDays(Model.form.ClassId, Model.form.LessonId);}
-        @if (Model.form != null && days.Count > 0 && Model.form.Classes.Count > 0 && Model.form.Lessons.Count > 0 && childrens.Count > 0)
+        @if (Model.form != null && Model.Period != null && Model.Period.Item1 != null && Model.Period.Item2 != null &&
+                     days.Count > 0 && Model.form.Classes.Count > 0 && Model.form.Lessons.Count > 0 && childrens.Count > 0)
         {
             int[] truancys = new int[childrens.Count];
             int[] summarks = new int[childrens.Count];
@@ -109,7 +110,6 @@
         }
     </div>
 </div>
-
 @section Scripts{
     <script>
         window.urls = {
@@ -119,7 +119,6 @@
     </script>
     @Scripts.Render("~/Scripts/marks.js");
 }
-
 
 @helper CreateTable(DateTime start, DateTime end, int[] cryancys, int[] summarks, int[] countmarks, bool endTable, List<OnlineDiary.Models.DiaryUser> childrens, List<DayOfWeek> days)
 {
@@ -149,7 +148,7 @@
                 int cruancyCounter = 0;
                 <tr>
                     <td>
-                        @children.FirstName
+                        @Model.GetUserName(children)
                     </td>
                     @for (DateTime date = start; date <= end; date = date.AddDays(1))
                     {
@@ -161,7 +160,7 @@
                                 <td class="mark--set" data-mark-lesson="@Model.form.LessonId" data-mark-children="@children.Id" data-mark-date="@date.ToString()">
                                     @val
                                 </td>
-                                sumMarks += (int) val;
+                                sumMarks += (int)val;
                                 marksCounter++;
                             }
                             else if (Model.IsTruancyed(children.Id, Model.form.LessonId, date))
@@ -182,7 +181,7 @@
                         <td id="mark--cruancy">@cruancyCounter</td>
                         if (marksCounter > 0)
                         {
-                            <td id="mark--total">@((int) Math.Round((double) sumMarks / marksCounter, MidpointRounding.AwayFromZero))</td>
+                            <td id="mark--total">@((int)Math.Round((double)sumMarks / marksCounter, MidpointRounding.AwayFromZero))</td>
                         }
                         else
                         {

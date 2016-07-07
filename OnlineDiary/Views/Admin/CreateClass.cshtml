@@ -3,7 +3,8 @@
 <div class="page-header">
     <h3>Создание класса</h3>
 </div>
-@using (@Html.BeginForm()) {
+@using (Html.BeginForm())
+{
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
     <div class="form-group">
@@ -13,5 +14,3 @@
     </div>
     <input type="submit" value="Создать" class="btn btn-default" />
 }
-    
-

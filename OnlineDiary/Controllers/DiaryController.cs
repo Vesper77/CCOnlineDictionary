@@ -72,7 +72,8 @@ namespace OnlineDiary.Controllers
             }
             return RedirectToAction("Index", "Home");
         }
-        public async Task<ActionResult> FinalMarks() {
+        public async Task<ActionResult> FinalMarks()
+        {
             var user = await UserManager.FindByNameAsync(User.Identity.Name);
             if (await UserManager.IsInRoleAsync(user.Id, "teacher"))
             {
@@ -100,10 +101,13 @@ namespace OnlineDiary.Controllers
             ChildrenMarksViewModel model = new ChildrenMarksViewModel(quadmester);
             model.User = user;
             model.Period = model.GetPeriod()[quadmester - 1];
-            model.marksModel.GetColumnsNumber(model.Period.Item1, model.Period.Item2);
-            model.marksModel.GetTableCount(model.marksModel.ColumnsNumber);
-            model.marksModel.ColumnsInTable = model.marksModel.GetColumnsInTable();
-            model.marksModel.GetEndDates(model.Period.Item1, model.Period.Item2, "children");
+            if (model.Period != null && model.Period.Item1 != null && model.Period.Item2 != null)
+            {
+                model.marksModel.GetColumnsNumber(model.Period.Item1, model.Period.Item2);
+                model.marksModel.GetTableCount(model.marksModel.ColumnsNumber);
+                model.marksModel.ColumnsInTable = model.marksModel.GetColumnsInTable();
+                model.marksModel.GetEndDates(model.Period.Item1, model.Period.Item2, "children");
+            }
             return View("ChildrenMarks", model);
         }
         [Authorize(Roles = "parent")]
@@ -118,16 +122,19 @@ namespace OnlineDiary.Controllers
             ParentMarksViewModel model = new ParentMarksViewModel(quadmester);
             model.User = user;
             model.Period = model.GetPeriod()[quadmester - 1];
-            model.marksModel.GetColumnsNumber(model.Period.Item1, model.Period.Item2);
-            model.marksModel.GetTableCount(model.marksModel.ColumnsNumber);
-            model.marksModel.ColumnsInTable = model.marksModel.GetColumnsInTable();
-            model.marksModel.GetEndDates(model.Period.Item1, model.Period.Item2, "parent");
+            if (model.Period != null && model.Period.Item1 != null && model.Period.Item2 != null)
+            {
+                model.marksModel.GetColumnsNumber(model.Period.Item1, model.Period.Item2);
+                model.marksModel.GetTableCount(model.marksModel.ColumnsNumber);
+                model.marksModel.ColumnsInTable = model.marksModel.GetColumnsInTable();
+                model.marksModel.GetEndDates(model.Period.Item1, model.Period.Item2, "parent");
+            }
             model.Childrens = model.GetChildrens();
             if (model.Childrens.Count > 0)
             {
                 if (childrenId == null)
                 {
-                    childrenId = model.Childrens[0].Id;
+                    childrenId = model.Childrens.Keys.First();
                 }
                 model.CurrentChildren = context.Users.Where(x => x.Id == childrenId).First();
                 ViewBag.ChildId = childrenId;
@@ -167,10 +174,13 @@ namespace OnlineDiary.Controllers
             model.form.Classes = model.getSchoolClasses();
             model.form.Lessons = model.getLessons();
             model.Period = model.GetPeriod()[quadmester - 1];
-            model.marksModel.GetColumnsNumber(model.Period.Item1, model.Period.Item2, model.form.ClassId, model.form.LessonId);
-            model.marksModel.GetTableCount(model.marksModel.ColumnsNumber);
-            model.marksModel.ColumnsInTable = model.marksModel.GetColumnsInTable();
-            model.marksModel.GetEndDates(model.Period.Item1, model.Period.Item2, "teacher", model.form.ClassId, model.form.LessonId);
+            if (model.Period != null && model.Period.Item1 != null && model.Period.Item2 != null)
+            {
+                model.marksModel.GetColumnsNumber(model.Period.Item1, model.Period.Item2, model.form.ClassId, model.form.LessonId);
+                model.marksModel.GetTableCount(model.marksModel.ColumnsNumber);
+                model.marksModel.ColumnsInTable = model.marksModel.GetColumnsInTable();
+                model.marksModel.GetEndDates(model.Period.Item1, model.Period.Item2, "teacher", model.form.ClassId, model.form.LessonId);
+            }
             return View("TeacherMarks", model);
         }
         [Authorize(Roles = "teacher")]
@@ -200,7 +210,7 @@ namespace OnlineDiary.Controllers
             {
                 if (childrenId == null)
                 {
-                    childrenId = model.Childrens[0].Id;
+                    childrenId = model.Childrens.Keys.First();
                 }
                 model.CurrentChildren = context.Users.Where(x => x.Id == childrenId).First();
                 ViewBag.ChildId = childrenId;
@@ -243,7 +253,7 @@ namespace OnlineDiary.Controllers
             return await TeacherFinalMarks(classId, lessonId);
         }
         [HttpPost]
-        [Authorize(Roles ="teacher")]
+        [Authorize(Roles = "teacher")]
         public JsonResult SetMark(DateTime day, int markvalue, string childrenId, int lessonId)
         {
             if (markvalue > 5 && markvalue < 0)
@@ -265,9 +275,10 @@ namespace OnlineDiary.Controllers
                 mark.MarkValue = markvalue;
             }
             var tryancy = context.Truancys.FirstOrDefault(t => t.ChildrenId == childrenId && t.LessonId == lessonId && t.TruancyDate == day);
-            if (tryancy != null) {
+            if (tryancy != null)
+            {
                 context.Truancys.Remove(tryancy);
-            }                
+            }
             context.SaveChanges();
             return Json(new { result = true, markValue = mark.MarkValue });
         }
@@ -275,7 +286,8 @@ namespace OnlineDiary.Controllers
         [Authorize(Roles = "teacher")]
         public JsonResult SetTruancy(DateTime day, string childrenId, int lessonId)
         {
-            if (day.Hour == 0 && day.Minute == 0 && day.Second == 0) {
+            if (day.Hour == 0 && day.Minute == 0 && day.Second == 0)
+            {
                 context.Truancys.Add(new Models.Diary.Truancy() { TruancyDate = day, ChildrenId = childrenId, LessonId = lessonId });
                 var mark = context.Marks.FirstOrDefault(m => m.ChildrenId == childrenId && m.Day == day && m.LessonId == lessonId);
                 if (mark != null)
@@ -289,9 +301,11 @@ namespace OnlineDiary.Controllers
         }
         [HttpPost]
         [Authorize(Roles = "teacher")]
-        public JsonResult setFinalMark(string childrenId, int lessonId, int fourth, int markvalue) {
-            if (markvalue < 1 || markvalue > 5) {
-                return Json(new { result = false});
+        public JsonResult setFinalMark(string childrenId, int lessonId, int fourth, int markvalue)
+        {
+            if (markvalue < 1 || markvalue > 5)
+            {
+                return Json(new { result = false });
             }
             FinalMark mark = context.FinalMarks.FirstOrDefault(m => m.LessonId == lessonId && m.QuadmesterNumber == fourth && m.ChildrenId == childrenId);
             if (mark != null)

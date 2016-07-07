@@ -9,20 +9,21 @@
         "Оценка за четвертую четверть",
         "Годовая оценка"
     };
+    var childrens = Model.GetChildrensInClass(Model.form.ClassId);
 }
 <div>
     @*@Html.ActionLink("Оценки за предыдущий год", "TeacherFinalMarks", new
-{
-    LessonId = Model.form.LessonId,
-    ClassId = Model.form.ClassId,
-    year = Model.CurrentYear - 1
-})
-    @Html.ActionLink("Оценки за следующий год", "TeacherFinalMarks", new
-{
-    LessonId = Model.form.LessonId,
-    ClassId = Model.form.ClassId,
-    year = Model.CurrentYear + 1
-})*@
+        {
+            LessonId = Model.form.LessonId,
+            ClassId = Model.form.ClassId,
+            year = Model.CurrentYear - 1
+        })
+            @Html.ActionLink("Оценки за следующий год", "TeacherFinalMarks", new
+        {
+            LessonId = Model.form.LessonId,
+            ClassId = Model.form.ClassId,
+            year = Model.CurrentYear + 1
+        })*@
     @using (Html.BeginForm("TeacherFinalMarksPost", "Diary", FormMethod.Post, new { @class = "form-inline" }))
     {
         if (Model.form.Classes.Count > 1)
@@ -63,7 +64,7 @@
     </h3>
     <div class="">
         @{ var days = Model.marksModel.GetDays(Model.form.ClassId, Model.form.LessonId);}
-        @if (Model.form != null && days.Count > 0 && Model.form.Classes.Count > 0 && Model.form.Lessons.Count > 0)
+        @if (Model.form != null && days.Count > 0 && Model.form.Classes.Count > 0 && Model.form.Lessons.Count > 0 && childrens.Count > 0)
         {
             <table class="table table table-bordered">
                 <thead>
@@ -76,24 +77,24 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var children in Model.GetChildrensInClass(Model.form.ClassId))
+                    @foreach (var children in childrens)
                     {
                         int[] marks = new int[4];
                         <tr>
                             <td>
-                                @children.FirstName
+                                @Model.GetUserName(children)
                             </td>
                             @for (int i = 1; i < 5; i++)
                             {
                                 int val = Model.GetFinalMark(children.Id, Model.form.LessonId, i);
                                 marks[i - 1] = val;
-                                <td  data-mark-lesson="@Model.form.LessonId" data-mark-children="@children.Id" data-mark-fourth="@(i)">
+                                <td data-mark-lesson="@Model.form.LessonId" data-mark-children="@children.Id" data-mark-fourth="@(i)">
                                     @val
                                 </td>
-                                    @*else
-                                        {
-                                            <td class="set--mark-final" data-mark-lesson="@Model.form.LessonId" data-mark-children="@children.Id" data-mark-fourth="@(i)" ></td>
-                                        }*@
+                                @*else
+                                    {
+                                        <td class="set--mark-final" data-mark-lesson="@Model.form.LessonId" data-mark-children="@children.Id" data-mark-fourth="@(i)" ></td>
+                                    }*@
                             }
                             @{  int count = 0;
                                 if (marks[0] != 0)

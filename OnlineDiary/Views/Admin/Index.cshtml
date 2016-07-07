@@ -7,36 +7,46 @@
     <h2>Список пользователей</h2>
 </div>
 
-@using (Html.BeginForm("Index", "Admin", FormMethod.Post)) {
+@using (Html.BeginForm("Index", "Admin", FormMethod.Post))
+{
     <div class="form-group">
         <div class="col-md-2 col-xs-5">
-            @Html.DropDownListFor(model => Model.Role, Model.Roles, "Все",  new { @class = "form-control", id = "DropDownRoles" })
+            @Html.DropDownListFor(model => Model.Role, Model.Roles, "Все", new { @class = "form-control", id = "DropDownRoles" })
         </div>
         <input type="submit" value="Выбрать роль" class="btn btn-primary" />
     </div>
 }
-        
+
 <div>
     <br />
     <table class="table">
-         <thead>
-             <tr>
-                 <th>
-                     <h3>ФИО</h3>
-                 </th>
-                 <th>
-                     <h3>Роль</h3>                     
-                 </th>
-                @if (Model.Role == "children") {
+        <thead>
+            <tr>
+                <th>
+                    <h3>ФИО</h3>
+                </th>
+                <th>
+                    <h3>Email</h3>
+                </th>
+                <th>
+                    <h3>Роль</h3>
+                </th>
+                @if (Model.Role == "children")
+                {
                     <th><h3>Класс</h3></th>
                 }
-                 <th>
-                     <h3>Действия</h3>                     
-                 </th>
-             </tr>
-         </thead>
+                @if (Model.Role == "teacher")
+                {
+                    <th><h3>Предметы</h3></th>
+                }
+                <th>
+                    <h3>Действия</h3>
+                </th>
+            </tr>
+        </thead>
         <tbody>
-            @foreach (var item in Model.GetAllUsersByRole(Model.Role)) {
+            @foreach (var item in Model.GetAllUsersByRole(Model.Role))
+            {
                 <tr>
                     <td class="tdIndex">
                         @Html.DisplayFor(model => item.FirstName)
@@ -44,17 +54,34 @@
                         @Html.DisplayFor(model => item.ParentName)
                     </td>
                     <td>
+                        @Html.DisplayFor(model => item.Email)
+                    </td>
+                    <td>
                         @{
                             var roleName = Model.GetRoleNameById(item.Id, true);
                             @Html.DisplayFor(modelItem => roleName)
                         }
                     </td>
-                    @if (Model.Role == "children") {
+                    @if (Model.Role == "children")
+                    {
                         <td>
                             @{
                                 string className = Model.GetClassNameById(item.Id);
                             }
                             @Html.DisplayFor(model => className)
+                        </td>
+                                }
+                    @if (Model.Role == "teacher")
+                    {
+                        <td>
+                            @{
+                                var lessons = Model.GetAllLessons(Model.Id);
+                                foreach (var lesson in lessons)
+                                {
+                                    @Html.DisplayFor(model => lesson.Title)
+                                    <br />
+                                }
+                            }
                         </td>
                                 }
                     <td>
@@ -68,10 +95,13 @@
     </table>
     <div style="text-align:center">
         <ul class="pagination" style="display:inline-block;">
-            @for (int i = 0; i < Model.getCountAllPages(); i++) {
-            if (Model.page == i) {
+            @for (int i = 0; i < Model.getCountAllPages(); i++)
+            {
+                if (Model.page == i)
+                {
                     <li class="active">@Html.ActionLink((i + 1).ToString(), "Index", new { page = i })</li>
-                } else {
+                } else
+                {
                     <li>@Html.ActionLink((i + 1).ToString(), "Index", new { page = i })</li>
                 }
             }

@@ -26,8 +26,8 @@
             </div>
         </div>
         <div class="form-group">
-           @Html.Label("Имя", htmlAttributes: new { @class = "control-label col-md-2" })
-           <div class="col-md-10">
+            @Html.Label("Имя", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
                 @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
             </div>
@@ -74,15 +74,27 @@
                 @Html.ValidationMessageFor(model => model.ClassId, "", new { @class = "text-danger" })
             </div>
         </div>
+        @{
+            var lessons = Model.GetNotBusyLessons();
+        }
         <div class="form-group" id="CheckBoxLessons">
-            <div class="col-md-offset-2 col-md-10">
-                @foreach (var item in Model.GetAllLessons())
-                {
-                    <input type="checkbox" name="LessonIds[]" value="@item.Id" class="checkbox-inline" />
-                    @item.Title
-                    <br/>
-                }
-            </div>
+            @if (lessons.Count() != 0)
+            {
+                @Html.Label("Предметы", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @foreach (var item in lessons)
+                    {
+                        <input type="checkbox" name="LessonIds[]" value="@item.Id" class="checkbox-inline" />
+                        @item.Title
+                        <br />
+                    }
+                </div>
+            } else
+            {
+                <div class="col-md-offset-2 col-md-10">
+                    @Html.Label("Нет свободных предметов", htmlAttributes: new { @class = "text-danger" })
+                </div>
+            }
         </div>
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
@@ -91,7 +103,7 @@
             </div>
         </div>
     </div>
-}
+            }
 @section Scripts{
     <script>
         $(function () {
@@ -134,5 +146,5 @@
                 });
             });
         });
-</script>
+    </script>
 }
