@@ -39,6 +39,7 @@ namespace OnlineDiary.Controllers
             var viewModel = new IndexUserViewModel();
             viewModel.page = page;
             viewModel.Role = "all";
+
             if (viewModel == null)
             {
                 return HttpNotFound();
@@ -58,15 +59,22 @@ namespace OnlineDiary.Controllers
         public ActionResult Edit(string id)
         {
             var user = context.Users.Find(id);
-            var viewModel = new EditUserViewModel(user);
-            var userRoleId = context.Users.Where(i => i.Id == viewModel.Id).ToArray()[0].Roles.ToArray()[0].RoleId;
-            var roleName = context.Roles.Where(i => i.Id == userRoleId).ToArray()[0].Name;
-            viewModel.Role = roleName;
-            if (viewModel == null)
+            if (user != null)
             {
-                return HttpNotFound();
+                var viewModel = new EditUserViewModel(user);
+                var userRoleId = context.Users.Where(i => i.Id == viewModel.Id).FirstOrDefault();
+                if (userRoleId != null)
+                {
+                    var role = context.Roles.Where(i => i.Id == userRoleId.Id).FirstOrDefault();
+                    if (role != null)
+                    {
+                        viewModel.Role = role.Name;
+                    }
+                }
+                return View(viewModel);
             }
-            return View(viewModel);
+            return HttpNotFound();
+            
         }
         public ActionResult Details(string id)
         {
@@ -193,8 +201,12 @@ namespace OnlineDiary.Controllers
 
                     if (dUser.Role == "children")
                     {
-                        context.ChildrenData.Where(c => c.ChildrenId == dUser.Id).ToArray()[0].ParentId = dUser.ParentId;
-                        context.ChildrenData.Where(c => c.ChildrenId == dUser.Id).ToArray()[0].SchoolClassId = dUser.ClassId;
+                        var chData = context.ChildrenData.Where(c => c.ChildrenId == dUser.Id).FirstOrDefault();
+                        if (chData != null) {
+                            chData.ParentId = dUser.ParentId;
+                            chData.SchoolClassId = dUser.ClassId;
+                        }
+                        
                         UserManager.AddToRole(user.Id, dUser.Role);
                         context.SaveChanges();
                     }
@@ -207,18 +219,14 @@ namespace OnlineDiary.Controllers
                             UserManager.RemoveFromRole(user.Id, r);
                         }
                         UserManager.AddToRole(user.Id, dUser.Role);
-                        for (int i = 0; i < context.Lessons.ToArray().Count(); i++)
-                        {
-                            if (context.Lessons.ToArray()[i].TeacherId == dUser.Id)
-                            {
-                                context.Lessons.ToArray()[i].TeacherId = null;
-                            }
-                        }
-
+                        context.Lessons.Where(l => l.TeacherId == dUser.Id).ToList().ForEach(l => l.TeacherId = null);
                         for (int i = 0; i < dUser.LessonIds.Count(); i++)
                         {
-                            var lessonId = dUser.LessonIds.ToArray()[i];
-                            context.Lessons.Where(model => model.Id == lessonId).ToArray()[0].TeacherId = dUser.Id;
+                            var lessonId = dUser.LessonIds[i];
+                            var lesson = context.Lessons.FirstOrDefault(model => model.Id == lessonId);
+                            if (lesson != null) {
+                                lesson.TeacherId = dUser.Id;
+                            }
                         }                        
 
                     }
@@ -227,14 +235,10 @@ namespace OnlineDiary.Controllers
                     if (dUser.newPassword != null && dUser.newPassword.Length > 0)
                     {
                         var result = await UserManager.AddPasswordAsync(dUser.Id, dUser.newPassword);
-                        if (!result.Succeeded)
-                        {
-                            //TODO : Add notif error
-                        }
                     }
 
                     context.SaveChanges();
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Edit", new {  Id = dUser.Id });
                 }
             }
             return View(dUser);
@@ -332,10 +336,15 @@ namespace OnlineDiary.Controllers
         public ActionResult QuadMester()
         {
             var qMester = new List<QuadMesterViewModel>();
-            qMester.Add(new QuadMesterViewModel());
-            qMester.Add(new QuadMesterViewModel());
-            qMester.Add(new QuadMesterViewModel());
-            qMester.Add(new QuadMesterViewModel());
+            var quas = context.Quadmesters.Where(q => q.Number == 1 || q.Number == 2 || q.Number == 3 || q.Number == 4).ToArray();
+            int count = quas.Length;
+            for (int i = 0; i < quas.Length; i++) {
+                qMester.Add(new QuadMesterViewModel() { StartDate = quas[i].StartDate, EndDate = quas[i].EndDate, Number = quas[i].Number } );
+            }
+            for (int i = quas.Length; i < 5; i++) {
+                qMester.Add(new QuadMesterViewModel());
+            }
+           
             return View(qMester);
         }
         [HttpPost]
@@ -347,11 +356,19 @@ namespace OnlineDiary.Controllers
                 {
                     if (viewQMest[i].StartDate.ToShortDateString() != "01.01.0001" && viewQMest[i].EndDate.ToShortDateString() != "01.01.0001")
                     {
-                        var qMester = new Quadmester();
-                        qMester.StartDate = viewQMest[i].StartDate;
-                        qMester.EndDate = viewQMest[i].EndDate;
-                        qMester.Number = i + 1;
-                        context.Quadmesters.Add(qMester);
+                        var qua = context.Quadmesters.FirstOrDefault(q => q.Number == i + 1);
+                        if (qua == null)
+                        {
+                            var qMester = new Quadmester();
+                            qMester.StartDate = viewQMest[i].StartDate;
+                            qMester.EndDate = viewQMest[i].EndDate;
+                            qMester.Number = i + 1;
+                            context.Quadmesters.Add(qMester);
+                        } else
+                        {
+                            qua.StartDate = viewQMest[i].StartDate;
+                            qua.EndDate = viewQMest[i].EndDate;
+                        }
                     }
                 }
                 context.SaveChanges();
@@ -408,7 +425,9 @@ namespace OnlineDiary.Controllers
                 context.Marks.RemoveRange(marks);
                 context.Truancys.RemoveRange(truancys);
                 context.Lessons.Remove(lesson);
+                context.SaveChanges();
             }
+            
             return RedirectToAction("ListLessons");
         }
         public ActionResult EditLesson(int Id)

@@ -34,7 +34,7 @@ namespace OnlineDiary.Models
     }
     public class ListLessonsViewModel
     {
-        public const int ITEMS_PER_PAGE = 3;
+        public const int ITEMS_PER_PAGE =10;
 
         public Lesson[] Lessons;
         public int page { get; set; } = 0;

@@ -28,8 +28,6 @@ namespace OnlineDiary.Models.CRUDViewModels
 
         public UserViewModel()
         {
-            //    this.user = new DiaryUser();
-
         }
         public UserViewModel(DiaryUser user)
         {
@@ -41,14 +39,7 @@ namespace OnlineDiary.Models.CRUDViewModels
             this.FirstName = user.FirstName;
             this.LastName = user.LastName;
             this.ParentName = user.ParentName;
-            // this.PhoneNumber = user.PhoneNumber;
         }
-
-
-        //public bool IsLesson { get; set; }
-        //public Dictionary<int, string> Lessons { get; set; }
-        //public List<UserViewModel> Usesrs { get; set; }
-        //public bool SelectedLesson { get; set; }
 
 
         public string Id { get; set; }
@@ -58,13 +49,13 @@ namespace OnlineDiary.Models.CRUDViewModels
         [EmailAddress(ErrorMessage = "Ввдеите нормальный емейл")]
         public string Email { get; set; }
         [Required(ErrorMessage = "Введите имя")]
-        [RegularExpression(@"^[а-яА-Я]+$", ErrorMessage = "Используйте буквы")]
+        [RegularExpression(@"^[а-яА-ЯЁё]+$", ErrorMessage = "Используйте буквы")]
         public string FirstName { get; set; }
         [Required(ErrorMessage = "Введите фамилию")]
-        [RegularExpression(@"^[а-яА-Я]+$", ErrorMessage = "Используйте буквы")]
+        [RegularExpression(@"^[а-яА-ЯЁё]+$", ErrorMessage = "Используйте буквы")]
         public string LastName { get; set; }
         [Required(ErrorMessage = "Введите отчество")]
-        [RegularExpression(@"^[а-яА-Я]+$", ErrorMessage = "Используйте буквы")]
+        [RegularExpression(@"^[а-яА-ЯЁё]+$", ErrorMessage = "Используйте буквы")]
         public string ParentName { get; set; }
         // public string PhoneNumber { get; set; }
         [Required]

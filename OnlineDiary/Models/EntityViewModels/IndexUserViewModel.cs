@@ -9,9 +9,10 @@ namespace OnlineDiary.Models.CRUDViewModels
     public class IndexUserViewModel : UserViewModel
     {
 
+        public const int ITEMS_PER_PAGE = 10;
+
         private DiaryUser user = null;
         private ApplicationDbContext context = new ApplicationDbContext();
-        private int itemsPerPage = 4;
 
         public IndexUserViewModel()
         {
@@ -31,6 +32,8 @@ namespace OnlineDiary.Models.CRUDViewModels
            // this.PhoneNumber = user.PhoneNumber;
         }
 
+        public int CountPages { get; set; }
+
         /// <summary>
         /// Возвращает список пользователей с определенной ролью
         /// </summary>
@@ -39,23 +42,23 @@ namespace OnlineDiary.Models.CRUDViewModels
         public List<UserViewModel> GetAllUsersByRole(string role)
         {
             var list = new List<UserViewModel>();
-            var users = context.Users.ToArray();
             if (role == "all"  || String.IsNullOrEmpty(role))
             {
-                for (int i = 0; i < context.Users.Count(); i++)
+                var users = context.Users.OrderBy(u => u.FirstName).Skip(page * ITEMS_PER_PAGE).Take(ITEMS_PER_PAGE).ToArray();
+                CountPages = context.Users.Count() / ITEMS_PER_PAGE;
+                for (int i = 0; i < users.Length; i++)
                 {
                     list.Add(new UserViewModel(users[i]));
                 }
             }
             else
             {
-                for (int i = 0; i < context.Users.Count(); i++)
+                var roleId = context.Roles.FirstOrDefault(r => r.Name == role);
+                var users = context.Users.Where(u => u.Roles.Any(r => r.RoleId == roleId.Id)).ToArray();
+                CountPages = users.Count() / ITEMS_PER_PAGE;
+                for (int i = 0; i < users.Length; i++)
                 {
-                    var nameRole = GetRoleNameById(users[i].Id);
-                    if (nameRole == role)
-                    {
-                        list.Add(new UserViewModel(users[i]));
-                    }
+                    list.Add(new UserViewModel(users[i]));
                 }
             }
             if (list != null && list.Count > 0) {
@@ -65,6 +68,7 @@ namespace OnlineDiary.Models.CRUDViewModels
             return list;
         }
 
+
         /// <summary>
         /// Возвращает все пользователей из таблицы User
         /// </summary>
@@ -73,7 +77,7 @@ namespace OnlineDiary.Models.CRUDViewModels
         {
             var users = new List<UserViewModel>();
 
-            foreach (var user in context.Users.OrderBy(x => x.FirstName).Skip(page * itemsPerPage).Take(itemsPerPage))
+            foreach (var user in context.Users.OrderBy(x => x.FirstName).Skip(page * ITEMS_PER_PAGE).Take(ITEMS_PER_PAGE))
             {
                 var r = new UserViewModel(user);
                 users.Add(r);
@@ -81,16 +85,6 @@ namespace OnlineDiary.Models.CRUDViewModels
             users.Sort((x, y) => x.FirstName.CompareTo(y.FirstName));
             return users;
         }
-
-        /// <summary>
-        /// Возвращает число страниц
-        /// </summary>
-        /// <returns></returns>
-        public int getCountAllPages()
-        {
-            return context.Users.Count() / itemsPerPage;
-        }
-
         /// <summary>
         /// Возвращает название класса по id ученика
         /// </summary>
@@ -98,10 +92,15 @@ namespace OnlineDiary.Models.CRUDViewModels
         /// <returns></returns>
         public string GetClassNameById(string userId)
         {
-            var userClassId = context.ChildrenData.Where(i => i.ChildrenId == userId).ToArray();
-            var adsad = userClassId[0].SchoolClassId;
-            var name = context.SchoolClasses.Where(i => i.Id == adsad).ToArray()[0].Title;
-            return name;
+            var classId = context.ChildrenData.Where(i => i.ChildrenId == userId).FirstOrDefault();
+            if (classId != null) {
+                var name = context.SchoolClasses.Where(i => i.Id == classId.SchoolClassId).FirstOrDefault();
+                if (name != null)
+                {
+                    return name.Title;
+                }
+            }
+            return "";            
         }
     }
 }

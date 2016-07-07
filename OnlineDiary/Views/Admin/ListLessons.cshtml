@@ -4,7 +4,7 @@
 }
 
 <div class="page-header">
-    @Html.ActionLink("Добавить предмет", "AddLesson", null, new { @class = "btn btn-primary pull-right" })
+    @Html.ActionLink("Добавить предмет", "CreateLesson", null, new { @class = "btn btn-primary pull-right" })
     <h2>Список предметов</h2>
 </div>
 
@@ -35,10 +35,10 @@
         {
             if (Model.page == i)
             {
-                <li class="active">@Html.ActionLink((i + 1).ToString(), "ListLesson", new { page = i })</li>
+                <li class="active">@Html.ActionLink((i + 1).ToString(), "ListLessons", new { page = i })</li>
             } else
             {
-                <li>@Html.ActionLink((i + 1).ToString(), "ListLesson", new { page = i })</li>
+                <li>@Html.ActionLink((i + 1).ToString(), "ListLessons", new { page = i })</li>
             }
         }
     </ul>
