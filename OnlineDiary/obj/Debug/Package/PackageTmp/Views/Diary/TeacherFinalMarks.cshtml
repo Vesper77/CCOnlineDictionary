@@ -1,0 +1,118 @@
+﻿@model OnlineDiary.Models.TeacherMarksViewModel
+@{
+    ViewBag.Title = "Итоговые оценки учеников";
+    string[] head = new string[]
+    {
+        "Оценка за первую четверть",
+        "Оценка за вторую четверть",
+        "Оценка за третью четверть",
+        "Оценка за четвертую четверть",
+        "Годовая оценка"
+    };
+}
+<div>
+    @Html.ActionLink("Оценки за предыдущий год", "TeacherFinalMarks", new
+{
+    LessonId = Model.form.LessonId,
+    ClassId = Model.form.ClassId,
+    year = Model.CurrentYear - 1
+})
+    @Html.ActionLink("Оценки за следующий год", "TeacherFinalMarks", new
+{
+    LessonId = Model.form.LessonId,
+    ClassId = Model.form.ClassId,
+    year = Model.CurrentYear + 1
+})
+    @using (Html.BeginForm("TeacherFinalMarksPost", "Diary", FormMethod.Post, new { @class = "form-inline" }))
+    {
+        if (Model.form.Classes.Count > 1)
+        {
+            <div class="form-group">
+                <label>Класс</label>
+                @Html.DropDownList("classId", new SelectList(Model.form.Classes, "Key", "Value"), new { @class = "form-control" })
+            </div>
+        }
+        else if (Model.form.Lessons.Count > 0)
+        {
+            <div class="form-group">
+                <label>Класс: @(Model.form.Classes.First().Value)</label>
+            </div>
+        }
+        if (Model.form.Lessons.Count > 1)
+        {
+            <div class="form-group">
+                <label>Предметы</label>
+                @Html.DropDownList("lessonId", new SelectList(Model.form.Lessons, "Key", "Value"), new { @class = "form-control" })
+            </div>
+        }
+        else if (Model.form.Lessons.Count > 0)
+        {
+            <div class="form-group">
+                <label>"Предмет: @Model.form.Lessons.First().Value"</label>
+            </div>
+        }
+        if (Model.form.Classes.Count > 1 || Model.form.Lessons.Count > 1)
+        {
+            <button type="submit">Показать</button>
+        }
+    }
+    <h2>Итоговые оценки учеников класса @(" " + Model.getClassName(Model.form.ClassId)) </h2>
+    <h3>
+        @("По предмету " + "\"" + Model.getLessonName(Model.form.LessonId) + "\"" + " за " +
+        Model.CurrentYear + " - " + (Model.CurrentYear + 1) + "учебный  год")
+    </h3>
+    <div class="">
+        @{ var days = Model.GetDays(Model.form.ClassId, Model.form.LessonId);}
+        @if (Model.form != null && days.Count > 0 && Model.form.Classes.Count > 0 && Model.form.Lessons.Count > 0)
+        {
+            <table class="table table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Ученик</th>
+                        @for (int i = 0; i < 5; i++)
+                        {
+                            <th>@head[i]</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var children in Model.GetChildrensInClass(Model.form.ClassId))
+                    {
+                        int[] marks = new int[4];
+                        <tr>
+                            <td>
+                                @children.FirstName
+                            </td>
+                            @for (int i = 1; i < 5; i++)
+                            {
+                                int val = Model.GetFinalMark(children.Id, Model.form.LessonId, i);
+                                marks[i - 1] = val;
+                                <td class="set--mark-final" data-mark-lesson="@Model.form.LessonId" data-mark-children="@children.Id" data-mark-fourth="@(i)">
+                                    @val
+                                </td>
+                                    @*else
+                                        {
+                                            <td class="set--mark-final" data-mark-lesson="@Model.form.LessonId" data-mark-children="@children.Id" data-mark-fourth="@(i)" ></td>
+                                        }*@
+                            }
+                            @{int finalMark = (int)Math.Round((double)(marks[0] + marks[1] + marks[2] + marks[3]) / 4);}
+                            <td><b>@finalMark</b></td>
+                        </tr>
+                                }
+                </tbody>
+            </table>
+                                }
+                                else
+                                {
+                                    <p>Нет данных</p>
+                                }
+    </div>
+</div>
+@section Scripts{
+    @Scripts.Render("~/Scripts/marks.js");
+    <script>
+        window.urls = {
+            'setFinalMark' : '@Url.Action("setFinalMark", "diary")'
+        }
+    </script>
+}

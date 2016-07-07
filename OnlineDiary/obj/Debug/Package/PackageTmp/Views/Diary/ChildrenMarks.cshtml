@@ -1,0 +1,134 @@
+﻿@model OnlineDiary.Models.ChildrenMarksViewModel
+@{
+    ViewBag.Title = "Оценки";
+    string[] quadmesters = new string[]
+    {
+        " первую ",
+        " вторую ",
+        " третью ",
+        " четвертую "
+    };
+    var period = Model.GetPeriod(Model.quadmesterNumber);
+    int countDays = (period.Item2 - period.Item1).Days / 2;
+
+    var lessons = Model.getLessons(Model.User);
+    int[] cruancys = new int[lessons.Count];
+    int[] summarks = new int[lessons.Count];
+    int[] countmarks = new int[lessons.Count];
+}
+<div class="page-header">
+    <h2>Оценки ученика класса @Model.getClassName(Model.User)</h2>
+</div>
+<div class="">
+    @Html.ActionLink("Предыдущий период", "ChildrenMarks", new
+    {
+        quadmester = Model.quadmesterNumber  == 1 ? 4 : Model.quadmesterNumber - 1,
+        year = Model.quadmesterNumber == 1 ? Model.CurrentYear - 1 : Model.CurrentYear,
+    }, new {  @class="btn btn-primary pull-left"})
+    @Html.ActionLink("Cледующий период", "ChildrenMarks", new
+    {
+        quadmester = Model.quadmesterNumber == 4 ? 1 : Model.quadmesterNumber + 1,
+        year = Model.quadmesterNumber == 4 ? Model.CurrentYear + 1 : Model.CurrentYear,
+    }, new { @class = "btn btn-primary pull-right" })
+    <div style="text-align:center;font-weight:bold;">
+        <h6>@Model.User.FirstName за @quadmesters[Model.quadmesterNumber - 1] четверть @Model.CurrentYear @(Model.CurrentYear + 1) учебного года</h6>
+    </div>
+</div>
+<div class="marks--content" style="margin-top:30px;">
+    @if (Model.User != null) {
+        if (lessons.Count > 0) {
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#part1">Часть1</a></li>
+                <li><a data-toggle="tab" href="#part2">Часть 2</a></li>
+            </ul>
+            <div class="tab-content">
+                <div id="part1" class="tab-pane active table-responsive">
+                    @CreateTable(period.Item1, period.Item1.AddDays(countDays),
+                      cruancys, summarks, countmarks, false, lessons)
+                </div>
+                <div id="part2" class="tab-pane table-responsive">
+                    @CreateTable(period.Item1.AddDays(countDays + 1), period.Item2,
+                      cruancys, summarks, countmarks, true, lessons)
+                </div>
+            </div>
+        } else {
+            <p>нет данных</p>
+        }
+
+    } else {
+        <p>Не выбран пользователь</p>
+    }    
+</div>
+@helper CreateTable(DateTime start, DateTime end, int[] cryancys, int[] summarks,
+                    int[] countmarks, bool endTable, List<OnlineDiary.Models.Diary.Lesson> lessons)
+{
+    int i = 0;
+    <table class="table table-bordered" style="font-size:10px;">
+        <thead>
+            <tr>
+                <th class="b-mark_name">Предмет</th>
+                @for (DateTime date = start; date <= end; date = date.AddDays(1))
+                {
+                    if (date.DayOfWeek != DayOfWeek.Sunday)
+                    {
+                        <th>@date.ToString("dd.MM")</th>
+                    }
+                }
+                @if (endTable)
+                {
+                    <th class="b-mark_name">Кол-во Н</th>
+                    <th class="b-mark_name">Оценка за четверть+
+                </th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var lesson in lessons)
+            {
+                <tr>
+                    <td>
+                        @lesson.Title
+                    </td>
+                    @for (DateTime date = start; date <= end; date = date.AddDays(1))
+                    {
+
+                        if (date.DayOfWeek != DayOfWeek.Sunday)
+                        {
+                            int? val = Model.getMarkValue(date, lesson.Id, Model.User);
+                            if (val != null)
+                            {
+                                <td>
+                                    <b>@val</b>
+                                </td>
+                                countmarks[i]++;
+                                summarks[i] += (int)val;
+                            }
+                            else if (Model.IsTruancyed(Model.User.Id, lesson.Id, date))
+                            {
+                                <td style="color:red;"><b>Н</b></td>
+                                cryancys[i]++;
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
+                        }
+                    }
+                    @if (endTable)
+                    {
+                        <td>@cryancys[i]</td>
+                        if (countmarks[i] != 0)
+                        {
+                            <td>@((int)Math.Round(((double)summarks[i] / countmarks[i])))</td>
+                        }
+                        else
+                        {
+                            <td>0</td>
+                        }
+                    }
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+}

@@ -1,0 +1,42 @@
+﻿@model OnlineDiary.Models.EditScheduleViewModel
+@{
+    ViewBag.Title = "Редактирование расписания";
+}
+<div class="panel panel-default b_preview-enter b_preview-form">
+    <div class="panel-heading b_preview-enter ">Редактирование расписания(@ViewBag.ClassName , @Model.days[Model.Day])</div>
+    <div class="panel-body">
+        @using (Html.BeginForm("EditSchedule", "Admin", FormMethod.Post))
+        {
+            @Html.HiddenFor(m => m.classiD)
+            @Html.HiddenFor(m => m.Day)
+            <fieldset class="form-group">
+                <label>Первый урок</label>
+                @Html.DropDownList("lesson", new SelectList(Model.Lessons, "Key", "Value", Model.GetCurrentLesson(1, Model.classiD).Key), new { @class = "form-control"})
+            </fieldset>
+            <fieldset class="form-group">
+                <label>Второй урок</label>
+                @Html.DropDownList("lesson", new SelectList(Model.Lessons, "Key", "Value", Model.GetCurrentLesson(2, Model.classiD).Key), new { @class = "form-control"})
+            </fieldset>
+            <fieldset class="form-group">
+                <label>Третий урок</label>
+                @Html.DropDownList("lesson", new SelectList(Model.Lessons, "Key", "Value", Model.GetCurrentLesson(3, Model.classiD).Key), new { @class = "form-control"})
+            </fieldset>
+            <fieldset class="form-group">
+                <label>Четвертый урок</label>
+                @Html.DropDownList("lesson", new SelectList(Model.Lessons, "Key", "Value", Model.GetCurrentLesson(4, Model.classiD).Key), new { @class = "form-control"})
+            </fieldset>
+            <fieldset class="form-group">
+                <label>Пятый урок</label>
+                @Html.DropDownList("lesson", new SelectList(Model.Lessons, "Key", "Value", Model.GetCurrentLesson(5, Model.classiD).Key), new { @class = "form-control"})
+            </fieldset>
+            <fieldset class="form-group">
+                <label>Шестой урок</label>
+                @Html.DropDownList("lesson", new SelectList(Model.Lessons, "Key", "Value", Model.GetCurrentLesson(6, Model.classiD).Key), new { @class = "form-control"})
+            </fieldset>
+            <fieldset class="form-group">
+                <button type="submit" class="btn btn-primary">Редактировать</button>
+            </fieldset>
+        }
+    </div>
+</div>
+

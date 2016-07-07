@@ -1,0 +1,23 @@
+﻿@model OnlineDiary.Models.LessonViewModel
+
+<div class="panel panel-default b_preview-enter b_preview-form">
+    <div class="panel-heading b_preview-enter ">Создание урока</div>
+    <div class="panel-body">
+        @using (Html.BeginForm("CreateLesson", "Admin", FormMethod.Post))
+        {
+            <fieldset class="form-group">
+                <label>Название урока</label>
+                @Html.TextBox("name", "", new { @class = "form-control", placeholder = "Введите название предмета" })
+                @Html.ValidationMessage("name", new { @class="text-danger" })
+            </fieldset>
+            <fieldset class="form-group">
+                <label>Учитель</label>
+                @Html.DropDownList("teacherId", new SelectList(Model.Teachers, "Key", "Value"), new { @class = "form-control", id = "select-lesson" })
+                @Html.ValidationMessage("teacherId", new { })
+            </fieldset>
+            <fieldset class="form-group">
+                <button type="submit" class="btn btn-primary">Добавить</button>
+            </fieldset>
+        }
+    </div>
+</div>

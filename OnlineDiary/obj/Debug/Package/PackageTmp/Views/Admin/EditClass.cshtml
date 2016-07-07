@@ -1,0 +1,20 @@
+﻿@model OnlineDiary.Models.ClassEditViewModel
+@{
+    ViewBag.Title = "Редактирование класса";
+}
+
+<div class="page-header">
+    <h2>Редактироние класса</h2>
+</div>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.Id)
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <fieldset class="form-group">
+        @Html.Label("Название")
+        @Html.TextBoxFor(m => m.Title, new { @class="form-control" })
+        @Html.ValidationMessageFor(m => m.Title, "", new { @class = "text-danger" })
+    </fieldset>
+    <button class="btn btn-primary">Отредактировать</button>
+}

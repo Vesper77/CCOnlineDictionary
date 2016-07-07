@@ -1,0 +1,23 @@
+﻿@model OnlineDiary.Models.EditLessonViewModel
+@{
+    ViewBag.Title = "Редактирование предмета";
+}
+
+<div class="page-header">
+    <h2>Редактирование предмета</h2>
+</div>
+@using (Html.BeginForm())
+{
+    <div class="form-group">
+        @Html.Label("Название")
+        @Html.TextBoxFor(m => m.Title, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Title, "", new { @class = "text-danger" })
+    </div>
+    <div class="form-group">
+        @Html.Label("Учитель")
+        @Html.DropDownListFor(m => m.TeacherId, new SelectList(Model.Teachers, "Key", "Value"), new { @class = "form-control", id = "select-lesson" })
+        @Html.ValidationMessageFor(m => m.TeacherId, "", new { @class = "text-danger" })
+    </div>
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+}
+

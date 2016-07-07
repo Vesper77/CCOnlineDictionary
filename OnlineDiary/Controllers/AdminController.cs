@@ -350,32 +350,79 @@ namespace OnlineDiary.Controllers
             return RedirectToAction("EditSchedule", new { classId = classId, day = day });
         }
 
-        public ActionResult ListLessons(int page = 0) {
+        public ActionResult ListLessons(int page = 0)
+        {
             var LessonsView = new ListLessonsViewModel();
             LessonsView.page = page;
             var lessons = context.Lessons.OrderBy(l => l.Title).Skip(page * ListLessonsViewModel.ITEMS_PER_PAGE).Take(ListLessonsViewModel.ITEMS_PER_PAGE).ToArray();
             LessonsView.Lessons = lessons;
+            LessonsView.PageCount = (int)Math.Floor((float)context.Lessons.Count() /(float)ListLessonsViewModel.ITEMS_PER_PAGE);
             return View(LessonsView);
         }
         public ActionResult DeleteLesson(int Id) {
             var lesson = context.Lessons.FirstOrDefault(l => l.Id == Id);
             if (lesson != null) {
-
+                var schLesson = context.ScheduleLessons.FirstOrDefault(s => s.LessonId == lesson.Id);
+                if (schLesson != null)
+                {
+                    var homeWorks = context.HomeWorks.Where(h => h.ScheludeLessonId == schLesson.Id).ToArray();
+                    var completedHomeWorks = context.CompltetedHomeWorks.Where(c => homeWorks.Any(h => h.Id == c.HomeWorkId)).ToArray();
+                    context.HomeWorks.RemoveRange(homeWorks);
+                    context.CompltetedHomeWorks.RemoveRange(completedHomeWorks);
+                    context.ScheduleLessons.Remove(schLesson);
+                }
+                var marks = context.Marks.Where(m => m.Lesson.Id == lesson.Id).ToArray();
+                var truancys = context.Truancys.Where(t => t.LessonId == lesson.Id);                    
+                context.Marks.RemoveRange(marks);
+                context.Truancys.RemoveRange(truancys);
+                context.Lessons.Remove(lesson);
             }
             return RedirectToAction("ListLessons");
         }
-        public ActionResult EditLesson(int Id) {
+        public ActionResult EditLesson(int Id)
+        {
             var lesson = context.Lessons.FirstOrDefault(l => l.Id == Id);
             if (lesson != null) {
                 var viewModel = new EditLessonViewModel();
                 viewModel.Id = lesson.Id;
                 viewModel.Title = lesson.Title;
-                return View(viewModel);
+                viewModel.TeacherId = lesson.TeacherId;
+                var teacherRoleId = context.Roles.FirstOrDefault(r => r.Name == "teacher");                
+                if (teacherRoleId != null)
+                {
+                    
+                    viewModel.Teachers = context.Users.Where(u => u.Roles.Any(r => r.RoleId == teacherRoleId.Id)).ToDictionary(x => x.Id, y => y.FirstName + " " + y.LastName + " " + y.ParentName);
+                    return View(viewModel);
+                }
+                
             }
             return HttpNotFound();
         }
-        //public ActionResult EditLesson(EditLessonViewModel lesson) { }
-
+        [HttpPost]
+        public ActionResult EditLesson(EditLessonViewModel viewModel)
+        {
+            if (viewModel != null)
+            {
+                if (ModelState.IsValid)
+                {
+                    var lesson = context.Lessons.FirstOrDefault(l => l.Id == viewModel.Id);
+                    if (lesson != null)
+                    {
+                        lesson.TeacherId = viewModel.TeacherId;
+                        lesson.Title = viewModel.Title;
+                        context.SaveChanges();
+                        return RedirectToAction("EditLesson", new { Id = lesson.Id });
+                    } else {
+                        return HttpNotFound();
+                    } 
+                } 
+                else
+                {
+                    return View(viewModel);
+                }
+            }
+            return RedirectToAction("LessonList");
+        }
         public ActionResult CreateClass() {
             ClassCreateViewModel sch = new ClassCreateViewModel();
             return View(sch);
@@ -443,6 +490,7 @@ namespace OnlineDiary.Controllers
             var classes = context.SchoolClasses.OrderBy(x => x.Title).Skip(page * ClassListViewModel.PER_PAGE).Take(ClassListViewModel.PER_PAGE).ToArray();
             viewModel.Classes = classes;
             viewModel.Page = page;
+            viewModel.PageCount =(int)Math.Floor((float)context.SchoolClasses.Count() / (float)ClassListViewModel.PER_PAGE);
             return View(viewModel);
         }
 

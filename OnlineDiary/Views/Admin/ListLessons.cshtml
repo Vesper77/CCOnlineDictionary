@@ -3,8 +3,12 @@
     ViewBag.Title = "Список предметов";
 }
 
-<h2>Список предметов</h2>
-<table>
+<div class="page-header">
+    @Html.ActionLink("Добавить предмет", "AddLesson", null, new { @class="btn btn-primary pull-right" })
+    <h2>Список предметов</h2>
+</div>
+
+<table class="table">
     <thead>
         <tr>
             <th>
@@ -24,4 +28,19 @@
         }
     </tbody>
 </table>
+<div style="text-align:center">
+    <ul class="pagination" style="display:inline-block;">
+        @for (int i = 0; i < Model.PageCount; i++)
+        {
+            if (Model.page == i)
+            {
+                <li class="active">@Html.ActionLink((i + 1).ToString(), "ListLesson", new { page = i })</li>
+            } else
+            {
+                <li>@Html.ActionLink((i + 1).ToString(), "ListLesson", new { page = i })</li>
+            }
+        }
+    </ul>
+</div>
+
 

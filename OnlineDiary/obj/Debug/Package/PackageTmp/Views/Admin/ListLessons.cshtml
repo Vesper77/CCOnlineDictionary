@@ -1,0 +1,27 @@
+﻿@model OnlineDiary.Models.ListLessonsViewModel
+@{
+    ViewBag.Title = "Список предметов";
+}
+
+<h2>Список предметов</h2>
+<table>
+    <thead>
+        <tr>
+            <th>
+                <h3>Название</h3>
+            </th>
+            <th>
+                <h3>Действия</h3>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Lessons) {
+            <tr>
+                <td>@item.Title</td>
+                <td>@Html.ActionLink("Редактировать", "EditLesson", new { Id = item.Id }) | @Html.ActionLink("Удаление", "DeleteLesson", new { Id = item.Id })</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
