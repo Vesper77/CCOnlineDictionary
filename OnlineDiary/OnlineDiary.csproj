@@ -208,11 +208,13 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\Diary\QuadMester.cs" />
     <Compile Include="Models\EntityViewModels\CreateUserViewModel.cs" />
     <Compile Include="Models\EntityViewModels\DeleteUserViewModel.cs" />
     <Compile Include="Models\EntityViewModels\DetailUserViewModel.cs" />
     <Compile Include="Models\EntityViewModels\EditUserViewModel.cs" />
     <Compile Include="Models\EntityViewModels\IndexUserViewModel.cs" />
+    <Compile Include="Models\EntityViewModels\QuadMester.cs" />
     <Compile Include="Models\EntityViewModels\UserViewModel.cs" />
     <Compile Include="Models\Diary\FinalMark.cs" />
     <Compile Include="Models\Diary\Homework.cs" />
@@ -314,6 +316,7 @@
     <Content Include="Views\Admin\CreateLesson.cshtml" />
     <Content Include="Views\Admin\SelectClass.cshtml" />
     <Content Include="Views\Admin\EditSchedule.cshtml" />
+    <Content Include="Views\Admin\QuadMester.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

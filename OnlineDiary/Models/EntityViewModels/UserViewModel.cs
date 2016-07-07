@@ -1,8 +1,17 @@
-﻿using OnlineDiary.Models.Diary;
+﻿using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.AspNet.Identity.Owin;
+using OnlineDiary.DAL;
+using OnlineDiary.Models;
+using OnlineDiary.Models.CRUDViewModels;
+using OnlineDiary.Models.Diary;
+using OnlineDiary.Models.People;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Data.Entity;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
@@ -22,7 +31,6 @@ namespace OnlineDiary.Models.CRUDViewModels
             //    this.user = new DiaryUser();
 
         }
-
         public UserViewModel(DiaryUser user)
         {
             this.user = user;
@@ -33,7 +41,7 @@ namespace OnlineDiary.Models.CRUDViewModels
             this.FirstName = user.FirstName;
             this.LastName = user.LastName;
             this.ParentName = user.ParentName;
-           // this.PhoneNumber = user.PhoneNumber;
+            // this.PhoneNumber = user.PhoneNumber;
         }
 
 
@@ -47,22 +55,22 @@ namespace OnlineDiary.Models.CRUDViewModels
         [Required(ErrorMessage = "Введите логин")]
         public string UserName { get; set; }
         [Required(ErrorMessage = "Введите email")]
+        [EmailAddress(ErrorMessage = "Ввдеите нормальный емейл")]
         public string Email { get; set; }
-        [Required(ErrorMessage = "Введите пароль")]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
-        [DataType(DataType.Password)]
-        public string Password { get; set; }
         [Required(ErrorMessage = "Введите имя")]
+        [RegularExpression(@"^[а-яА-Я]+$", ErrorMessage = "Используйте буквы")]
         public string FirstName { get; set; }
         [Required(ErrorMessage = "Введите фамилию")]
+        [RegularExpression(@"^[а-яА-Я]+$", ErrorMessage = "Используйте буквы")]
         public string LastName { get; set; }
         [Required(ErrorMessage = "Введите отчество")]
+        [RegularExpression(@"^[а-яА-Я]+$", ErrorMessage = "Используйте буквы")]
         public string ParentName { get; set; }
-       // public string PhoneNumber { get; set; }
+        // public string PhoneNumber { get; set; }
         [Required]
         [Display(Name = "Role")]
-        public string Role { get; set; }
-       
+        public string Role { get; set; } = "all";
+
         public string ParentId { get; set; }
         public int ClassId { get; set; }
 
@@ -70,6 +78,7 @@ namespace OnlineDiary.Models.CRUDViewModels
         /// Список всех ролей пользователя
         /// </summary>
         public SelectListItem[] Roles = new[] {
+                //new SelectListItem() { Text = "Все", Value = "all"},
                 new SelectListItem() { Text = "Администратор", Value = "admin"},
                 new SelectListItem() { Text = "Ученик",Value = "children"},
                 new SelectListItem() { Text = "Родитель",Value = "parent"},
@@ -91,7 +100,7 @@ namespace OnlineDiary.Models.CRUDViewModels
                     FirstName = this.FirstName,
                     LastName = this.LastName,
                     ParentName = this.ParentName,
-                  //  PhoneNumber = this.PhoneNumber
+                    //  PhoneNumber = this.PhoneNumber
                 };
             }
             return user;
@@ -101,26 +110,61 @@ namespace OnlineDiary.Models.CRUDViewModels
         /// Возвращает список всех элементов из таблицы Lesson
         /// </summary>
         /// <returns></returns>
-        public Dictionary<int, string> GetAllLessons()
+        public Lesson[] GetAllLessons(string id = "")
         {
-            var allLesson = context.Lessons.Where(l => l.TeacherId == null).ToArray();
-            if (allLesson != null)
+            var allLessons = context.Lessons.Where(l => l.TeacherId == null || l.TeacherId == id).ToArray();
+            if (id != "")
             {
-                var lessons = new Dictionary<int, string>();
-                foreach (var l in allLesson)
+                var teacherLessons = allLessons.Where(i => i.TeacherId == id).ToArray();
+                if (teacherLessons != null)
                 {
-                    lessons.Add(l.Id, l.Title);
+                    return teacherLessons;
                 }
-                return lessons;
             }
-            return new Dictionary<int, string>();
+            if (allLessons != null)
+                return allLessons;
+            return new Lesson[0];
+        }
+
+        /// <summary>
+        /// Возвращает список незанятых предметов
+        /// </summary>
+        /// <returns></returns>
+        public Lesson[] GetNotBusyLessons()
+        {
+            var allLessons = context.Lessons.Where(l => l.TeacherId == null && l.Title != null).ToArray();
+            if (allLessons != null)
+            {
+                return allLessons;
+            }
+            return new Lesson[0];
+        }
+
+        /// <summary>
+        /// Возвращает имя школьного класса с помощью id ученика
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public string GetClassNameByChildrenId(string id)
+        {
+            var arrChild = context.ChildrenData.Where(i => i.ChildrenId == id).ToArray();
+            if (arrChild != null)
+            {
+                var schClassId = arrChild.First().SchoolClassId;
+                var nameClass = context.SchoolClasses.Where(i => i.Id == schClassId).ToArray();
+                if (nameClass != null)
+                {
+                    return nameClass.First().Title;
+                }
+            }
+            return "";
         }
 
         /// <summary>
         /// Возвращает список всех пользователей из таблицы User с ролью Parent
         /// </summary>
         /// <returns></returns>
-        public Dictionary<string, string> GetAllParents()
+        public Dictionary<string, string> GetAllParent()
         {
             var parentRoleName = "parent";
             var parentRole = context.Roles.SingleOrDefault(r => r.Name == parentRoleName);
@@ -164,23 +208,48 @@ namespace OnlineDiary.Models.CRUDViewModels
         /// </summary>
         /// <param name="userId">Id пользователя</param>
         /// <returns></returns>
-        public string GetRoleNameById(string userId)
+        public string GetRoleNameById(string userId, bool isLocalization = false)
         {
-            var userRoleId = context.Users.Where(i => i.Id == userId).ToArray()[0].Roles.ToArray()[0].RoleId;
-            var name = context.Roles.Where(i => i.Id == userRoleId).ToArray()[0].Name;
-            return name;
+            var user = context.Users.FirstOrDefault(i => i.Id == userId);
+            if (user != null)
+            {
+                var role = user.Roles.FirstOrDefault();
+                if (role != null)
+                {
+                    var name = context.Roles.First(i => i.Id == role.RoleId).Name;
+                    if (isLocalization)
+                    {
+                        return GetRoleTitle(name);
+                    }
+                    return name;
+                }
+            }
+            return "none";
+
         }
-        
+
         /// <summary>
         /// Создает новый школьный класс
         /// </summary>
         /// <param name="className">название школьного класса</param>
-        public void CreateClass(string className)
+        public void CreateClas(string className)
         {
             SchoolClass schClass = new SchoolClass();
             schClass.Title = className;
             context.SchoolClasses.Add(schClass);
             context.SaveChanges();
+        }
+        private string GetRoleTitle(string role)
+        {
+            switch (role)
+            {
+                case "all": return "Все";
+                case "children": return "Ученик";
+                case "parent": return "Родитель";
+                case "teacher": return "Учитель";
+                case "admin": return "Администратор";
+                default: return "Человек";
+            }
         }
 
     }

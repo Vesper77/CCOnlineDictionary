@@ -344,6 +344,39 @@ namespace OnlineDiary.Controllers
             model.EditSchedule(lesson);
             return RedirectToAction("SelectClass", "Admin");
         }
+
+        public ActionResult QuadMester()
+        {
+            var qMester = new List<QuadMesterViewModel>();
+            qMester.Add(new QuadMesterViewModel());
+            qMester.Add(new QuadMesterViewModel());
+            qMester.Add(new QuadMesterViewModel());
+            qMester.Add(new QuadMesterViewModel());
+            return View(qMester);
+        }
+        [HttpPost]
+        public ActionResult QuadMester(List<QuadMesterViewModel> viewQMest)
+        {
+            if (ModelState.IsValid)
+            {
+                if (viewQMest != null)
+                {
+                    for (int i = 0; i < viewQMest.Count; i++)
+                    {
+                        var qMester = new QuadMester();
+                        qMester.StartDate = viewQMest[i].StartDate;
+                        qMester.EndDate = viewQMest[i].EndDate;
+                        qMester.Number = viewQMest[i].Number;
+                        context.QuadMesters.Add(qMester);
+                    }
+                    context.SaveChanges();
+                }
+            }
+            return View();
+        }
+
+
+
         protected override void Dispose(bool disposing)
         {
             context.Dispose();

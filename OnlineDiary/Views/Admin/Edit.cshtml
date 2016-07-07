@@ -6,7 +6,6 @@
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-
     <div class="form-horizontal">
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -48,18 +47,18 @@
         </div>
         <div class="form-group">
             @Html.Label("Новый пароль", htmlAttributes: new { @class = "control-label col-md-2" })
-           <div class="col-md-10">
-                @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.newPassword, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.newPassword, "", new { @class = "text-danger" })
             </div>
         </div>
         @*<div class="form-group">
-            @Html.LabelFor(model => model.PhoneNumber, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
-            </div>
-        </div>*@
+                @Html.LabelFor(model => model.PhoneNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
+                </div>
+            </div>*@
         <div class="form-group">
             @Html.Label("Роль", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -67,45 +66,67 @@
                 @Html.ValidationMessageFor(model => model.Role, "", new { @class = "text-danger" })
             </div>
         </div>
-        <div class="form-group" id="DropDownParents">
+        <div class="form-group" id="DropDownParents" @if (string.IsNullOrEmpty(Model.Role) || Model.Role != "children") { <text> style="display:none;" </text> }>
             @Html.Label("Родитель ученика", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.DropDownListFor(mo => mo.ParentId, new SelectList(Model.GetAllParent(), "Key", "Value"), new { @class = "form-control" })
                 @Html.ValidationMessageFor(mo => mo.ParentId, "", new { @class = "text-danger" })
             </div>
         </div>
-        <div class="form-group" id="DropDownClass">
+        <div class="form-group" id="DropDownClass" @if (string.IsNullOrEmpty(Model.Role) || Model.Role != "children") { <text> style="display:none;" </text>  }>
             @Html.Label("Класс ученика", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.DropDownListFor(model => model.ClassId, new SelectList(Model.GetAllClass(), "Key", "Value"), new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.ClassId, "", new { @class = "text-danger" })
             </div>
         </div>
-        <div class="form-group" id="CheckBoxLessons">
+
+
+
+
+        <div class="form-group" id="CheckBoxLessons" @if (string.IsNullOrEmpty(Model.Role) || Model.Role != "teacher") { <text> style="display:none;" </text>  }>
+            @Html.Label("Предметы", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-offset-2 col-md-10">
-                @foreach (var item in Model.GetAllLessons())
+                @foreach (var item in Model.GetAllLessons(Model.Id))
                 {
-                    @item.Value
-                    <input type="checkbox" name="LessonIds[]" value="@item.Key" class="checkbox-inline"/>
+                    if (item.TeacherId == Model.Id)
+                    {
+                        <input type="checkbox" name="LessonIds[]" value="@item.Id" class="checkbox-inline" checked='checked' />
+                    } else
+                    {
+                        <input type="checkbox" name="LessonIds[]" value="@item.Id" class="checkbox-inline" />
+                    }
+                    @item.Title
+                    <br />
                 }
             </div>
         </div>
+
+
+
+
+
+
+
+
+
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Сохранить" class="btn btn-default" />
-            </div>  
+                <input type="submit" value="Сохранить" class="btn btn-primary" />
+                @Html.ActionLink("Назад к списку", "Index", null, new { @class = "btn btn-default " })
+            </div>
         </div>
-        @Html.ActionLink("Назад к списку", "Index")
- </div>
+    </div>
 }
+
 
 
 @section Scripts{
     <script>
         $(function () {
-            $("#DropDownParents").hide();
-            $("#DropDownClass").hide();
-            $("#CheckBoxLessons").hide();
+            //$("#DropDownParents").hide();
+            //$("#DropDownClass").hide();
+            //$("#CheckBoxLessons").hide();
             $(document).ready(function () {
                 $("#Role").change(function () {
                     if ($(this).val() == "Выберите роль") {
@@ -137,7 +158,7 @@
             });
         });
     </script>
- }
+}
 <div>
     <br /><br /><br /><br />
 </div>
