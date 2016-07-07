@@ -210,11 +210,13 @@
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Diary\CompletedHomeWork.cs" />
     <Compile Include="Models\Diary\QuadMester.cs" />
+    <Compile Include="Models\EntityViewModels\AdminClassViewModel.cs" />
     <Compile Include="Models\EntityViewModels\CreateUserViewModel.cs" />
     <Compile Include="Models\EntityViewModels\DeleteUserViewModel.cs" />
     <Compile Include="Models\EntityViewModels\DetailUserViewModel.cs" />
     <Compile Include="Models\EntityViewModels\EditUserViewModel.cs" />
     <Compile Include="Models\EntityViewModels\IndexUserViewModel.cs" />
+    <Compile Include="Models\EntityViewModels\LessonViewModel.cs" />
     <Compile Include="Models\EntityViewModels\QuadMester.cs" />
     <Compile Include="Models\EntityViewModels\UserViewModel.cs" />
     <Compile Include="Models\Diary\FinalMark.cs" />
@@ -225,7 +227,6 @@
     <Compile Include="Models\Diary\Truancy.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\Diary\Lesson.cs" />
-    <Compile Include="Models\LessonViewModel.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\MarksViewModel.cs" />
     <Compile Include="Models\People\ChildrenData.cs" />
@@ -318,6 +319,11 @@
     <Content Include="Views\Admin\SelectClass.cshtml" />
     <Content Include="Views\Admin\EditSchedule.cshtml" />
     <Content Include="Views\Admin\QuadMester.cshtml" />
+    <Content Include="Views\Admin\CreateClass.cshtml" />
+    <Content Include="Views\Admin\EditClass.cshtml" />
+    <Content Include="Views\Admin\EditLesson.cshtml" />
+    <Content Include="Views\Admin\ListClasses.cshtml" />
+    <Content Include="Views\Admin\ListLessons.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

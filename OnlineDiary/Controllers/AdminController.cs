@@ -224,9 +224,9 @@ namespace OnlineDiary.Controllers
                     }
                     await UserManager.UpdateAsync(user);
 
-                    if (dUser.Password != null && dUser.Password.Length > 0)
+                    if (dUser.newPassword != null && dUser.newPassword.Length > 0)
                     {
-                        var result = await UserManager.AddPasswordAsync(dUser.Id, dUser.Password);
+                        var result = await UserManager.AddPasswordAsync(dUser.Id, dUser.newPassword);
                         if (!result.Succeeded)
                         {
                             //TODO : Add notif error
@@ -296,22 +296,6 @@ namespace OnlineDiary.Controllers
             model.Teachers = model.GetAllTeachers();
             return View(model);
         }
-        [HttpPost]
-        public async Task<ActionResult> CreateLesson(string teacherId, string name)
-        {
-            if (!String.IsNullOrWhiteSpace(name))
-            {
-                var lesson = new Lesson() { TeacherId = teacherId, Title = name };
-                var identLesson = context.Lessons.Where(x => x.TeacherId == teacherId && x.Title.
-                                                       ToLower() == name.ToLower()).FirstOrDefault();
-                if (identLesson == null)
-                {
-                    context.Lessons.Add(lesson);
-                    context.SaveChanges();
-                }
-            }
-            return await CreateLesson();
-        }
         [HttpGet]
         public async Task<ActionResult> SelectClass()
         {
@@ -357,25 +341,197 @@ namespace OnlineDiary.Controllers
         [HttpPost]
         public ActionResult QuadMester(List<QuadMesterViewModel> viewQMest)
         {
-            if (ModelState.IsValid)
+            if (viewQMest != null)
             {
-                if (viewQMest != null)
+                for (int i = 0; i < viewQMest.Count; i++)
                 {
-                    for (int i = 0; i < viewQMest.Count; i++)
+                    if (viewQMest[i].StartDate.ToShortDateString() != "01.01.0001" && viewQMest[i].EndDate.ToShortDateString() != "01.01.0001")
                     {
                         var qMester = new Quadmester();
                         qMester.StartDate = viewQMest[i].StartDate;
                         qMester.EndDate = viewQMest[i].EndDate;
-                        qMester.Number = viewQMest[i].Number;
+                        qMester.Number = i + 1;
                         context.Quadmesters.Add(qMester);
                     }
-                    context.SaveChanges();
                 }
+                context.SaveChanges();
             }
-            return View();
+            return View(viewQMest);
+        }
+        [HttpPost]
+        public async Task<ActionResult> CreateLesson(string teacherId, string name)
+        {
+            if (!String.IsNullOrWhiteSpace(name))
+            {
+                var lesson = new Lesson() { TeacherId = teacherId, Title = name };
+                var identLesson = context.Lessons.Where(x => x.Title.ToLower() == name.ToLower()).FirstOrDefault();
+                if (identLesson == null)
+                {
+                    context.Lessons.Add(lesson);
+                    context.SaveChanges();
+                } else
+                {
+                    ModelState.AddModelError("", "Уже существует");
+                }
+            } else
+            {
+                ModelState.AddModelError("name", "Пустое имя");
+            }
+            return await CreateLesson();
         }
 
+        public ActionResult ListLessons(int page = 0)
+        {
+            var LessonsView = new ListLessonsViewModel();
+            LessonsView.page = page;
+            var lessons = context.Lessons.OrderBy(l => l.Title).Skip(page * ListLessonsViewModel.ITEMS_PER_PAGE).Take(ListLessonsViewModel.ITEMS_PER_PAGE).ToArray();
+            LessonsView.Lessons = lessons;
+            LessonsView.PageCount = (int)Math.Floor((float)context.Lessons.Count() / (float)ListLessonsViewModel.ITEMS_PER_PAGE);
+            return View(LessonsView);
+        }
+        public ActionResult DeleteLesson(int Id)
+        {
+            var lesson = context.Lessons.FirstOrDefault(l => l.Id == Id);
+            if (lesson != null)
+            {
+                var schLesson = context.ScheduleLessons.FirstOrDefault(s => s.LessonId == lesson.Id);
+                if (schLesson != null)
+                {
+                    var homeWorks = context.HomeWorks.Where(h => h.ScheludeLessonId == schLesson.Id).ToArray();
+                    var completedHomeWorks = context.CompltetedHomeWorks.Where(c => homeWorks.Any(h => h.Id == c.HomeWorkId)).ToArray();
+                    context.HomeWorks.RemoveRange(homeWorks);
+                    context.CompltetedHomeWorks.RemoveRange(completedHomeWorks);
+                    context.ScheduleLessons.Remove(schLesson);
+                }
+                var marks = context.Marks.Where(m => m.Lesson.Id == lesson.Id).ToArray();
+                var truancys = context.Truancys.Where(t => t.LessonId == lesson.Id);
+                context.Marks.RemoveRange(marks);
+                context.Truancys.RemoveRange(truancys);
+                context.Lessons.Remove(lesson);
+            }
+            return RedirectToAction("ListLessons");
+        }
+        public ActionResult EditLesson(int Id)
+        {
+            var lesson = context.Lessons.FirstOrDefault(l => l.Id == Id);
+            if (lesson != null)
+            {
+                var viewModel = new EditLessonViewModel();
+                viewModel.Id = lesson.Id;
+                viewModel.Title = lesson.Title;
+                viewModel.TeacherId = lesson.TeacherId;
+                var teacherRoleId = context.Roles.FirstOrDefault(r => r.Name == "teacher");
+                if (teacherRoleId != null)
+                {
 
+                    viewModel.Teachers = context.Users.Where(u => u.Roles.Any(r => r.RoleId == teacherRoleId.Id)).ToDictionary(x => x.Id, y => y.FirstName + " " + y.LastName + " " + y.ParentName);
+                    return View(viewModel);
+                }
+            }
+            return HttpNotFound();
+        }
+        [HttpPost]
+        public ActionResult EditLesson(EditLessonViewModel viewModel)
+        {
+            if (viewModel != null)
+            {
+                if (ModelState.IsValid)
+                {
+                    var lesson = context.Lessons.FirstOrDefault(l => l.Id == viewModel.Id);
+                    if (lesson != null)
+                    {
+                        lesson.TeacherId = viewModel.TeacherId;
+                        lesson.Title = viewModel.Title;
+                        context.SaveChanges();
+                        return RedirectToAction("EditLesson", new { Id = lesson.Id });
+                    } else
+                    {
+                        return HttpNotFound();
+                    }
+                } else
+                {
+                    return View(viewModel);
+                }
+            }
+            return RedirectToAction("LessonList");
+        }
+        public ActionResult CreateClass()
+        {
+            ClassCreateViewModel sch = new ClassCreateViewModel();
+            return View(sch);
+        }
+        [HttpPost]
+        public ActionResult CreateClass(ClassCreateViewModel sch)
+        {
+            SchoolClass sc = new SchoolClass();
+            sc.Title = sch.Title;
+            var schl = context.SchoolClasses.FirstOrDefault(c => c.Title == sch.Title);
+            if (schl == null)
+            {
+                context.SchoolClasses.Add(sc);
+                context.SaveChanges();
+            } else
+            {
+                ModelState.AddModelError("", "Такой класс уже существует");
+            }
+            return View(sch);
+        }
+        public ActionResult EditClass(int Id)
+        {
+            var schoolClass = context.SchoolClasses.FirstOrDefault(s => s.Id == Id);
+            if (schoolClass != null)
+            {
+                var viewModel = new ClassEditViewModel();
+                viewModel.Id = schoolClass.Id;
+                viewModel.Title = schoolClass.Title;
+                return View(viewModel);
+            }
+            return HttpNotFound();
+
+        }
+        [HttpPost]
+        public ActionResult EditClass(ClassEditViewModel viewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                var sch = context.SchoolClasses.FirstOrDefault(s => s.Id == viewModel.Id);
+                if (sch != null)
+                {
+                    sch.Title = viewModel.Title;
+                    context.SaveChanges();
+                }
+                return RedirectToAction("EditClass", new { Id = viewModel.Id });
+            } else
+            {
+                return View(viewModel);
+            }
+        }
+        public ActionResult DeleteClass(int Id)
+        {
+            var schClass = context.SchoolClasses.FirstOrDefault(s => s.Id == Id);
+            if (schClass != null)
+            {
+                context.SchoolClasses.Remove(schClass);
+                context.ChildrenData.Where(c => c.SchoolClassId == schClass.Id).ToList().ForEach(
+                    c => { c.SchoolClassId = 0; }
+                );
+                context.ScheduleLessons.Where(l => l.SchoolClassId == schClass.Id).ToList().ForEach(
+                    l => { l.SchoolClassId = 0; }
+                );
+                context.SaveChanges();
+            }
+            return RedirectToAction("ListClasses");
+
+        }
+        public ActionResult ListClasses(int page = 0)
+        {
+            var viewModel = new ClassListViewModel();
+            var classes = context.SchoolClasses.OrderBy(x => x.Title).Skip(page * ClassListViewModel.PER_PAGE).Take(ClassListViewModel.PER_PAGE).ToArray();
+            viewModel.Classes = classes;
+            viewModel.Page = page;
+            viewModel.PageCount = (int)Math.Floor((float)context.SchoolClasses.Count() / (float)ClassListViewModel.PER_PAGE);
+            return View(viewModel);
+        }
 
         protected override void Dispose(bool disposing)
         {

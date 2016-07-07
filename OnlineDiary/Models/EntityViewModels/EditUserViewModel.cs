@@ -10,8 +10,8 @@ namespace OnlineDiary.Models.CRUDViewModels
         private DiaryUser user = null;
         private ApplicationDbContext context = new ApplicationDbContext();
         public int[] LessonIds { get; set; }
-
-        public string Password { get; set; }
+        new
+        public string newPassword { get; set; }
 
         public EditUserViewModel()
         {
