@@ -363,11 +363,11 @@ namespace OnlineDiary.Controllers
                 {
                     for (int i = 0; i < viewQMest.Count; i++)
                     {
-                        var qMester = new QuadMester();
+                        var qMester = new Quadmester();
                         qMester.StartDate = viewQMest[i].StartDate;
                         qMester.EndDate = viewQMest[i].EndDate;
                         qMester.Number = viewQMest[i].Number;
-                        context.QuadMesters.Add(qMester);
+                        context.Quadmesters.Add(qMester);
                     }
                     context.SaveChanges();
                 }

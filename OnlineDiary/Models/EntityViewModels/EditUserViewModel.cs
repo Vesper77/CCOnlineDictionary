@@ -11,6 +11,8 @@ namespace OnlineDiary.Models.CRUDViewModels
         private ApplicationDbContext context = new ApplicationDbContext();
         public int[] LessonIds { get; set; }
 
+        public string Password { get; set; }
+
         public EditUserViewModel()
         {
             //    this.user = new DiaryUser();

@@ -1,4 +1,5 @@
-﻿using OnlineDiary.Models.Diary;
+﻿using OnlineDiary.Models;
+using OnlineDiary.Models.Diary;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -17,7 +18,7 @@ namespace OnlineDiary.Models
         public DateTime EndDate { get; set; }
         public QuadMesterViewModel() { }
 
-        public QuadMesterViewModel(QuadMester qMester)
+        public QuadMesterViewModel(QuadMesterViewModel qMester)
         {
             this.Id = qMester.Id;
             this.Number = qMester.Number;
