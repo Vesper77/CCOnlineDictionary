@@ -11,27 +11,29 @@
 </head>
 <body>
     <header>
-        <nav class="b-preview-day navbar navbar-default navbar-static-top navbar-inverse ">
+        <nav class=" b-preview-day navbar navbar-default navbar-static-top navbar-inverse ">
             <div class="container">
                 <a href="#" class="navbar-link"><img class="navbar-text navbar-left b-preview-logo " src="/Content/Images/logo.jpg" alt="Логотип"></img></a>
                 <p class="navbar-text navbar-left ">
-                @if (HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString() == "Admin") {
-                    <ul class="nav navbar-nav navbar-left">
-                        <li>@Html.ActionLink("Редактирование расписания", "SelectClass", "Admin", new { }, new { @class = "navbar-link" })</li>
-                        <li>@Html.ActionLink("Создание урока", "CreateLesson", "Admin", new { }, new { @class = "navbar-link" })</li>
-                        <li>@Html.ActionLink("Создание класса", "CreateClass", "Admin", new { }, new { @class = "navbar-link" })</li>
-                        <li>@Html.ActionLink("Список", "Index", "Admin", new { }, new { @class = "navbar-link" })</li>
-                        <li class="dropdown">
-                    </ul>
-                } else {
-                    <ul class="nav navbar-nav navbar-left">
-                        <li>@Html.ActionLink("Расписание", "Schedule", "Diary", new { }, new { @class = "navbar-link" })</li>
-                        <li>@Html.ActionLink("Итоговые оценки", "FinalMarks", "Diary", new { }, new { @class = "navbar-link" })</li>
-                        <li>@Html.ActionLink("Оценки", "Marks", "Diary", new { }, new { @class = "navbar-link" })</li>
-                        <li class="dropdown">
-                    </ul>
-                }                
-                @Html.Partial("_LoginPartial")
+                    @if (HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString() == "Admin")
+                    {
+                        <ul class="nav navbar-nav navbar-left">
+                            <li>@Html.ActionLink("Редактирование расписания", "SelectClass", "Admin", new { }, new { @class = "navbar-link" })</li>
+                            <li>@Html.ActionLink("Список уроков", "ListLessons", "Admin", new { }, new { @class = "navbar-link" })</li>
+                            <li>@Html.ActionLink("Список классов", "ListClasses", "Admin", new { }, new { @class = "navbar-link" })</li>
+                            <li>@Html.ActionLink("Четверти", "QuadMester", "Admin", new { }, new { @class = "navbar-link" })</li>
+                            <li class="dropdown">
+                        </ul>
+                    } else
+                    {
+                        <ul class="nav navbar-nav navbar-left">
+                            <li>@Html.ActionLink("Расписание", "Schedule", "Diary", new { }, new { @class = "navbar-link" })</li>
+                            <li>@Html.ActionLink("Итоговые оценки", "FinalMarks", "Diary", new { }, new { @class = "navbar-link" })</li>
+                            <li>@Html.ActionLink("Оценки", "Marks", "Diary", new { }, new { @class = "navbar-link" })</li>
+                            <li class="dropdown">
+                        </ul>
+                    }
+                    @Html.Partial("_LoginPartial")
             </div>
         </nav>
     </header>
@@ -51,9 +53,9 @@
         @RenderSection("scripts", required: false)
     </content>
     @*<nav class="b-main_footer navbar navbar-default navbar-fixed-bottom">
-        <div>
-            <p class="navbar-text navbar-left"><a href="#" class="b-company_name navbar-link ">© 2009–2016 ООО «Электронный дневник»</a></p>
-        </div>
-    </nav>*@
+            <div>
+                <p class="navbar-text navbar-left"><a href="#" class="b-company_name navbar-link ">© 2009–2016 ООО «Электронный дневник»</a></p>
+            </div>
+        </nav>*@
 </body>
 </html>
