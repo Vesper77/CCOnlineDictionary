@@ -32,7 +32,7 @@
     @using (Html.BeginForm())
     {
         <div class="col-md-10">
-            <div class="form-horizontal">
+            <div class="form">
                 <fieldset>
                     @Html.Label("1 четверть", htmlAttributes: new { @class = "control-label col-md-2" })
                     С
@@ -42,7 +42,7 @@
                 </fieldset>
             </div>
             <br />
-            <div class="form-horizontal">
+            <div class="form">
                 <fieldset>
                     @Html.Label("2 четверть", htmlAttributes: new { @class = "control-label col-md-2" })
                     С
@@ -52,7 +52,7 @@
                 </fieldset>
             </div>
             <br />
-            <div class="form-horizontal">
+            <div class="form">
                 <fieldset>
                     @Html.Label("3 четверть", htmlAttributes: new { @class = "control-label col-md-2" })
                     С
@@ -62,17 +62,20 @@
                 </fieldset>
             </div>
             <br />
-            <div class="form-horizontal">
+            <div class="form">
                 <fieldset>
                     @Html.Label("4 четверть", htmlAttributes: new { @class = "control-label col-md-2" })
                     С
                     @Html.TextBoxFor(model => Model.ToArray()[3].StartDate, "{0:yyyy-MM-dd}", new { @class = "datefield", type = "date" })
                     До
                     @Html.TextBoxFor(model => Model.ToArray()[3].EndDate, "{0:yyyy-MM-dd}", new { @class = "datefield", type = "date" })
+                    <br />
+                    <input type="submit" value="Создать" class="btn btn-primary b-quadMester" />
                 </fieldset>
+     
             </div>
-            <br />
-            <input type="submit" value="Создать" class="btn btn-primary" />
+        
+         
             <script>
                 if (!Modernizr.inputtypes.date) {
                     $(function () {
