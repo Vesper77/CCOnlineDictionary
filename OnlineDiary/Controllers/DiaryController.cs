@@ -336,17 +336,20 @@ namespace OnlineDiary.Controllers
         [HttpPost]
         [Authorize(Roles = "teacher")]
         public ActionResult setMarks(List<MarkViewModel> marks) {
-            foreach (var m in marks) {
+            if (marks != null) {
+                foreach (var m in marks)
+                {
+                    if (m.value == "1" || m.value == "3" || m.value == "2" || m.value == "4" || m.value == "5")
+                    {
+                        SetMark(m.day, Convert.ToInt32(m.value), m.childrenId, m.lessonId);
+                    } else if (string.IsNullOrWhiteSpace(m.value))
+                    {
+                        //context.Marks.FirstOrDefault(ma => ma.Day == m.day && ma.ChildrenId == m.childrenId && ma.LessonId == m.lessonId);
 
-                if (m.value == "1" || m.value == "3" || m.value == "2" || m.value == "4" || m.value == "5")
-                {
-                    SetMark(m.day, Convert.ToInt32(m.value), m.childrenId, m.lessonId);
-                } else if (string.IsNullOrWhiteSpace(m.value)) {
-                    //context.Marks.FirstOrDefault(ma => ma.Day == m.day && ma.ChildrenId == m.childrenId && ma.LessonId == m.lessonId);
-                    
-                }else
-                {
-                    SetTruancy(m.day, m.childrenId, m.lessonId);
+                    } else
+                    {
+                        SetTruancy(m.day, m.childrenId, m.lessonId);
+                    }
                 }
             }
             return Redirect(Request.UrlReferrer.ToString());

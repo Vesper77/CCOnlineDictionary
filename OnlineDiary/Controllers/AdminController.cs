@@ -272,7 +272,7 @@ namespace OnlineDiary.Controllers
                             UserManager.RemoveFromRole(user.Id, r);
                         }
                         var chData = context.ChildrenData.Where(c => c.ChildrenId == dUser.Id).FirstOrDefault();
-                        if (chData.ChildrenId != null)
+                        if (chData != null && chData.ChildrenId != null)
                         {
                             chData.ParentId = dUser.ParentId;
                             chData.SchoolClassId = dUser.ClassId;

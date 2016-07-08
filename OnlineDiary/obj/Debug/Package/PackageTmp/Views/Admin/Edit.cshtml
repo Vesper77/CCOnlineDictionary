@@ -74,7 +74,7 @@
             </div>
         </div>
 
-        <div class="form-group" id="CheckBoxLessons" @if (string.IsNullOrEmpty(Model.Role) || Model.Role != "teacher") { <text> style="display:none;" </text>  }>
+        <div class="form-group" id="CheckBoxLessons" @if (string.IsNullOrEmpty(Model.Role) || Model.Role != "teacher") { <text> style="display:none;" </text>   }>
             @Html.Label("Предметы", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-offset-2 col-md-10">
                 @foreach (var item in Model.GetAllLessons(Model.Id))

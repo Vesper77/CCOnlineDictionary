@@ -106,11 +106,7 @@ namespace OnlineDiary.Models.CRUDViewModels
             var allLessons = context.Lessons.Where(l => l.TeacherId == null || l.TeacherId == id).ToArray();
             if (id != "")
             {
-                var teacherLessons = allLessons.Where(i => i.TeacherId == id).ToArray();
-                if (teacherLessons != null)
-                {
-                    return teacherLessons;
-                }
+                return allLessons;
             }
             if (allLessons != null)
                 return allLessons;

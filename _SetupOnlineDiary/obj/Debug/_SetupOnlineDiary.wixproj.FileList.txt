@@ -1,0 +1,10 @@
+obj\Debug\Product.wixobj
+C:\Users\Pacman\Documents\Visual Studio 2015\Projects\OnlineDictionary\_SetupOnlineDiary\bin\Debug\_SetupOnlineDiary.msi
+C:\Users\Pacman\Documents\Visual Studio 2015\Projects\OnlineDictionary\_SetupOnlineDiary\bin\Debug\_SetupOnlineDiary.wixpdb
+obj\Debug\_SetupOnlineDiary.wixproj.BindContentsFileListnull.txt
+obj\Debug\_SetupOnlineDiary.wixproj.BindOutputsFileListnull.txt
+obj\Debug\_SetupOnlineDiary.wixproj.BindBuiltOutputsFileListnull.txt
+obj\Debug\DemoUI.wixobj
+obj\Debug\Database.wixobj
+obj\Debug\IISConfiguration.wixobj
+obj\Debug\UIDIalogs.wixobj

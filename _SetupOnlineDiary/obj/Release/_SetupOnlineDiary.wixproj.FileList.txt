@@ -1,0 +1,9 @@
+C:\Users\Pacman\Documents\Visual Studio 2015\Projects\OnlineDictionary\_SetupOnlineDiary\bin\Release\_SetupOnlineDiary.msi
+C:\Users\Pacman\Documents\Visual Studio 2015\Projects\OnlineDictionary\_SetupOnlineDiary\bin\Release\_SetupOnlineDiary.wixpdb
+obj\Release\DemoUI.wixobj
+obj\Release\IISConfiguration.wixobj
+obj\Release\Product.wixobj
+obj\Release\UIDIalogs.wixobj
+obj\Release\_SetupOnlineDiary.wixproj.BindContentsFileListnull.txt
+obj\Release\_SetupOnlineDiary.wixproj.BindOutputsFileListnull.txt
+obj\Release\_SetupOnlineDiary.wixproj.BindBuiltOutputsFileListnull.txt
