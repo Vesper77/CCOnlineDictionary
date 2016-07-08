@@ -9,31 +9,31 @@
         {
             @Html.HiddenFor(m => m.classiD)
             @Html.HiddenFor(m => m.Day)
-            <fieldset class="form-group">
+            <fieldset class="form-group col-md-4">
                 <label>Первый урок</label>
                 @Html.DropDownList("lesson", new SelectList(Model.Lessons, "Key", "Value", Model.GetCurrentLesson(1, Model.classiD).Key), new { @class = "form-control"})
             </fieldset>
-            <fieldset class="form-group">
+            <fieldset class="form-group  col-md-4">
                 <label>Второй урок</label>
                 @Html.DropDownList("lesson", new SelectList(Model.Lessons, "Key", "Value", Model.GetCurrentLesson(2, Model.classiD).Key), new { @class = "form-control"})
             </fieldset>
-            <fieldset class="form-group">
+            <fieldset class="form-group  col-md-4">
                 <label>Третий урок</label>
                 @Html.DropDownList("lesson", new SelectList(Model.Lessons, "Key", "Value", Model.GetCurrentLesson(3, Model.classiD).Key), new { @class = "form-control"})
             </fieldset>
-            <fieldset class="form-group">
+            <fieldset class="form-group  col-md-4">
                 <label>Четвертый урок</label>
                 @Html.DropDownList("lesson", new SelectList(Model.Lessons, "Key", "Value", Model.GetCurrentLesson(4, Model.classiD).Key), new { @class = "form-control"})
             </fieldset>
-            <fieldset class="form-group">
+            <fieldset class="form-group  col-md-4">
                 <label>Пятый урок</label>
                 @Html.DropDownList("lesson", new SelectList(Model.Lessons, "Key", "Value", Model.GetCurrentLesson(5, Model.classiD).Key), new { @class = "form-control"})
             </fieldset>
-            <fieldset class="form-group">
+            <fieldset class="form-group  col-md-4">
                 <label>Шестой урок</label>
                 @Html.DropDownList("lesson", new SelectList(Model.Lessons, "Key", "Value", Model.GetCurrentLesson(6, Model.classiD).Key), new { @class = "form-control"})
             </fieldset>
-            <fieldset class="form-group">
+            <fieldset class="form-group  col-md-4">
                 <button type="submit" class="btn btn-primary">Редактировать</button>
             </fieldset>
         }

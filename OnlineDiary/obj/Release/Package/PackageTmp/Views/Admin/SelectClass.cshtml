@@ -8,16 +8,16 @@
     <div class="panel-body">
         @using (Html.BeginForm("SelectClass", "Admin", FormMethod.Post))
         {
-            <fieldset class="form-group">
+            <fieldset class="form-group  col-md-4">
                 <label>Выбор Класса</label>
                 @Html.DropDownList("classId", new SelectList(Model.AllClasses, "Key", "Value"), new { @class = "form-control"})
             </fieldset>
-            <fieldset class="form-group">
+            <fieldset class="form-group  col-md-4 ">
                 <label>Выбор дня</label>
                 @Html.DropDownList("day", new SelectList(Model.days, "Key", "Value"), new { @class = "form-control"})
             </fieldset>
-            <fieldset class="form-group">
-                <button type="submit" class="btn btn-primary">Редактировать расписание</button>
+            <fieldset class="form-group ">
+                <button type="submit" class="btn btn-primary b-select_edit">Редактировать расписание</button>
             </fieldset>
         }
     </div>

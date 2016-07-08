@@ -145,7 +145,7 @@ namespace OnlineDiary.Models.CRUDViewModels
                     if (t!= null) {
                         return t.Title;
                     }
-                    return nameClass.First().Title;
+                    return "";
                 }
             }
             return "";

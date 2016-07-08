@@ -164,17 +164,17 @@ namespace OnlineDiary.Controllers
             }
             var user = await UserManager.FindByNameAsync(User.Identity.Name);
             TeacherMarksViewModel model = new TeacherMarksViewModel(quadmester);
-            if (LessonId != 0)
-            {
-                model.form.LessonId = LessonId;
-            }
+            model.User = user;
             if (ClassId != 0)
             {
                 model.form.ClassId = ClassId;
             }
-            model.User = user;
             model.form.Classes = model.getSchoolClasses();
             model.form.Lessons = model.getLessons();
+            if (LessonId != 0 && model.form.Lessons.ContainsKey(LessonId))
+            {
+                model.form.LessonId = LessonId;
+            }
             model.Period = model.GetPeriod()[quadmester - 1];
             if (model.Period != null && model.Period.Item1 != null && model.Period.Item2 != null)
             {
@@ -235,17 +235,17 @@ namespace OnlineDiary.Controllers
         {
             var user = await UserManager.FindByNameAsync(User.Identity.Name);
             TeacherMarksViewModel model = new TeacherMarksViewModel();
-            if (lessonId != 0)
-            {
-                model.form.LessonId = lessonId;
-            }
+            model.User = user;
             if (classId != 0)
             {
                 model.form.ClassId = classId;
             }
-            model.User = user;
             model.form.Classes = model.getSchoolClasses();
             model.form.Lessons = model.getLessons();
+            if (lessonId != 0 && model.form.Lessons.ContainsKey(lessonId))
+            {
+                model.form.LessonId = lessonId;
+            }
             return View("TeacherFinalMarks", model);
         }
         [Authorize(Roles = "teacher")]

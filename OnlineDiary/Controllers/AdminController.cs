@@ -331,9 +331,20 @@ namespace OnlineDiary.Controllers
         public ActionResult DeleteConfirmed(string id)
         {
             var dUser = context.Users.Find(id);
-            var userRole = context.Users.Where(i => i.Id == dUser.Id).ToArray()[0].Roles.ToArray()[0];
-            var roleName = context.Roles.Where(i => i.Id == userRole.RoleId).ToArray()[0].Name;
+
+            var userRole = context.Users.Where(i => i.Id == dUser.Id).FirstOrDefault();
+            var roleName = "";
+            if (userRole != null) {
+                var roleId = userRole.Roles.FirstOrDefault();
+                if (roleId != null) {
+                    var role = context.Roles.Where(i => i.Id == roleId.RoleId).FirstOrDefault();
+                    if (role != null) {
+                        roleName = role.Name;
+                    }
+                }                
+            }
             
+
             if (roleName == "parent")
             {
                 var parentData = context.ChildrenData.Where(i => i.ParentId == id).ToArray();

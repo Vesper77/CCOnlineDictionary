@@ -309,7 +309,7 @@ namespace OnlineDiary.Models
                     }
                 }
             }
-            if (lessons.Count > 0 && form.LessonId == 0)
+            if (lessons.Count > 0 && (form.LessonId == 0 || !lessons.ContainsKey(form.LessonId)))
             {
                 form.LessonId = lessons.Keys.First();
             }
