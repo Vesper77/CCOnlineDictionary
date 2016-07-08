@@ -32,20 +32,22 @@
     }
     <br />
     <br />
-@using (Html.BeginForm("ParentMarksPost", "Diary", FormMethod.Post, new { @class = "form-inline select-children" }))
+@(Html.BeginForm("ParentMarksPost", "Diary", FormMethod.Post, new{ @class = "form-inline select-children"}))
 {
     if (Model.Childrens.Count > 1)
     {
         <div class="form-group">
             <label>Выберите ребенка</label>
-            @Html.DropDownList("ChildrenId", new SelectList(Model.Childrens, "Key", "Value"), new { @class = "form-control" });
+            @Html.DropDownList("ChildrenId", new SelectList(Model.Childrens, "Key", "Value"), new{@class = "form-control"});
         </div>
             <button type="submit">Показать</button>
-    } else if (Model.Childrens.Count > 0)
+    }
+    else if (Model.Childrens.Count > 0)
     {
         @Html.Hidden("ChildrenId", Model.Childrens.First().Key)
         <label>Ребёнок: @Model.GetUserName(Model.CurrentChildren)</label>
     }
+}
 </div>
 @if (Model.CurrentChildren != null)
 {

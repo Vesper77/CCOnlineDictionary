@@ -486,7 +486,7 @@ namespace OnlineDiary.Controllers
             LessonsView.page = page;
             var lessons = context.Lessons.OrderBy(l => l.Title).Skip(page * ListLessonsViewModel.ITEMS_PER_PAGE).Take(ListLessonsViewModel.ITEMS_PER_PAGE).ToArray();
             LessonsView.Lessons = lessons;
-            LessonsView.PageCount = (int)Math.Round((float)context.Lessons.Count() / (float)ListLessonsViewModel.ITEMS_PER_PAGE);
+            LessonsView.PageCount = (int)Math.Ceiling((float)context.Lessons.Count() / (float)ListLessonsViewModel.ITEMS_PER_PAGE);
             return View(LessonsView);
         }
         public ActionResult DeleteLesson(int Id)
@@ -631,7 +631,7 @@ namespace OnlineDiary.Controllers
             var classes = context.SchoolClasses.OrderBy(x => x.Title).Skip(page * ClassListViewModel.PER_PAGE).Take(ClassListViewModel.PER_PAGE).ToArray();
             viewModel.Classes = classes;
             viewModel.Page = page;
-            viewModel.PageCount = (int)Math.Round((float)context.SchoolClasses.Count() / (float)ClassListViewModel.PER_PAGE);
+            viewModel.PageCount = (int)Math.Ceiling((float)context.SchoolClasses.Count() / (float)ClassListViewModel.PER_PAGE);
             return View(viewModel);
         }
 

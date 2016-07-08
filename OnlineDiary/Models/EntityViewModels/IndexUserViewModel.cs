@@ -55,7 +55,7 @@ namespace OnlineDiary.Models.CRUDViewModels
             {
                 var roleId = context.Roles.FirstOrDefault(r => r.Name == role);
                 var users = context.Users.Where(u => u.Roles.Any(r => r.RoleId == roleId.Id)).ToArray();
-                CountPages = (int)Math.Round((float)users.Count() / (float)ITEMS_PER_PAGE);
+                CountPages = (int)Math.Ceiling((float)users.Count() / (float)ITEMS_PER_PAGE);
                 for (int i = 0; i < users.Length; i++)
                 {
                     list.Add(new UserViewModel(users[i]));

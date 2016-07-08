@@ -32,10 +32,10 @@
                 <label>Класс</label>
                 @Html.DropDownList("classId", new SelectList(Model.form.Classes, "Key", "Value"), new { @class = "form-control" })
             </div>
-        }
-        else if (Model.form.Lessons.Count > 0)
+        } else if (Model.form.Classes.Count > 0)
         {
             <div class="form-group">
+                @Html.Hidden("classId", Model.form.Classes.First().Key)
                 <label>Класс: @(Model.form.Classes.First().Value)</label>
             </div>
         }
@@ -45,10 +45,10 @@
                 <label>Предметы</label>
                 @Html.DropDownList("lessonId", new SelectList(Model.form.Lessons, "Key", "Value"), new { @class = "form-control" })
             </div>
-        }
-        else if (Model.form.Lessons.Count > 0)
+        } else if (Model.form.Lessons.Count > 0)
         {
             <div class="form-group">
+                @Html.Hidden("lessonId", Model.form.Lessons.First().Key)
                 <label>"Предмет: @Model.form.Lessons.First().Value"</label>
             </div>
         }
@@ -57,13 +57,15 @@
             <button type="submit">Показать</button>
         }
     }
-    <h2>Итоговые оценки учеников класса @(" " + Model.getClassName(Model.form.ClassId)) </h2>
-    <h3>
-        @("По предмету " + "\"" + Model.getLessonName(Model.form.LessonId) + "\"" + " за " +
+    <div class="page-header">
+        <h2>Итоговые оценки учеников класса @(" " + Model.getClassName(Model.form.ClassId)) </h2>
+        <h3>
+            @("По предмету " + "\"" + Model.getLessonName(Model.form.LessonId) + "\"" + " за " +
         Model.CurrentYear + " - " + (Model.CurrentYear + 1) + "учебный  год")
-    </h3>
+        </h3>
+    </div>
     <div class="">
-        @{ var days = Model.marksModel.GetDays(Model.form.ClassId, Model.form.LessonId);}
+        @{var days = Model.marksModel.GetDays(Model.form.ClassId, Model.form.LessonId);}
         @if (Model.form != null && days.Count > 0 && Model.form.Classes.Count > 0 && Model.form.Lessons.Count > 0 && childrens.Count > 0)
         {
             <table class="table table table-bordered">

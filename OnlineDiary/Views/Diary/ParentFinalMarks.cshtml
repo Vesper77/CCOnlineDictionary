@@ -33,9 +33,9 @@
                 @Html.DropDownList("ChildrenId", new SelectList(Model.Childrens, "Key", "Value"), new { @class = "form-control" });
             </div>
             <button type="submit">Показать</button>
-        }
-        else
+        } else
         {
+            @Html.Hidden("ChildrenId", Model.Childrens.First().Key)
             <label>Ребёнок: @Model.GetUserName(Model.CurrentChildren)</label>
         }
     }
