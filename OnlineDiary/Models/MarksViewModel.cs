@@ -7,6 +7,13 @@ using System.Text;
 using System.Threading.Tasks;
 namespace OnlineDiary.Models
 {
+    public class MarkViewModelSet
+    {
+        public DateTime day { get; set; }
+        public string value { get; set; }
+        public string childrenId { get; set; }
+        public int lessonId { get; set; }
+    }
     public abstract class MarksViewModel
     {
         private int currentYear;

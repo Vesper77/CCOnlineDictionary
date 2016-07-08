@@ -187,6 +187,7 @@ namespace OnlineDiary.Controllers
         }
         [Authorize(Roles = "teacher")]
         [HttpPost]
+        [HttpGet]
         public async Task<ActionResult> TeacherMarksPost(int lessonId, int classId)
         {
             return await TeacherMarks(lessonId, classId);
@@ -327,15 +328,9 @@ namespace OnlineDiary.Controllers
             context.SaveChanges();
             return Json(new { result = true, markValue = markvalue });
         }
-        public class MarkViewModel {
-            public DateTime day { get; set; }
-            public string value { get; set; }
-            public string childrenId { get; set; }
-            public int lessonId { get; set; }
-        }
         [HttpPost]
         [Authorize(Roles = "teacher")]
-        public ActionResult setMarks(List<MarkViewModel> marks) {
+        public ActionResult setMarks(List<MarkViewModelSet> marks) {
             if (marks != null) {
                 foreach (var m in marks)
                 {
@@ -352,6 +347,7 @@ namespace OnlineDiary.Controllers
                     }
                 }
             }
+            //return RedirectToAction("");
             return Redirect(Request.UrlReferrer.ToString());
         }
     }
