@@ -141,6 +141,10 @@ namespace OnlineDiary.Models.CRUDViewModels
                 var nameClass = context.SchoolClasses.Where(i => i.Id == schClassId).ToArray();
                 if (nameClass != null)
                 {
+                    var t = nameClass.FirstOrDefault();
+                    if (t!= null) {
+                        return t.Title;
+                    }
                     return nameClass.First().Title;
                 }
             }

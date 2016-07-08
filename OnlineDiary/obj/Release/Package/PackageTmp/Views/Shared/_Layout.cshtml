@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Онлайн дневник</title>
+    @Styles.Render("~/Content/css")
+    @Styles.Render("~/Content/main.css")
+    @Scripts.Render("~/bundles/modernizr")
+
+</head>
+<body>
+    <header>
+        <nav class=" b-preview-day navbar navbar-default navbar-static-top navbar-inverse ">
+            <div class="container">
+                <p class="navbar-text navbar-left ">
+                    @if (HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString() == "Admin")
+                    {
+                        <ul class="nav navbar-nav navbar-left">
+                            <li>@Html.ActionLink("Редактирование расписания", "SelectClass", "Admin", new { }, new { @class = "navbar-link" })</li>
+                            <li>@Html.ActionLink("Список пользовтелей", "Index", "Admin", new { }, new { @class = "navbar-link" })</li>
+                            <li>@Html.ActionLink("Список предметов", "ListLessons", "Admin", new { }, new { @class = "navbar-link" })</li>
+                            <li>@Html.ActionLink("Список классов", "ListClasses", "Admin", new { }, new { @class = "navbar-link" })</li>
+                            <li>@Html.ActionLink("Четверти", "QuadMester", "Admin", new { }, new { @class = "navbar-link" })</li>
+                            <li class="dropdown">
+                        </ul>
+                    } else
+                    {
+                        <ul class="nav navbar-nav navbar-left">
+                            <li>@Html.ActionLink("Расписание", "Schedule", "Diary", new { }, new { @class = "navbar-link" })</li>
+                            <li>@Html.ActionLink("Итоговые оценки", "FinalMarks", "Diary", new { }, new { @class = "navbar-link" })</li>
+                            <li>@Html.ActionLink("Оценки", "Marks", "Diary", new { }, new { @class = "navbar-link" })</li>
+                            <li class="dropdown">
+                        </ul>
+                    }
+                    @Html.Partial("_LoginPartial")
+            </div>
+        </nav>
+    </header>
+    <content>
+        <div class="container body-content">
+            @RenderBody()
+            @*<nav class="b_preview-footer navbar navbar-default navbar-fixed-bottom">
+                    <div class="container">
+                        <div>
+                            <p class="navbar-text navbar-left  "><a href="#" class="navbar-link b_preview-organization">© 2009–2016 ООО «Электронный дневник»</a></p>
+                        </div>
+                    </div>
+                </nav>*@
+        </div>
+        @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/bundles/bootstrap")
+        @RenderSection("scripts", required: false)
+    </content>
+    @*<nav class="b-main_footer navbar navbar-default navbar-fixed-bottom">
+            <div>
+                <p class="navbar-text navbar-left"><a href="#" class="b-company_name navbar-link ">© 2009–2016 ООО «Электронный дневник»</a></p>
+            </div>
+        </nav>*@
+</body>
+</html>

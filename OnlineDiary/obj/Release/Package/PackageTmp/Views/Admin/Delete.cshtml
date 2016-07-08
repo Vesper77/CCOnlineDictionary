@@ -1,0 +1,87 @@
+﻿@model OnlineDiary.Models.CRUDViewModels.DeleteUserViewModel
+@{
+    ViewBag.Title = "Удаление";
+}
+<h2>Удаление</h2>
+<h3>Вы точно хотите удалить этого пользователя?</h3>
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.Label("Логин", htmlAttributes: new { @class = "control-label col-md-2" })
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => Model.UserName)
+        </dd>
+        <dt>
+            @Html.Label("Имя", htmlAttributes: new { @class = "control-label col-md-2" })
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => Model.FirstName)
+        </dd>
+        <dt>
+            @Html.Label("Фамилия", htmlAttributes: new { @class = "control-label col-md-2" })
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => Model.LastName)
+        </dd>
+        <dt>
+            @Html.Label("Отчество", htmlAttributes: new { @class = "control-label col-md-2" })
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => Model.ParentName)
+        </dd>
+        <dt>
+            @Html.Label("Email", htmlAttributes: new { @class = "control-label col-md-2" })
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => Model.Email)
+        </dd>
+        <dt>
+            @Html.Label("Роль", htmlAttributes: new { @class = "control-label col-md-2" })
+        </dt>
+        <dd>
+            @{
+                var nameRole = Model.GetRoleNameById(Model.Id, true);
+            }
+            @Html.DisplayFor(model => nameRole)
+        </dd>
+        @{
+            var lessons = Model.GetAllLessons(Model.Id);
+        }
+        @if (nameRole == "Учитель")
+        {
+            <dt>
+                @Html.Label("Предмет", htmlAttributes: new { @class = "control-label col-md-2" })
+            </dt>
+            if (lessons != null)
+            {
+                foreach (var lesson in lessons)
+                {
+                    <dd>
+                        @Html.DisplayFor(model => lesson.Title)
+                    </dd>
+                }
+            }
+        }
+        @if (nameRole == "Ученик")
+        {
+            <dt>
+                @Html.Label("Класс", htmlAttributes: new { @class = "control-label col-md-2" })
+            </dt>
+            var className = Model.GetClassNameByChildrenId(Model.Id);
+            <dd>
+                @Html.DisplayFor(model => className)
+            </dd>
+        }
+    </dl>
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            @Html.ActionLink("Назад к списку", "Index", null, new { @class = "btn btn-default" })
+            <input type="submit" value="Удалить" class="btn btn-primary" />
+        </div>
+    }
+</div>
